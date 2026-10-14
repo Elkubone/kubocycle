@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>Kubocycle</title>
+<style>
+:root{--bg:#000;--ink:#F2F5F6;--mut:#BCC9D0;--line:#33444C;--card:#0B1114;--con:#FF5448;--fav:#2EE077;--lat:#FFB830;--acc:#5BC0EB;--s:#8A9BA3}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+h1{font-size:1.55rem;line-height:1.1;font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin:0;text-align:center;background:linear-gradient(90deg,var(--acc),var(--fav));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margin:4px auto 0;background:linear-gradient(90deg,var(--acc),var(--fav))}
+#start{font:inherit;font-size:1.2rem;font-weight:700;padding:18px;border:0;border-radius:16px;background:var(--acc);color:#001018}
+#err{color:var(--con);font-size:1rem;min-height:1.2em}
+#main{display:none;flex-direction:column;gap:10px;flex:1}
+
+.wrow{display:flex;align-items:center;gap:18px}
+.wtitle{color:var(--ink);font-size:1.1rem;font-weight:700;letter-spacing:.02em;line-height:1.2}
+.legend{display:flex;gap:8px}
+.chip{flex:1;text-align:center;font-size:.9rem;font-weight:700;padding:6px 4px;border-radius:12px;border:2px solid var(--c);color:var(--c);opacity:.45;transition:opacity .3s,background .3s,color .3s}
+.chip.on{opacity:1;background:var(--c);color:#000}
+.chip[data-k=con]{--c:var(--con)}.chip[data-k=lat]{--c:var(--lat)}.chip[data-k=fav]{--c:var(--fav)}
+
+.row{display:flex;flex-direction:column;gap:8px;margin-top:auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 16px}
+svg{width:min(170px,18vh,40vw);height:min(170px,18vh,40vw);width:min(170px,18dvh,40vw);height:min(170px,18dvh,40vw);flex:none}
+.ticks line{stroke:var(--mut);stroke-width:1.5;opacity:.7}
+.cl{font:800 11px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--mut);text-anchor:middle;dominant-baseline:central}
+.cn{fill:var(--acc)}
+.ring{fill:none;stroke:var(--line);stroke-width:3}
+.arrow{fill:var(--s);transition:transform .6s}
+.w{font-size:2.2rem;font-weight:800;line-height:1.05}
+.w small{font-size:1.1rem;font-weight:500;color:var(--mut)}
+.sub{color:var(--mut);font-size:1rem;margin-top:2px}
+#speed,#speed2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;flex:1}
+#speed .tcard,#speed2 .tcard{padding:9px 12px;gap:4px;justify-content:space-between}
+.thead{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);font-size:1.05rem;font-weight:700;line-height:1.2}
+.thead small{font-size:.85rem;font-weight:600;color:var(--mut)}
+.big{font-size:min(3.2rem,6.6vh);font-size:min(3.2rem,6.6dvh);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;margin:auto 0}
+.big small{font-size:.55em;font-weight:800;margin-left:2px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;flex:1}
+.tcard{flex:1;display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 18px}
+.pair .tcard{justify-content:space-between;min-height:0;padding:9px 12px;gap:4px}
+.pair .tcard>span{display:block;line-height:1.2}
+.pair .temp{font-size:min(2.7rem,5.4vh);font-size:min(2.7rem,5.4dvh);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;margin:auto 0}
+.pair .temp small{font-size:.7em;font-weight:800;color:inherit;margin-left:2px}
+.tcard>span{color:var(--ink);font-size:1.05rem;font-weight:700}
+.temp{font-size:3.4rem;font-weight:800;line-height:1}
+.temp small{font-size:1.4rem;font-weight:500;color:var(--mut);margin-left:3px}
+.foot{color:var(--mut);font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>Kubocycle</h1>
+<button id="start">Avvia (usa la posizione)</button>
+<div id="err"></div>
+<div id="main">
+  <div id="speed">
+    <div class="tcard"><div class="thead"><span>Velocità</span><small>km/h</small></div><div class="big" id="sp">--</div></div>
+    <div class="tcard"><div class="thead"><span>Media</span><small>km/h</small></div><div class="big" id="avg">--</div></div>
+  </div>
+  <div id="speed2">
+    <div class="tcard"><div class="thead"><span>Vel. max</span><small>km/h</small></div><div class="big" id="vmax">0</div></div>
+    <div class="tcard"><div class="thead"><span id="bt">Batteria</span></div><div class="big" id="batv"><span id="bat">--</span><small>%</small></div></div>
+  </div>
+  <div class="pair">
+    <div class="tcard"><span>Km percorsi</span><div class="temp"><span id="km">0,0</span></div></div>
+    <div class="tcard"><span>Temperatura</span><div class="temp"><span id="t">--</span><small>°C</small></div></div>
+  </div>
+  <div class="pair">
+    <div class="tcard"><span>In sella</span><div class="temp" id="elapsed">0:00</div></div>
+    <div class="tcard"><span>Ora</span><div class="temp" id="clock">--:--</div></div>
+  </div>
+  <div class="row">
+    <span class="wtitle">Vento</span>
+    <div class="wrow">
+    <svg viewBox="-60 -60 120 120" aria-label="Bussola e direzione del vento rispetto alla tua marcia">
+      <circle class="ring" r="38"/>
+      <g id="ticks" class="ticks"><line y1="-38" y2="-33" transform="rotate(0)"/><line y1="-38" y2="-33" transform="rotate(45)"/><line y1="-38" y2="-33" transform="rotate(90)"/><line y1="-38" y2="-33" transform="rotate(135)"/><line y1="-38" y2="-33" transform="rotate(180)"/><line y1="-38" y2="-33" transform="rotate(225)"/><line y1="-38" y2="-33" transform="rotate(270)"/><line y1="-38" y2="-33" transform="rotate(315)"/></g>
+      <text class="cl cn" id="cN">N</text><text class="cl" id="cE">E</text><text class="cl" id="cS">S</text><text class="cl" id="cO">O</text>
+      <path d="M0 -38 L5.5 -29 L-5.5 -29 Z" fill="var(--ink)"/>
+      <g id="arr" class="arrow"><path d="M0 -24 L10 -3 L3 -3 L3 24 L-3 24 L-3 -3 L-10 -3 Z"/></g>
+    </svg>
+    <div>
+      <div class="w"><span id="v">--</span> <small>km/h</small></div>
+      <div class="sub">raffiche <span id="g">--</span> km/h</div>
+      <div class="sub">da <span id="d">--</span></div>
+    </div>
+    </div>
+    <div class="legend">
+      <div class="chip" data-k="con">Contrario</div>
+      <div class="chip" data-k="lat">Laterale</div>
+      <div class="chip" data-k="fav">A favore</div>
+    </div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const dirs=['N','NE','E','SE','S','SO','O','NO'];
+const card=d=>dirs[Math.round(((d%360)+360)%360/45)%8];
+const COL={con:['var(--con)','rgba(255,84,72,.14)'],fav:['var(--fav)','rgba(46,224,119,.14)'],lat:['var(--lat)','rgba(255,184,48,.14)'],none:['var(--mut)','rgba(138,155,163,.12)']};
+let km=0,lastDistPt=null,lastDistTs=0,moving=0,maxSpd=0;
+let wx=null,lastFetch=0,lastFetchPos=null,lastPt=null,heading=null;
+
+function dist(a,b){const R=6371e3,r=Math.PI/180,x=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+function bearing(a,b){const r=Math.PI/180,y=Math.sin((b.lon-a.lon)*r)*Math.cos(b.lat*r),x=Math.cos(a.lat*r)*Math.sin(b.lat*r)-Math.sin(a.lat*r)*Math.cos(b.lat*r)*Math.cos((b.lon-a.lon)*r);return(Math.atan2(y,x)/r+360)%360}
+
+async function getWx(p){
+  lastFetch=Date.now();lastFetchPos=p;
+  try{
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${p.lat.toFixed(4)}&longitude=${p.lon.toFixed(4)}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh`;
+    const r=await fetch(u);if(!r.ok)throw 0;
+    const c=(await r.json()).current;
+    wx={t:c.temperature_2m,v:c.wind_speed_10m,d:c.wind_direction_10m,g:c.wind_gusts_10m,time:new Date()};
+    $('err').textContent='';
+  }catch(e){
+    lastFetch=Date.now()-270000;
+    $('err').textContent='Meteo non disponibile: controlla la connessione dati.';
+  }
+  render();
+}
+
+let dbgShown=false,lastFixTs=0;
+// Filtro di Kalman (posizione + velocità, in metri locali) per i telefoni con GPS lento o impreciso
+let kf=null,lastKTs=0,KQ=0.08,KDZ=1.5;
+function kfUpdate(p,ts,acc){
+  const R=Math.max(acc,5)**2,q=acc<=10?0.3:acc>=40?KQ:0.3+(KQ-0.3)*(acc-10)/30; // GPS buono: risposta rapida; GPS scarso: più filtro
+  if(!kf)kf={lat0:p.lat,lon0:p.lon,ts,x:0,y:0,vx:0,vy:0,Ppp:R,Ppv:0,Pvv:25,n:1,rej:0,speed:null,heading:null};
+  else{
+    const dt=(ts-kf.ts)/1000;
+    if(dt<=0)return kf;
+    if(dt>60){kf=null;return kfUpdate(p,ts,acc)}
+    kf.x+=kf.vx*dt;kf.y+=kf.vy*dt;
+    const a=kf.Ppp+2*dt*kf.Ppv+dt*dt*kf.Pvv+q*dt**4/4,b=kf.Ppv+dt*kf.Pvv+q*dt**3/2,c=kf.Pvv+q*dt*dt;
+    kf.Ppp=a;kf.Ppv=b;kf.Pvv=c;kf.ts=ts;
+    const zx=(p.lon-kf.lon0)*111320*Math.cos(kf.lat0*Math.PI/180),zy=(p.lat-kf.lat0)*110540;
+    const ix=zx-kf.x,iy=zy-kf.y,S=kf.Ppp+R;
+    if((ix*ix+iy*iy)/S>12){            // salto improbabile: ignoro la posizione
+      if(++kf.rej>=3){kf=null;return kfUpdate(p,ts,acc)}
+      return kf;
+    }
+    kf.rej=0;
+    const Kp=kf.Ppp/S,Kv=kf.Ppv/S;
+    kf.x+=Kp*ix;kf.y+=Kp*iy;kf.vx+=Kv*ix;kf.vy+=Kv*iy;
+    kf.Pvv-=Kv*kf.Ppv;kf.Ppv*=(1-Kp);kf.Ppp*=(1-Kp);
+    kf.n++;
+  }
+  if(kf.n>=3){kf.sv=Math.sqrt(kf.Pvv);kf.speed=Math.hypot(kf.vx,kf.vy);kf.heading=(Math.atan2(kf.vx,kf.vy)*180/Math.PI+360)%360}
+  return kf;
+}
+
+function onPos(pos){
+  const c=pos.coords,p={lat:c.latitude,lon:c.longitude};
+  $('main').style.display='flex';
+  let rep=(c.speed==null||isNaN(c.speed))?null:c.speed;
+  const k=kfUpdate(p,pos.timestamp,c.accuracy);
+  const ks=k&&k.speed!=null?(k.speed<Math.max(0.7,KDZ*k.sv)?0:k.speed):null;
+  // scarto la velocità fornita dal telefono se è incoerente: oltre 97 km/h o troppo diversa da quella filtrata
+  if(rep!=null&&(rep>27||(ks!=null&&Math.abs(rep-ks)>6)))rep=null;
+  let spd=rep;
+  if(spd==null||(spd<0.5&&ks!=null&&ks>2))spd=ks;
+  $('sp').textContent=spd==null?'--':(spd<0.5?'0':Math.round(spd*3.6));
+  if(spd!=null&&spd>maxSpd){maxSpd=spd;$('vmax').textContent=Math.round(maxSpd*3.6)}
+  if(spd==null||c.accuracy>50){
+    const gap=lastFixTs?Math.round((pos.timestamp-lastFixTs)/1000):0;
+    $('err').style.color='var(--mut)';dbgShown=true;
+    $('err').textContent=c.accuracy>50?'GPS poco preciso ('+Math.round(c.accuracy)+' m): i valori sono indicativi':'GPS: precisione '+Math.round(c.accuracy)+' m, velocità '+(rep==null?'non fornita':'0')+(gap?', ultimo aggiornamento '+gap+' s fa':'');
+  }else if(dbgShown){dbgShown=false;$('err').textContent='';$('err').style.color=''}
+  lastFixTs=pos.timestamp;
+  // km e tempo in movimento: integro la velocità sul tempo tra due posizioni
+  if(lastKTs&&spd!=null&&spd>=0.8){const dts=(pos.timestamp-lastKTs)/1000;if(dts>0&&dts<=15){km+=spd*dts;moving+=dts*1000}}
+  lastKTs=pos.timestamp;
+  $('km').textContent=(km/1000).toFixed(1).replace('.',',');
+  $('avg').textContent=moving>=10000?((km/1000)/(moving/3600000)).toFixed(1).replace('.',','):'--';
+  if(!lastPt)lastPt=p;
+  if(rep!=null&&c.heading!=null&&!isNaN(c.heading)&&spd>1.5)heading=c.heading;
+  else if(ks!=null&&ks>1.5)heading=k.heading;
+  else if(rep!=null&&dist(lastPt,p)>15){heading=bearing(lastPt,p);lastPt=p}
+  if(!wx||Date.now()-lastFetch>300000||(lastFetchPos&&dist(lastFetchPos,p)>1000))getWx(p);
+  else render();
+}
+
+function onErr(e){
+  $('start').style.display='';
+  $('err').textContent=e.code===1?'Permesso posizione negato: consentilo nelle impostazioni del browser e riprova.':'Posizione non disponibile. Esci all\'aperto e riprova.';
+}
+
+function setState(k){
+  document.documentElement.style.setProperty('--s',COL[k][0]);
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+}
+
+function updateRose(h){
+  [['cN',0],['cE',90],['cS',180],['cO',270]].forEach(([id,a])=>{
+    const r=(a-h)*Math.PI/180,e=$(id);
+    e.setAttribute('x',(50*Math.sin(r)).toFixed(1));e.setAttribute('y',(-50*Math.cos(r)).toFixed(1));
+  });
+  $('ticks').style.transform=`rotate(${-h}deg)`;
+}
+
+function render(){
+  updateRose(heading??0);
+  if(!wx)return;
+  $('main').style.display='flex';
+  $('t').textContent=Math.round(wx.t);
+  $('v').textContent=Math.round(wx.v);
+  $('g').textContent=Math.round(wx.g);
+  $('d').textContent=card(wx.d)+' ('+Math.round(wx.d)+'°)';
+  const rel=wx.d-(heading??0),rad=rel*Math.PI/180;
+  $('arr').style.transform=`rotate(${rel+180}deg)`;
+  const head=wx.v*Math.cos(rad),cross=wx.v*Math.sin(rad);
+  if(heading==null){setState('none');return}
+  if(Math.abs(cross)>Math.abs(head)&&Math.abs(cross)>=4)setState('lat');
+  else setState(head>=0?'con':'fav');
+}
+
+async function keepAwake(){try{await navigator.wakeLock.request('screen')}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&lastPt)keepAwake()});
+
+let startTime=null;
+function tick(){
+  $('clock').textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  if(startTime){const m=Math.floor((Date.now()-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0')}
+}
+tick();setInterval(tick,1000);
+
+function goFull(){
+  const el=document.documentElement;
+  if(document.fullscreenElement||!el.requestFullscreen)return;
+  try{el.requestFullscreen({navigationUI:'hide'}).catch(()=>{})}catch(e){}
+}
+// toccando un punto qualsiasi dello schermo si rientra a schermo intero
+document.addEventListener('click',goFull);
+
+updateRose(0);
+
+// batteria: la mette a disposizione Chrome, Firefox no (in quel caso compare n/d)
+function nd(){$('bat').textContent='n/d';$('batv').querySelector('small').style.display='none'}
+if(navigator.getBattery){
+  navigator.getBattery().then(b=>{
+    const u=()=>{
+      const p=Math.round(b.level*100);
+      $('bat').textContent=p;
+      $('batv').style.color=b.charging?'':(p<=10?'var(--con)':p<=20?'var(--lat)':'');
+      $('bt').textContent=b.charging?'Batteria ⚡':'Batteria';
+    };
+    u();b.addEventListener('levelchange',u);b.addEventListener('chargingchange',u);
+  }).catch(nd);
+}else nd();
+
+$('start').onclick=()=>{
+  goFull();
+  if(!startTime){startTime=Date.now();tick()}
+  if(!navigator.geolocation){$('err').textContent='Questo browser non supporta la posizione.';return}
+  $('start').style.display='none';$('err').textContent='Cerco la posizione...';
+  keepAwake();
+  navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});
+};
+</script>
+</body>
+</html>
