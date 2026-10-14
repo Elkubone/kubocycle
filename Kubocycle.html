@@ -235,11 +235,14 @@ document.addEventListener('click',goFull);
 
 updateRose(0);
 
-// batteria: la mette a disposizione Chrome, Firefox no (in quel caso compare n/d)
+// batteria: la mette a disposizione Chrome, Firefox no; se il dato non è affidabile compare n/d
 function nd(){$('bat').textContent='n/d';$('batv').querySelector('small').style.display='none'}
 if(navigator.getBattery){
   navigator.getBattery().then(b=>{
     const u=()=>{
+      // livello 100%, in carica, 0 s alla carica completa: sono i valori "di ripiego" che il browser dà quando non riesce a leggere la batteria
+      if(b.level===1&&b.charging&&b.chargingTime===0&&b.dischargingTime===Infinity){nd();$('bt').textContent='Batteria';$('batv').style.color='';return}
+      $('batv').querySelector('small').style.display='';
       const p=Math.round(b.level*100);
       $('bat').textContent=p;
       $('batv').style.color=b.charging?'':(p<=10?'var(--con)':p<=20?'var(--lat)':'');
