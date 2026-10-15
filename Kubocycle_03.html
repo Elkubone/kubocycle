@@ -10,10 +10,11 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg)}
 body{color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
-h1{font-size:1.55rem;line-height:1.1;font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin:0;text-align:center;background:linear-gradient(90deg,var(--acc),var(--fav));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+h1{font-size:1.3rem;line-height:1.1;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin:0;text-align:center;background:linear-gradient(90deg,var(--acc),var(--fav));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margin:4px auto 0;background:linear-gradient(90deg,var(--acc),var(--fav))}
 #start{font:inherit;font-size:1.2rem;font-weight:700;padding:18px;border:0;border-radius:16px;background:var(--acc);color:#001018}
-#err{color:var(--con);font-size:1rem;min-height:1.2em}
+#err{color:var(--con);font-size:1rem}
+#err:empty{display:none}
 #main{display:none;flex-direction:column;gap:10px;flex:1}
 
 .wrow{display:flex;align-items:center;gap:18px}
@@ -24,7 +25,7 @@ h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margi
 .chip[data-k=con]{--c:var(--con)}.chip[data-k=lat]{--c:var(--lat)}.chip[data-k=fav]{--c:var(--fav)}
 
 .row{display:flex;flex-direction:column;gap:8px;margin-top:auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 16px}
-svg{width:min(170px,18vh,40vw);height:min(170px,18vh,40vw);width:min(170px,18dvh,40vw);height:min(170px,18dvh,40vw);flex:none}
+svg{width:min(170px,15vh,40vw);height:min(170px,15vh,40vw);width:min(170px,15dvh,40vw);height:min(170px,15dvh,40vw);flex:none}
 .ticks line{stroke:var(--mut);stroke-width:1.5;opacity:.7}
 .cl{font:800 11px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--mut);text-anchor:middle;dominant-baseline:central}
 .cn{fill:var(--acc)}
@@ -71,12 +72,31 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .bob{animation:bob .4s ease-in-out infinite}
 .road{stroke:#2A3D46;stroke-width:3;stroke-dasharray:12 12;animation:road .25s linear infinite}
 .lines line{stroke:#5BC0EB;stroke-width:2.5;stroke-linecap:round;opacity:.5}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:1}
+.trio .tcard{justify-content:space-between;min-height:0;padding:8px 8px;gap:3px}
+.trio .tcard>span{display:block;line-height:1.2;font-size:.85rem;white-space:nowrap}
+.trio .temp{font-size:min(1.65rem,3.6vh);font-size:min(1.65rem,3.6dvh);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;margin:auto 0}
+.trio .temp small{font-size:.7em;font-weight:800;color:inherit;margin-left:1px}
+.tcard.sun{flex-direction:row;align-items:center;justify-content:space-between;padding:8px 14px}
+.sun>div{display:flex;flex-direction:column;gap:3px}
+.sun .sunr{align-items:flex-end;text-align:right}
+.sun span{color:var(--ink);font-size:.95rem;font-weight:700}
+.sun .temp{font-size:min(2.3rem,4.8vh);font-size:min(2.3rem,4.8dvh);font-variant-numeric:tabular-nums;white-space:nowrap}
+#fine{position:absolute;left:14px;top:max(10px,env(safe-area-inset-top));font:inherit;font-size:.9rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
+#mapov{position:fixed;inset:0;z-index:40;display:none;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
+#mapov.on{display:flex}
+#mapov canvas{max-width:100%;max-height:calc(100vh - 130px);max-height:calc(100dvh - 130px);border-radius:14px}
+#mapmsg{margin:0;color:var(--ink);font-weight:700;text-align:center;font-size:1.1rem;padding:0 16px}
+.mbtns{display:flex;gap:10px;width:100%;max-width:460px}
+.mbtns button{flex:1;font:inherit;font-weight:800;padding:14px 6px;border:0;border-radius:14px;background:var(--acc);color:#001018}
+.mbtns button.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 #gpx{position:absolute;right:14px;top:max(10px,env(safe-area-inset-top));font:inherit;font-size:.9rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
 </style>
 </head>
 <body>
 <h1 id="title">Kubocycle</h1>
 <button id="gpx" aria-label="Scarica il percorso in formato GPX">GPX ⬇</button>
+<button id="fine" aria-label="Termina il giro e crea la mappa">FINE ■</button>
 <button id="start">Avvia (usa la posizione)</button>
 <div id="err"></div>
 <div id="main">
@@ -86,15 +106,21 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
   </div>
   <div id="speed2">
     <div class="tcard"><div class="thead"><span>Vel. max</span><small>km/h</small></div><div class="big" id="vmax">0</div></div>
-    <div class="tcard"><div class="thead"><span id="bt">Batteria</span></div><div class="big" id="batv"><span id="bat">--</span><small>%</small></div></div>
+    <div class="tcard"><div class="thead"><span>Km percorsi</span></div><div class="big" id="km">0,0</div></div>
   </div>
-  <div class="pair">
-    <div class="tcard"><span>Km percorsi</span><div class="temp"><span id="km">0,0</span></div></div>
-    <div class="tcard"><span>Temperatura</span><div class="temp"><span id="t">--</span><small>°C</small></div></div>
-  </div>
-  <div class="pair">
+  <div class="trio">
     <div class="tcard"><span>In sella</span><div class="temp" id="elapsed">0:00</div></div>
+    <div class="tcard"><span>Pedalando</span><div class="temp" id="mov">0:00</div></div>
     <div class="tcard"><span>Ora</span><div class="temp" id="clock">--:--</div></div>
+  </div>
+  <div class="trio">
+    <div class="tcard"><span>Temp.</span><div class="temp"><span id="t">--</span><small>°C</small></div></div>
+    <div class="tcard"><span>Percepita</span><div class="temp"><span id="feel">--</span><small>°C</small></div></div>
+    <div class="tcard"><span id="bt">Batteria</span><div class="temp" id="batv"><span id="bat">--</span><small>%</small></div></div>
+  </div>
+  <div class="tcard sun">
+    <div><span>Tramonto</span><div class="temp" id="sunT">--:--</div></div>
+    <div class="sunr"><span id="sunL">mancano</span><div class="temp" id="sunR">--</div></div>
   </div>
   <div class="row">
     <span class="wtitle">Vento</span>
@@ -137,6 +163,8 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
   </g>
   <line x1="77" y1="58" x2="100" y2="92" class="leg"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><line x1="88" y1="92" x2="100" y2="92" class="crk"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><circle cx="100" cy="92" r="4.4" class="foot"><animate attributeName="cx" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="cy" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></circle>
 </svg><p>Kubo ti augura buona pedalata!</p></div>
+<div id="mapov"><p id="mapmsg"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mjpg">Salva JPG</button><button id="mgpx" class="sec">GPX</button><button id="mclose" class="sec">Chiudi</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const dirs=['N','NE','E','SE','S','SO','O','NO'];
@@ -144,6 +172,7 @@ const card=d=>dirs[Math.round(((d%360)+360)%360/45)%8];
 const COL={con:['var(--con)','rgba(255,84,72,.14)'],fav:['var(--fav)','rgba(46,224,119,.14)'],lat:['var(--lat)','rgba(255,184,48,.14)'],none:['var(--mut)','rgba(138,155,163,.12)']};
 let km=0,lastDistPt=null,lastDistTs=0,moving=0,maxSpd=0;
 let track=[];
+let curPos=null,curSpd=0,ended=false,watchId=null,mapBlob=null;
 let wx=null,lastFetch=0,lastFetchPos=null,lastPt=null,heading=null;
 
 function dist(a,b){const R=6371e3,r=Math.PI/180,x=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
@@ -152,10 +181,10 @@ function bearing(a,b){const r=Math.PI/180,y=Math.sin((b.lon-a.lon)*r)*Math.cos(b
 async function getWx(p){
   lastFetch=Date.now();lastFetchPos=p;
   try{
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${p.lat.toFixed(4)}&longitude=${p.lon.toFixed(4)}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh`;
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${p.lat.toFixed(4)}&longitude=${p.lon.toFixed(4)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh`;
     const r=await fetch(u);if(!r.ok)throw 0;
     const c=(await r.json()).current;
-    wx={t:c.temperature_2m,v:c.wind_speed_10m,d:c.wind_direction_10m,g:c.wind_gusts_10m,time:new Date()};
+    wx={t:c.temperature_2m,h:c.relative_humidity_2m,v:c.wind_speed_10m,d:c.wind_direction_10m,g:c.wind_gusts_10m,time:new Date()};
     $('err').textContent='';
   }catch(e){
     lastFetch=Date.now()-270000;
@@ -203,6 +232,7 @@ function onPos(pos){
   if(rep!=null&&(rep>27||(ks!=null&&Math.abs(rep-ks)>6)))rep=null;
   let spd=rep;
   if(spd==null||(spd<0.5&&ks!=null&&ks>2))spd=ks;
+  curSpd=spd==null?0:spd;curPos=p;
   $('sp').textContent=spd==null?'--':(spd<0.5?'0':Math.round(spd*3.6));
   if(spd!=null&&spd>maxSpd){maxSpd=spd;$('vmax').textContent=Math.round(maxSpd*3.6)}
   if(spd==null||c.accuracy>50){
@@ -254,6 +284,7 @@ function render(){
   if(!wx)return;
   $('main').style.display='flex';
   $('t').textContent=Math.round(wx.t);
+  const fl=feelsLike();if(fl!=null)$('feel').textContent=Math.round(fl);
   $('v').textContent=Math.round(wx.v);
   $('g').textContent=Math.round(wx.g);
   $('d').textContent=card(wx.d)+' ('+Math.round(wx.d)+'°)';
@@ -272,6 +303,8 @@ let startTime=null;
 function tick(){
   $('clock').textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
   if(startTime){const m=Math.floor((Date.now()-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0')}
+  const mm=Math.floor(moving/60000);$('mov').textContent=Math.floor(mm/60)+':'+String(mm%60).padStart(2,'0');
+  updateSun();
 }
 tick();setInterval(tick,1000);
 
@@ -335,7 +368,136 @@ $('title').addEventListener('click',()=>{taps++;clearTimeout(tapT);tapT=setTimeo
 $('egg').addEventListener('click',e=>{e.stopPropagation();$('egg').classList.remove('on')});
 $('egg').querySelector('svg').addEventListener('animationend',e=>{if(e.animationName==='ride')$('egg').classList.remove('on')});
 
+// ---- temperatura percepita (formula di Steadman con il vento apparente: vento + tua velocità) ----
+function feelsLike(){
+  if(!wx)return null;
+  const T=wx.t,V=wx.v/3.6,s=curSpd||0,r=Math.PI/180;
+  let ws;
+  if(heading!=null&&s>0.5){
+    const ax=-V*Math.sin(wx.d*r)-s*Math.sin(heading*r),ay=-V*Math.cos(wx.d*r)-s*Math.cos(heading*r);
+    ws=Math.hypot(ax,ay);
+  }else ws=Math.hypot(V,s);
+  const h=wx.h==null?50:wx.h,e=h/100*6.105*Math.exp(17.27*T/(237.7+T));
+  return T+0.33*e-0.70*ws-4.00;
+}
+
+// ---- tramonto (calcolo astronomico locale, nessuna connessione) ----
+function sunsetDate(lat,lon,now){
+  const R=Math.PI/180,Jn=now/86400000+2440587.5;
+  const n=Math.round(Jn-2451545.0+lon/360),Js=n-lon/360;
+  const M=((357.5291+0.98560028*Js)%360+360)%360,Mr=M*R;
+  const C=1.9148*Math.sin(Mr)+0.02*Math.sin(2*Mr)+0.0003*Math.sin(3*Mr);
+  const lr=((((M+C+180+102.9372)%360)+360)%360)*R;
+  const Jt=2451545.0+Js+0.0053*Math.sin(Mr)-0.0069*Math.sin(2*lr);
+  const sinD=Math.sin(lr)*Math.sin(23.4397*R),cosD=Math.cos(Math.asin(sinD));
+  const cw=(Math.sin(-0.833*R)-Math.sin(lat*R)*sinD)/(Math.cos(lat*R)*cosD);
+  if(cw<-1||cw>1)return null;
+  return new Date((Jt+Math.acos(cw)/R/360-2440587.5)*86400000);
+}
+function updateSun(){
+  if(!curPos)return;
+  const now=Date.now(),sd=sunsetDate(curPos.lat,curPos.lon,now);
+  if(!sd){$('sunT').textContent='--:--';$('sunR').textContent='--';return}
+  $('sunT').textContent=sd.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  const diff=sd.getTime()-now,mins=Math.floor(Math.abs(diff)/60000);
+  $('sunL').textContent=diff>=0?'mancano':'tramontato da';
+  $('sunR').textContent=mins>=60?Math.floor(mins/60)+'h '+String(mins%60).padStart(2,'0'):mins+' min';
+  $('sunR').style.color=(diff<0||diff<=1800000)?'var(--con)':diff<=3600000?'var(--lat)':'';
+}
+
+// ---- fine giro: mappa satellitare con il percorso, salvata come JPG ----
+const TILE='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/';
+function loadTile(z,x,y){return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';const t=setTimeout(()=>res(null),9000);im.onload=()=>{clearTimeout(t);res(im)};im.onerror=()=>{clearTimeout(t);res(null)};im.src=TILE+z+'/'+y+'/'+x})}
+const mx=(lon,z)=>(lon+180)/360*256*2**z;
+const my=(lat,z)=>{const s=Math.sin(lat*Math.PI/180);return(0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*256*2**z};
+const fmtDur=ms=>{const m=Math.round(ms/60000),h=Math.floor(m/60);return h>0?h+' h '+String(m%60).padStart(2,'0')+' min':m+' min'};
+function rideStats(){
+  const t0=track[0][2],tot=track[track.length-1][2]-t0;
+  let d=0;for(let i=1;i<track.length;i++)d+=dist({lat:track[i-1][0],lon:track[i-1][1]},{lat:track[i][0],lon:track[i][1]});
+  const live=startTime!==null;
+  return {t0,tot,kmm:live?km:d,mov:live?moving:null,vm:live?maxSpd:null,
+    avg:live&&moving>=10000?(km/1000)/(moving/3600000):(tot>0?(d/1000)/(tot/3600000):null)};
+}
+async function buildMap(){
+  let pts=track.map(q=>[q[0],q[1]]);
+  if(pts.length>4000){const k=Math.ceil(pts.length/4000);pts=pts.filter((_,i)=>i%k===0||i===pts.length-1)}
+  const W=1080,H=1350,fx=110,fy=170,fw=W-220,fh=H-170-360;
+  let a=90,b=-90,c=180,d=-180;
+  pts.forEach(([la,lo])=>{a=Math.min(a,la);b=Math.max(b,la);c=Math.min(c,lo);d=Math.max(d,lo)});
+  let z=17;
+  for(;z>3;z--){if(mx(d,z)-mx(c,z)<=fw&&my(a,z)-my(b,z)<=fh)break}
+  const cx=(mx(c,z)+mx(d,z))/2,cy=(my(a,z)+my(b,z))/2,ox=cx-(fx+fw/2),oy=cy-(fy+fh/2);
+  const cv=$('mapc');cv.width=W;cv.height=H;
+  const g=cv.getContext('2d');
+  g.fillStyle='#0B1114';g.fillRect(0,0,W,H);
+  const n=2**z,x0=Math.floor(ox/256),x1=Math.floor((ox+W)/256),y0=Math.max(0,Math.floor(oy/256)),y1=Math.min(n-1,Math.floor((oy+H)/256));
+  const jobs=[];
+  for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++){
+    jobs.push(loadTile(z,((tx%n)+n)%n,ty).then(im=>{if(im)g.drawImage(im,tx*256-ox,ty*256-oy,256,256);return !!im}));
+  }
+  const okTiles=(await Promise.all(jobs)).filter(Boolean).length;
+  // velature per leggere i testi
+  let gr=g.createLinearGradient(0,0,0,230);gr.addColorStop(0,'rgba(0,0,0,.78)');gr.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=gr;g.fillRect(0,0,W,230);
+  // percorso
+  const P=pts.map(([la,lo])=>[mx(lo,z)-ox,my(la,z)-oy]);
+  g.lineJoin='round';g.lineCap='round';g.beginPath();
+  P.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));
+  g.strokeStyle='rgba(0,0,0,.65)';g.lineWidth=17;g.stroke();
+  g.strokeStyle='#5BC0EB';g.lineWidth=9;g.stroke();
+  const pin=(p,col)=>{g.beginPath();g.arc(p[0],p[1],22,0,7);g.fillStyle=col;g.fill();g.lineWidth=6;g.strokeStyle='#fff';g.stroke()};
+  pin(P[0],'#2EE077');pin(P[P.length-1],'#FF5448');
+  // titolo e data
+  const tg=g.createLinearGradient(50,0,420,0);tg.addColorStop(0,'#5BC0EB');tg.addColorStop(1,'#2EE077');
+  g.textAlign='left';g.textBaseline='alphabetic';
+  g.fillStyle=tg;g.font='900 62px system-ui,sans-serif';g.fillText('KUBOCYCLE',50,92);
+  const S=rideStats(),dt=new Date(S.t0);
+  g.fillStyle='#F2F5F6';g.font='600 30px system-ui,sans-serif';
+  g.fillText(dt.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),50,140);
+  // riquadro dati
+  g.fillStyle='rgba(0,0,0,.68)';g.beginPath();g.roundRect(40,H-320,W-80,270,32);g.fill();
+  const cells=[['Distanza',(S.kmm/1000).toFixed(1).replace('.',',')+' km'],['In sella',fmtDur(S.tot)],['Pedalando',S.mov==null?'n/d':fmtDur(S.mov)],
+    ['Media',S.avg==null?'n/d':S.avg.toFixed(1).replace('.',',')+' km/h'],['Vel. max',S.vm==null?'n/d':Math.round(S.vm*3.6)+' km/h'],
+    ['Partenza',dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})]];
+  const cw=(W-80)/3;
+  cells.forEach(([l,v],i)=>{
+    const x=40+cw*(i%3)+34,y=H-320+(i<3?0:125);
+    g.fillStyle='#BCC9D0';g.font='700 28px system-ui,sans-serif';g.fillText(l,x,y+58);
+    g.fillStyle='#F2F5F6';g.font='800 44px system-ui,sans-serif';g.fillText(v,x,y+108);
+  });
+  g.textAlign='right';g.fillStyle='rgba(255,255,255,.85)';g.font='19px system-ui,sans-serif';
+  g.fillText(okTiles?'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community':'Mappa satellitare non disponibile',W-30,H-14);
+  mapBlob=await new Promise(res=>{try{cv.toBlob(res,'image/jpeg',0.9)}catch(e){res(null)}});
+  return okTiles;
+}
+function downloadJpg(){
+  if(!mapBlob){toast('Immagine non disponibile');return}
+  const d0=new Date(track[0][2]),pad=n=>String(n).padStart(2,'0');
+  const fn='kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())+'.jpg';
+  const a=document.createElement('a');a.href=URL.createObjectURL(mapBlob);a.download=fn;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
+}
+async function doFine(){
+  if(track.length<2){toast('Nessun percorso registrato: premi prima Avvia');return}
+  if(!confirm('Terminare il giro e creare la mappa?'))return;
+  if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}
+  ended=true;saveTrack();
+  $('mapov').classList.add('on');$('mapmsg').textContent='Creo la mappa…';$('mapc').style.display='none';$('mbtns').style.display='none';
+  let ok=0;
+  try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
+  $('mapc').style.display='block';$('mbtns').style.display='flex';
+  $('mapmsg').textContent=!mapBlob?'Non sono riuscito a creare l\'immagine, ma il percorso è salvato: scarica il GPX.':ok?'':'Mappa satellitare non disponibile (serve la connessione dati): disegnato solo il percorso.';
+  if(mapBlob)downloadJpg();
+  $('start').style.display='';$('start').textContent='Nuovo giro';
+}
+$('fine').onclick=doFine;
+$('mjpg').onclick=downloadJpg;
+$('mgpx').onclick=downloadGpx;
+$('mclose').onclick=()=>$('mapov').classList.remove('on');
+
 $('start').onclick=()=>{
+  if(ended){location.reload();return}
   if(track.length>=2&&!startTime){
     if(!confirm('C\'è un percorso salvato ('+track.length+' punti). OK = cancellarlo e iniziarne uno nuovo. Annulla = tenerlo: scaricalo prima col pulsante GPX.'))return;
     track=[];saveTrack();
@@ -345,7 +507,7 @@ $('start').onclick=()=>{
   if(!navigator.geolocation){$('err').textContent='Questo browser non supporta la posizione.';return}
   $('start').style.display='none';$('err').textContent='Cerco la posizione...';
   keepAwake();
-  navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});
+  watchId=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});
 };
 </script>
 </body>
