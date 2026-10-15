@@ -50,11 +50,31 @@ svg{width:min(170px,18vh,40vw);height:min(170px,18vh,40vw);width:min(170px,18dvh
 .temp small{font-size:1.4rem;font-weight:500;color:var(--mut);margin-left:3px}
 .foot{color:var(--mut);font-size:.85rem}
 body{position:relative}
+#egg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;overflow:hidden}
+#egg.on{display:flex}
+#egg svg{width:min(88vw,460px);height:auto;overflow:visible;animation:ride 4.8s ease-in-out forwards}
+#egg p{position:absolute;bottom:16%;margin:0;color:var(--ink);font-weight:800;font-size:1.2rem;letter-spacing:.04em;text-align:center;padding:0 20px}
+@keyframes ride{from{transform:translateX(-115vw)}to{transform:translateX(115vw)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{50%{transform:translateY(-2px)}}
+@keyframes road{to{stroke-dashoffset:-24}}
+.wheel{animation:spin .55s linear infinite}
+.tire{fill:none;stroke:#F2F5F6;stroke-width:4}
+.spk line{stroke:#8A9BA3;stroke-width:1.6}
+.frame line{stroke:#5BC0EB;stroke-width:4;stroke-linecap:round}
+.frame .sad{stroke:#F2F5F6;stroke-width:5}
+.leg{stroke:#1F9E86;stroke-width:6;stroke-linecap:round}
+.crk{stroke:#8A9BA3;stroke-width:3;stroke-linecap:round}
+.foot{fill:#F2F5F6;stroke:#0B1114;stroke-width:1.5}
+.arm{stroke:#2EC9A0;stroke-width:6;stroke-linecap:round}
+.bob{animation:bob .4s ease-in-out infinite}
+.road{stroke:#2A3D46;stroke-width:3;stroke-dasharray:12 12;animation:road .25s linear infinite}
+.lines line{stroke:#5BC0EB;stroke-width:2.5;stroke-linecap:round;opacity:.5}
 #gpx{position:absolute;right:14px;top:max(10px,env(safe-area-inset-top));font:inherit;font-size:.9rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
 </style>
 </head>
 <body>
-<h1>Kubocycle</h1>
+<h1 id="title">Kubocycle</h1>
 <button id="gpx" aria-label="Scarica il percorso in formato GPX">GPX ⬇</button>
 <button id="start">Avvia (usa la posizione)</button>
 <div id="err"></div>
@@ -98,6 +118,24 @@ body{position:relative}
     </div>
   </div>
 </div>
+<div id="egg" aria-hidden="true"><svg viewBox="0 0 200 130" aria-hidden="true">
+  <defs><linearGradient id="kb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5BC0EB"/><stop offset="1" stop-color="#2EE077"/></linearGradient></defs>
+  <line x1="0" y1="119" x2="200" y2="119" class="road"/>
+  <g class="lines"><line x1="-6" y1="50" x2="22" y2="50"/><line x1="-14" y1="66" x2="14" y2="66"/><line x1="-2" y1="82" x2="20" y2="82"/></g>
+  <g class="wheel" style="transform-origin:45px 92px"><circle cx="45" cy="92" r="26" class="tire"/><g class="spk"><line x1="45" y1="66" x2="45" y2="118" transform="rotate(0 45 92)"/><line x1="45" y1="66" x2="45" y2="118" transform="rotate(60 45 92)"/><line x1="45" y1="66" x2="45" y2="118" transform="rotate(120 45 92)"/></g></g><g class="wheel" style="transform-origin:155px 92px"><circle cx="155" cy="92" r="26" class="tire"/><g class="spk"><line x1="155" y1="66" x2="155" y2="118" transform="rotate(0 155 92)"/><line x1="155" y1="66" x2="155" y2="118" transform="rotate(60 155 92)"/><line x1="155" y1="66" x2="155" y2="118" transform="rotate(120 155 92)"/></g></g>
+  <g class="frame"><line x1="45" y1="92" x2="88" y2="92"/><line x1="45" y1="92" x2="78" y2="64"/><line x1="88" y1="92" x2="78" y2="64"/><line x1="78" y1="64" x2="138" y2="62"/><line x1="88" y1="92" x2="138" y2="62"/><line x1="138" y1="62" x2="155" y2="92"/><line x1="138" y1="62" x2="142" y2="51"/><line x1="142" y1="51" x2="151" y2="51"/><line x1="70" y1="62" x2="86" y2="62" class="sad"/></g>
+  <line x1="77" y1="58" x2="100" y2="92" class="leg"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="0s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="0s" repeatCount="indefinite"/></line><line x1="88" y1="92" x2="100" y2="92" class="crk"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="0s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="0s" repeatCount="indefinite"/></line><circle cx="100" cy="92" r="4.4" class="foot"><animate attributeName="cx" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="0s" repeatCount="indefinite"/><animate attributeName="cy" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="0s" repeatCount="indefinite"/></circle>
+  <g class="bob">
+    <line x1="92" y1="44" x2="148" y2="52" class="arm"/>
+    <rect x="58" y="26" width="38" height="34" rx="10" fill="url(#kb)"/>
+    <circle cx="70" cy="41" r="4.8" fill="#fff"/><circle cx="86" cy="41" r="4.8" fill="#fff"/>
+    <circle cx="71.4" cy="41.4" r="2.2" fill="#0B1114"/><circle cx="87.4" cy="41.4" r="2.2" fill="#0B1114"/>
+    <path d="M72 50 Q78 55.5 84 50" fill="none" stroke="#0B1114" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="65" cy="48" r="2.6" fill="#FF8FA3" opacity=".85"/><circle cx="91" cy="48" r="2.6" fill="#FF8FA3" opacity=".85"/>
+    <path d="M56 32 Q77 5 98 32 Z" fill="#FFB830"/><path d="M62 24 Q77 14 92 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+  </g>
+  <line x1="77" y1="58" x2="100" y2="92" class="leg"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><line x1="88" y1="92" x2="100" y2="92" class="crk"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><circle cx="100" cy="92" r="4.4" class="foot"><animate attributeName="cx" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="cy" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></circle>
+</svg><p>Kubo ti augura buona pedalata!</p></div>
 <script>
 const $=id=>document.getElementById(id);
 const dirs=['N','NE','E','SE','S','SO','O','NO'];
@@ -287,6 +325,13 @@ function downloadGpx(){
   toast('Scaricato '+fn+' ('+track.length+' punti)');
 }
 $('gpx').onclick=downloadGpx;
+
+// easter egg: 5 tocchi sul titolo
+let taps=0,tapT=null;
+function showEgg(){const e=$('egg');e.classList.remove('on');void e.offsetWidth;e.classList.add('on')}
+$('title').addEventListener('click',()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>{taps=0},1500);if(taps>=5){taps=0;showEgg()}});
+$('egg').addEventListener('click',e=>{e.stopPropagation();$('egg').classList.remove('on')});
+$('egg').querySelector('svg').addEventListener('animationend',e=>{if(e.animationName==='ride')$('egg').classList.remove('on')});
 
 $('start').onclick=()=>{
   if(track.length>=2&&!startTime){
