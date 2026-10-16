@@ -10,32 +10,19 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg)}
 body{color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
-h1{font-size:1.3rem;line-height:1.1;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin:0;text-align:center;background:linear-gradient(90deg,var(--acc),var(--fav));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+h1{font-size:1.15rem;line-height:1.1;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin:0;text-align:center;background:linear-gradient(90deg,var(--acc),var(--fav));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margin:4px auto 0;background:linear-gradient(90deg,var(--acc),var(--fav))}
 #start{font:inherit;font-size:1.2rem;font-weight:700;padding:18px;border:0;border-radius:16px;background:var(--acc);color:#001018}
 #err{color:var(--con);font-size:1rem}
 #err:empty{display:none}
 #main{display:none;flex-direction:column;gap:10px;flex:1}
 
-.wrow{display:flex;align-items:center;gap:18px}
 .wtitle{color:var(--ink);font-size:1.1rem;font-weight:700;letter-spacing:.02em;line-height:1.2}
 .legend{display:flex;gap:8px}
 .chip{flex:1;text-align:center;font-size:.9rem;font-weight:700;padding:6px 4px;border-radius:12px;border:2px solid var(--c);color:var(--c);opacity:.45;transition:opacity .3s,background .3s,color .3s}
 .chip.on{opacity:1;background:var(--c);color:#000}
 .chip[data-k=con]{--c:var(--con)}.chip[data-k=lat]{--c:var(--lat)}.chip[data-k=fav]{--c:var(--fav)}
 
-.row{display:flex;flex-direction:column;gap:8px;margin-top:auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 16px}
-svg{width:min(170px,15vh,40vw);height:min(170px,15vh,40vw);width:min(170px,15dvh,40vw);height:min(170px,15dvh,40vw);flex:none}
-.ticks line{stroke:var(--mut);stroke-width:1.5;opacity:.7}
-.cl{font:800 11px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--mut);text-anchor:middle;dominant-baseline:central}
-.cn{fill:var(--acc)}
-.ring{fill:none;stroke:var(--line);stroke-width:3}
-.arrow{fill:var(--s);transition:transform .6s}
-.w{font-size:2.2rem;font-weight:800;line-height:1.05}
-.w small{font-size:1.1rem;font-weight:500;color:var(--mut)}
-.sub{color:var(--mut);font-size:1rem;margin-top:2px}
-#speed,#speed2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;flex:1}
-#speed .tcard,#speed2 .tcard{padding:9px 12px;gap:4px;justify-content:space-between}
 .thead{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);font-size:1.05rem;font-weight:700;line-height:1.2}
 .thead small{font-size:.85rem;font-weight:600;color:var(--mut)}
 .big{font-size:min(3.2rem,6.6vh);font-size:min(3.2rem,6.6dvh);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;margin:auto 0}
@@ -72,72 +59,83 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .bob{animation:bob .4s ease-in-out infinite}
 .road{stroke:#2A3D46;stroke-width:3;stroke-dasharray:12 12;animation:road .25s linear infinite}
 .lines line{stroke:#5BC0EB;stroke-width:2.5;stroke-linecap:round;opacity:.5}
-.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:1}
-.trio .tcard{justify-content:space-between;min-height:0;padding:8px 8px;gap:3px}
-.trio .tcard>span{display:block;line-height:1.2;font-size:.85rem;white-space:nowrap}
-.trio .temp{font-size:min(1.65rem,3.6vh);font-size:min(1.65rem,3.6dvh);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;margin:auto 0}
-.trio .temp small{font-size:.7em;font-weight:800;color:inherit;margin-left:1px}
-.tcard.sun{flex-direction:row;align-items:center;justify-content:space-between;padding:8px 14px}
-.sun>div{display:flex;flex-direction:column;gap:3px}
-.sun .sunr{align-items:flex-end;text-align:right}
-.sun span{color:var(--ink);font-size:.95rem;font-weight:700}
-.sun .temp{font-size:min(2.3rem,4.8vh);font-size:min(2.3rem,4.8dvh);font-variant-numeric:tabular-nums;white-space:nowrap}
 #fine{position:absolute;left:14px;top:max(10px,env(safe-area-inset-top));font:inherit;font-size:.9rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
 #mapov{position:fixed;inset:0;z-index:40;display:none;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
 #mapov.on{display:flex}
-#mapov canvas{max-width:100%;max-height:calc(100vh - 130px);max-height:calc(100dvh - 130px);border-radius:14px}
+#mapov canvas{max-width:100%;max-height:calc(100vh - 215px);max-height:calc(100dvh - 215px);border-radius:14px}
 #mapmsg{margin:0;color:var(--ink);font-weight:700;text-align:center;font-size:1.1rem;padding:0 16px}
-.mbtns{display:flex;gap:10px;width:100%;max-width:460px}
-.mbtns button{flex:1;font:inherit;font-weight:800;padding:14px 6px;border:0;border-radius:14px;background:var(--acc);color:#001018}
+.mbtns{display:flex;flex-wrap:wrap;gap:10px;width:100%;max-width:460px}
+.mbtns button{flex:1 1 28%;font:inherit;font-weight:800;padding:14px 6px;border:0;border-radius:14px;background:var(--acc);color:#001018}
 .mbtns button.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-#gpx{position:absolute;right:14px;top:max(10px,env(safe-area-inset-top));font:inherit;font-size:.9rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
+#speed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;flex:1.6 1 0}
+#speed .tcard{padding:9px 12px;gap:4px;justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:10px;flex:4 1 0}
+.grid2 .tcard{min-height:0;padding:8px 12px;gap:3px;justify-content:space-between}
+.grid2 .temp{font-size:min(2.1rem,4.4vh);font-size:min(2.1rem,4.4dvh);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;margin:auto 0}
+.grid2 .temp small{font-size:.65em;font-weight:800;color:inherit;margin-left:2px}
+.grid2 .thead{font-size:.92rem;white-space:nowrap}
+.grid2 .thead{gap:6px}
+.grid2 .thead small{font-size:.74rem}
+.row{display:grid;grid-template-columns:1fr auto;grid-template-areas:"txt dial" "leg leg";align-items:center;gap:6px 8px;margin-top:auto;background:linear-gradient(160deg,#0F1A20,#0B1114 65%);border:1px solid var(--line);border-radius:20px;padding:10px 14px}
+.wl{grid-area:txt;display:flex;flex-direction:column;gap:2px;min-width:0}
+.row .legend{grid-area:leg}
+.w{font-size:2.5rem;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
+.w small{font-size:1.1rem;font-weight:500;color:var(--mut)}
+.sub{color:var(--mut);font-size:.88rem;margin-top:2px;white-space:nowrap}
+#dial{grid-area:dial;width:min(190px,21vh,50vw);height:min(190px,21vh,50vw);width:min(190px,21dvh,50vw);height:min(190px,21dvh,50vw)}
+.ticks line{stroke:var(--mut);stroke-width:1.2;opacity:.8}
+.ticks line.b{stroke:var(--ink);stroke-width:2;opacity:1}
+.cl{font:800 9.5px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.cn{fill:var(--acc)}
+.arrow{fill:var(--s);transition:transform .6s;filter:drop-shadow(0 0 3px var(--s))}
+#batv{position:absolute;right:14px;top:max(10px,env(safe-area-inset-top));display:flex;align-items:center;gap:4px;font-size:.85rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
+#batv svg{width:20px;height:11px;flex:none}
+#batv small{font-size:.8em;font-weight:800;margin-left:-3px}
+#bolt{margin-left:-2px}
+.mbtns .strava{flex:1 1 100%;background:#FC4C02;color:#fff}
 </style>
 </head>
 <body>
 <h1 id="title">Kubocycle</h1>
-<button id="gpx" aria-label="Scarica il percorso in formato GPX">GPX ⬇</button>
 <button id="fine" aria-label="Termina il giro e crea la mappa">FINE ■</button>
+<div id="batv" aria-label="Batteria"><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div>
 <button id="start">Avvia (usa la posizione)</button>
 <div id="err"></div>
 <div id="main">
   <div id="speed">
     <div class="tcard"><div class="thead"><span>Velocità</span><small>km/h</small></div><div class="big" id="sp">--</div></div>
-    <div class="tcard"><div class="thead"><span>Media</span><small>km/h</small></div><div class="big" id="avg">--</div></div>
-  </div>
-  <div id="speed2">
-    <div class="tcard"><div class="thead"><span>Vel. max</span><small>km/h</small></div><div class="big" id="vmax">0</div></div>
     <div class="tcard"><div class="thead"><span>Km percorsi</span></div><div class="big" id="km">0,0</div></div>
   </div>
-  <div class="trio">
-    <div class="tcard"><span>In sella</span><div class="temp" id="elapsed">0:00</div></div>
-    <div class="tcard"><span>Pedalando</span><div class="temp" id="mov">0:00</div></div>
-    <div class="tcard"><span>Ora</span><div class="temp" id="clock">--:--</div></div>
-  </div>
-  <div class="trio">
-    <div class="tcard"><span>Temp.</span><div class="temp"><span id="t">--</span><small>°C</small></div></div>
-    <div class="tcard"><span>Percepita</span><div class="temp"><span id="feel">--</span><small>°C</small></div></div>
-    <div class="tcard"><span id="bt">Batteria</span><div class="temp" id="batv"><span id="bat">--</span><small>%</small></div></div>
-  </div>
-  <div class="tcard sun">
-    <div><span>Tramonto</span><div class="temp" id="sunT">--:--</div></div>
-    <div class="sunr"><span id="sunL">mancano</span><div class="temp" id="sunR">--</div></div>
+  <div class="grid2">
+    <div class="tcard"><div class="thead"><span>Vel. max</span><small>km/h</small></div><div class="temp" id="vmax">0</div></div>
+    <div class="tcard"><div class="thead"><span>Vel. media</span><small>km/h</small></div><div class="temp" id="avg">--</div></div>
+    <div class="tcard"><div class="thead"><span>In sella</span></div><div class="temp" id="elapsed">0:00</div></div>
+    <div class="tcard"><div class="thead"><span>Pedalando</span></div><div class="temp" id="mov">0:00</div></div>
+    <div class="tcard"><div class="thead"><span>Temperatura</span></div><div class="temp"><span id="t">--</span><small>°C</small></div></div>
+    <div class="tcard"><div class="thead"><span>Temp. percepita</span></div><div class="temp"><span id="feel">--</span><small>°C</small></div></div>
+    <div class="tcard"><div class="thead"><span>Tramonto</span><small id="sunL"></small></div><div class="temp" id="sunT">--:--</div></div>
+    <div class="tcard"><div class="thead"><span>Ora</span></div><div class="temp" id="clock">--:--</div></div>
   </div>
   <div class="row">
-    <span class="wtitle">Vento</span>
-    <div class="wrow">
-    <svg viewBox="-60 -60 120 120" aria-label="Bussola e direzione del vento rispetto alla tua marcia">
-      <circle class="ring" r="38"/>
-      <g id="ticks" class="ticks"><line y1="-38" y2="-33" transform="rotate(0)"/><line y1="-38" y2="-33" transform="rotate(45)"/><line y1="-38" y2="-33" transform="rotate(90)"/><line y1="-38" y2="-33" transform="rotate(135)"/><line y1="-38" y2="-33" transform="rotate(180)"/><line y1="-38" y2="-33" transform="rotate(225)"/><line y1="-38" y2="-33" transform="rotate(270)"/><line y1="-38" y2="-33" transform="rotate(315)"/></g>
-      <text class="cl cn" id="cN">N</text><text class="cl" id="cE">E</text><text class="cl" id="cS">S</text><text class="cl" id="cO">O</text>
-      <path d="M0 -38 L5.5 -29 L-5.5 -29 Z" fill="var(--ink)"/>
-      <g id="arr" class="arrow"><path d="M0 -24 L10 -3 L3 -3 L3 24 L-3 24 L-3 -3 L-10 -3 Z"/></g>
-    </svg>
-    <div>
+    <div class="wl">
+      <span class="wtitle">Vento</span>
       <div class="w"><span id="v">--</span> <small>km/h</small></div>
       <div class="sub">raffiche <span id="g">--</span> km/h</div>
       <div class="sub">da <span id="d">--</span></div>
     </div>
-    </div>
+    <svg id="dial" viewBox="-60 -60 120 120" aria-label="Bussola e direzione del vento rispetto alla tua marcia">
+      <defs>
+        <radialGradient id="fg" cx="50%" cy="42%" r="62%"><stop offset="0" stop-color="#1A2C34"/><stop offset="1" stop-color="#070C0F"/></radialGradient>
+        <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5BC0EB"/><stop offset="1" stop-color="#2EE077"/></linearGradient>
+      </defs>
+      <circle r="45" fill="url(#fg)" stroke="url(#rg)" stroke-width="2.6"/>
+      <circle r="26" fill="none" stroke="#24353D" stroke-width="1" stroke-dasharray="2 3"/>
+      <g id="ticks" class="ticks"><line y1="-34" y2="-42" transform="rotate(0)" class="b"/><line y1="-38" y2="-42" transform="rotate(15)" class=""/><line y1="-38" y2="-42" transform="rotate(30)" class=""/><line y1="-38" y2="-42" transform="rotate(45)" class=""/><line y1="-38" y2="-42" transform="rotate(60)" class=""/><line y1="-38" y2="-42" transform="rotate(75)" class=""/><line y1="-34" y2="-42" transform="rotate(90)" class="b"/><line y1="-38" y2="-42" transform="rotate(105)" class=""/><line y1="-38" y2="-42" transform="rotate(120)" class=""/><line y1="-38" y2="-42" transform="rotate(135)" class=""/><line y1="-38" y2="-42" transform="rotate(150)" class=""/><line y1="-38" y2="-42" transform="rotate(165)" class=""/><line y1="-34" y2="-42" transform="rotate(180)" class="b"/><line y1="-38" y2="-42" transform="rotate(195)" class=""/><line y1="-38" y2="-42" transform="rotate(210)" class=""/><line y1="-38" y2="-42" transform="rotate(225)" class=""/><line y1="-38" y2="-42" transform="rotate(240)" class=""/><line y1="-38" y2="-42" transform="rotate(255)" class=""/><line y1="-34" y2="-42" transform="rotate(270)" class="b"/><line y1="-38" y2="-42" transform="rotate(285)" class=""/><line y1="-38" y2="-42" transform="rotate(300)" class=""/><line y1="-38" y2="-42" transform="rotate(315)" class=""/><line y1="-38" y2="-42" transform="rotate(330)" class=""/><line y1="-38" y2="-42" transform="rotate(345)" class=""/></g>
+      <text class="cl cn" id="cN">N</text><text class="cl" id="cE">E</text><text class="cl" id="cS">S</text><text class="cl" id="cO">O</text>
+      <path d="M0 -33 L5.5 -44 L-5.5 -44 Z" fill="#fff"/>
+      <g id="arr" class="arrow"><path d="M0 -27 L11 -4 L3.5 -6 L3.5 25 L-3.5 25 L-3.5 -6 L-11 -4 Z"/></g>
+      <circle r="3.6" fill="#0B1114" stroke="var(--s)" stroke-width="1.8"/>
+    </svg>
     <div class="legend">
       <div class="chip" data-k="con">Contrario</div>
       <div class="chip" data-k="lat">Laterale</div>
@@ -164,7 +162,7 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
   <line x1="77" y1="58" x2="100" y2="92" class="leg"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><line x1="88" y1="92" x2="100" y2="92" class="crk"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><circle cx="100" cy="92" r="4.4" class="foot"><animate attributeName="cx" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="cy" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></circle>
 </svg><p>Kubo ti augura buona pedalata!</p></div>
 <div id="mapov"><p id="mapmsg"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
-<div class="mbtns" id="mbtns" style="display:none"><button id="mjpg">Salva JPG</button><button id="mgpx" class="sec">GPX</button><button id="mclose" class="sec">Chiudi</button></div></div>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mstrava" class="strava">Carica su Strava</button><button id="mjpg">Salva JPG</button><button id="mgpx" class="sec">GPX</button><button id="mclose" class="sec">Chiudi</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const dirs=['N','NE','E','SE','S','SO','O','NO'];
@@ -172,6 +170,7 @@ const card=d=>dirs[Math.round(((d%360)+360)%360/45)%8];
 const COL={con:['var(--con)','rgba(255,84,72,.14)'],fav:['var(--fav)','rgba(46,224,119,.14)'],lat:['var(--lat)','rgba(255,184,48,.14)'],none:['var(--mut)','rgba(138,155,163,.12)']};
 let km=0,lastDistPt=null,lastDistTs=0,moving=0,maxSpd=0;
 let track=[];
+let prevSpd=0,moveRun=0;
 let curPos=null,curSpd=0,ended=false,watchId=null,mapBlob=null;
 let wx=null,lastFetch=0,lastFetchPos=null,lastPt=null,heading=null;
 
@@ -195,6 +194,16 @@ async function getWx(p){
 
 let dbgShown=false,lastFixTs=0;
 // Filtro di Kalman (posizione + velocità, in metri locali) per i telefoni con GPS lento o impreciso
+const recent=[];
+// true = sei fermo, false = ti stai muovendo, null = ancora poco storico. Confronta lo spostamento netto degli ultimi 25-40 s con la precisione del GPS
+function isStationary(p,ts,acc){
+  recent.push({lat:p.lat,lon:p.lon,ts,acc});
+  const W=acc>25?40000:25000;      // con GPS scarso guardo un periodo più lungo
+  while(recent.length>2&&ts-recent[0].ts>W)recent.shift();
+  if(ts-recent[0].ts<8000)return null;
+  const am=recent.reduce((a,r)=>a+r.acc,0)/recent.length;
+  return dist(recent[0],p)<Math.max(12,2.5*am);
+}
 let kf=null,lastKTs=0,KQ=0.08,KDZ=1.5;
 function kfUpdate(p,ts,acc){
   const R=Math.max(acc,5)**2,q=acc<=10?0.3:acc>=40?KQ:0.3+(KQ-0.3)*(acc-10)/30; // GPS buono: risposta rapida; GPS scarso: più filtro
@@ -228,13 +237,18 @@ function onPos(pos){
   let rep=(c.speed==null||isNaN(c.speed))?null:c.speed;
   const k=kfUpdate(p,pos.timestamp,c.accuracy);
   const ks=k&&k.speed!=null?(k.speed<Math.max(0.7,KDZ*k.sv)?0:k.speed):null;
-  // scarto la velocità fornita dal telefono se è incoerente: oltre 97 km/h o troppo diversa da quella filtrata
-  if(rep!=null&&(rep>27||(ks!=null&&Math.abs(rep-ks)>6)))rep=null;
-  let spd=rep;
-  if(spd==null||(spd<0.5&&ks!=null&&ks>2))spd=ks;
+  const st=isStationary(p,pos.timestamp,c.accuracy);
+  // scarto la velocità del telefono solo se è assurdamente più alta di quella stimata dal filtro
+  if(rep!=null&&(rep>27||(ks!=null&&rep>ks+6&&rep>8)))rep=null;
+  moveRun=st===false?moveRun+1:0;
+  let spd;
+  if(rep!=null)spd=(rep<1||(st===true&&rep<2.5))?0:rep;           // il telefono dà la velocità: mi fido, ma un fruscio da fermo diventa 0
+  else spd=st===false?((c.accuracy>25&&moveRun<2)?0:ks):(st===true?0:null);              // altrimenti uso il filtro, solo se risulta davvero un movimento
   curSpd=spd==null?0:spd;curPos=p;
   $('sp').textContent=spd==null?'--':(spd<0.5?'0':Math.round(spd*3.6));
-  if(spd!=null&&spd>maxSpd){maxSpd=spd;$('vmax').textContent=Math.round(maxSpd*3.6)}
+  const sus=spd==null?0:Math.min(spd,prevSpd);            // velocità sostenuta per due fix di fila
+  if(sus>maxSpd&&sus<=27){maxSpd=sus;$('vmax').textContent=Math.round(maxSpd*3.6)}
+  prevSpd=spd==null?0:spd;
   if(spd==null||c.accuracy>50){
     const gap=lastFixTs?Math.round((pos.timestamp-lastFixTs)/1000):0;
     $('err').style.color='var(--mut)';dbgShown=true;
@@ -247,9 +261,11 @@ function onPos(pos){
   $('km').textContent=(km/1000).toFixed(1).replace('.',',');
   $('avg').textContent=moving>=10000?((km/1000)/(moving/3600000)).toFixed(1).replace('.',','):'--';
   if(!lastPt)lastPt=p;
-  if(rep!=null&&c.heading!=null&&!isNaN(c.heading)&&spd>1.5)heading=c.heading;
-  else if(ks!=null&&ks>1.5)heading=k.heading;
-  else if(rep!=null&&dist(lastPt,p)>15){heading=bearing(lastPt,p);lastPt=p}
+  if(sus>=1.5){        // la direzione si aggiorna solo se ti stai davvero muovendo (due fix di fila)
+    if(rep!=null&&c.heading!=null&&!isNaN(c.heading))heading=c.heading;
+    else if(ks!=null&&ks>1.5&&k.heading!=null)heading=k.heading;
+    else if(rep!=null&&dist(lastPt,p)>15){heading=bearing(lastPt,p);lastPt=p}
+  }
   // registro il punto per il GPX: se la posizione è poco precisa uso quella filtrata; da fermo salvo un punto ogni 30 s
   if(c.accuracy<=100){
     let la=p.lat,lo=p.lon;
@@ -274,7 +290,7 @@ function setState(k){
 function updateRose(h){
   [['cN',0],['cE',90],['cS',180],['cO',270]].forEach(([id,a])=>{
     const r=(a-h)*Math.PI/180,e=$(id);
-    e.setAttribute('x',(50*Math.sin(r)).toFixed(1));e.setAttribute('y',(-50*Math.cos(r)).toFixed(1));
+    e.setAttribute('x',(53*Math.sin(r)).toFixed(1));e.setAttribute('y',(-53*Math.cos(r)).toFixed(1));
   });
   $('ticks').style.transform=`rotate(${-h}deg)`;
 }
@@ -319,17 +335,18 @@ document.addEventListener('click',goFull);
 updateRose(0);
 
 // batteria: la mette a disposizione Chrome, Firefox no; se il dato non è affidabile compare n/d
-function nd(){$('bat').textContent='n/d';$('batv').querySelector('small').style.display='none'}
+function nd(){$('bat').textContent='n/d';$('batv').querySelector('small').style.display='none';$('batfill').setAttribute('width',0);$('bolt').textContent='';$('batv').style.color=''}
 if(navigator.getBattery){
   navigator.getBattery().then(b=>{
     const u=()=>{
       // livello 100%, in carica, 0 s alla carica completa: sono i valori "di ripiego" che il browser dà quando non riesce a leggere la batteria
-      if(b.level===1&&b.charging&&b.chargingTime===0&&b.dischargingTime===Infinity){nd();$('bt').textContent='Batteria';$('batv').style.color='';return}
+      if(b.level===1&&b.charging&&b.chargingTime===0&&b.dischargingTime===Infinity){nd();return}
       $('batv').querySelector('small').style.display='';
       const p=Math.round(b.level*100);
       $('bat').textContent=p;
+      $('batfill').setAttribute('width',Math.max(1,Math.round(18*b.level)));
+      $('bolt').textContent=b.charging?'⚡':'';
       $('batv').style.color=b.charging?'':(p<=10?'var(--con)':p<=20?'var(--lat)':'');
-      $('bt').textContent=b.charging?'Batteria ⚡':'Batteria';
     };
     u();b.addEventListener('levelchange',u);b.addEventListener('chargingchange',u);
   }).catch(nd);
@@ -358,7 +375,6 @@ function downloadGpx(){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
   toast('Scaricato '+fn+' ('+track.length+' punti)');
 }
-$('gpx').onclick=downloadGpx;
 
 // easter egg: 5 tocchi sul titolo
 let taps=0,tapT=null;
@@ -396,13 +412,14 @@ function sunsetDate(lat,lon,now){
 }
 function updateSun(){
   if(!curPos)return;
-  const now=Date.now(),sd=sunsetDate(curPos.lat,curPos.lon,now);
-  if(!sd){$('sunT').textContent='--:--';$('sunR').textContent='--';return}
+  const now=Date.now(),sd=sunsetDate(curPos.lat,curPos.lon,now),L=$('sunL');
+  if(!sd){$('sunT').textContent='--:--';L.textContent='';return}
   $('sunT').textContent=sd.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-  const diff=sd.getTime()-now,mins=Math.floor(Math.abs(diff)/60000);
-  $('sunL').textContent=diff>=0?'mancano':'tramontato da';
-  $('sunR').textContent=mins>=60?Math.floor(mins/60)+'h '+String(mins%60).padStart(2,'0'):mins+' min';
-  $('sunR').style.color=(diff<0||diff<=1800000)?'var(--con)':diff<=3600000?'var(--lat)':'';
+  const diff=sd.getTime()-now,mins=Math.floor(diff/60000);
+  if(diff>=0&&mins<600){
+    L.textContent='tra '+(mins>=60?Math.floor(mins/60)+'h'+String(mins%60).padStart(2,'0'):mins+' min');
+    L.style.color=diff<=1800000?'var(--con)':diff<=3600000?'var(--lat)':'';
+  }else L.textContent='';
 }
 
 // ---- fine giro: mappa satellitare con il percorso, salvata come JPG ----
@@ -492,6 +509,7 @@ async function doFine(){
   $('start').style.display='';$('start').textContent='Nuovo giro';
 }
 $('fine').onclick=doFine;
+$('mstrava').onclick=()=>{downloadGpx();window.open('https://www.strava.com/upload/select','_blank','noopener');$('mapmsg').textContent="GPX scaricato: su Strava scegli il file dall'elenco Download."};
 $('mjpg').onclick=downloadJpg;
 $('mgpx').onclick=downloadGpx;
 $('mclose').onclick=()=>$('mapov').classList.remove('on');
