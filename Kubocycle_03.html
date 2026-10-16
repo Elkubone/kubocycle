@@ -12,10 +12,28 @@ html,body{margin:0;background:var(--bg)}
 body{color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
 h1{font-size:1.15rem;line-height:1.1;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin:0;text-align:center;background:linear-gradient(90deg,var(--acc),var(--fav));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margin:4px auto 0;background:linear-gradient(90deg,var(--acc),var(--fav))}
-#start{font:inherit;font-size:1.2rem;font-weight:700;padding:18px;border:0;border-radius:16px;background:var(--acc);color:#001018}
+#top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;height:36px;flex:none}
+#top h1{font-size:min(1.15rem,4.7vw);letter-spacing:.06em;white-space:nowrap}
+#start,#fine{display:flex;align-items:center;justify-content:center;height:36px;font:inherit;font-size:.9rem;font-weight:800;border-radius:12px;padding:0 12px;white-space:nowrap}
+#start{background:var(--acc);color:#001018;border:1px solid var(--acc)}
+#fine{display:none;color:var(--ink);background:var(--card);border:1px solid var(--line)}
+body.rec #fine{display:flex}
+body.rec #start{display:none}
+#gps{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;color:var(--con)}
+#batv #gps{width:16px;height:16px;margin-right:2px}
+#batv #gps.on{color:#FFD60A}
+#batv #gps.off{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.15}}
+#resume{position:fixed;inset:0;z-index:45;display:none;background:rgba(0,0,0,.94);align-items:center;justify-content:center;padding:20px}
+#resume.on{display:flex}
+.rbox{width:100%;max-width:380px;display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+.rbox h2{margin:0;font-size:1.25rem}
+.rbox p{margin:0 0 6px;color:var(--mut);font-size:1rem;line-height:1.35}
+.rbox button{font:inherit;font-size:1rem;font-weight:800;padding:15px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.rbox button.go{background:var(--fav);border-color:var(--fav);color:#001a0d}
 #err{color:var(--con);font-size:1rem}
 #err:empty{display:none}
-#main{display:none;flex-direction:column;gap:10px;flex:1}
+#main{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
 
 
 .thead{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);font-size:1.05rem;font-weight:700;line-height:1.2}
@@ -54,10 +72,9 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .bob{animation:bob .4s ease-in-out infinite}
 .road{stroke:#2A3D46;stroke-width:3;stroke-dasharray:12 12;animation:road .25s linear infinite}
 .lines line{stroke:#5BC0EB;stroke-width:2.5;stroke-linecap:round;opacity:.5}
-#fine{position:absolute;left:14px;top:max(10px,env(safe-area-inset-top));font:inherit;font-size:.9rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
 #mapov{position:fixed;inset:0;z-index:40;display:none;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
 #mapov.on{display:flex}
-#mapov canvas{max-width:100%;max-height:calc(100vh - 290px);max-height:calc(100dvh - 290px);border-radius:14px}
+#mapov canvas{max-width:100%;max-height:calc(100vh - 260px);max-height:calc(100dvh - 260px);border-radius:14px}
 #mapmsg{margin:0;color:var(--ink);font-weight:700;text-align:center;font-size:1.1rem;padding:0 16px}
 .mbtns{display:flex;flex-wrap:wrap;gap:10px;width:100%;max-width:460px}
 .mbtns button{flex:1 1 28%;font:inherit;font-size:.92rem;font-weight:800;padding:14px 6px;border:0;border-radius:14px;background:var(--acc);color:#001018}
@@ -76,7 +93,7 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .cl{font:800 9.5px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .cn{fill:var(--acc)}
 .arrow{fill:var(--s);transition:transform .6s;filter:drop-shadow(0 0 3px var(--s))}
-#batv{position:absolute;right:14px;top:max(10px,env(safe-area-inset-top));display:flex;align-items:center;gap:4px;font-size:.85rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
+#batv{display:flex;align-items:center;gap:4px;height:36px;font-size:.85rem;font-weight:800;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 8px}
 #batv svg{width:20px;height:11px;flex:none}
 #batv small{font-size:.8em;font-weight:800;margin-left:-3px}
 #bolt{margin-left:-2px}
@@ -90,26 +107,23 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .wvu{font:700 5.6px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--mut);text-anchor:middle}
 .grid2 .temp.txt{font-size:min(1.45rem,3.2vh);font-size:min(1.45rem,3.2dvh)}
 .mbtns .mcap{flex:1 1 100%;margin:0;color:var(--mut);font-size:.85rem;font-weight:700;text-align:left}
-.mbtns .share{flex:1 1 28%;background:#2EE077;color:#001a0d}
-.mbtns .strava{flex:1 1 100%;background:#FC4C02;color:#fff}
+.mbtns .share{flex:1 1 40%;background:#2EE077;color:#001a0d}
+.mbtns .strava{flex:1 1 40%;background:#FC4C02;color:#fff}
 </style>
 </head>
 <body>
-<h1 id="title">Kubocycle</h1>
-<button id="fine" aria-label="Termina il giro e crea la mappa">FINE ■</button>
-<div id="batv" aria-label="Batteria"><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div>
-<button id="start">Avvia (usa la posizione)</button>
+<div id="top"><div><button id="start">AVVIA ▶︎</button><button id="fine" aria-label="Termina il giro e crea la mappa">FINE ■</button></div><h1 id="title">Kubocycle</h1><div id="batv" aria-label="Batteria"><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
 <div id="err"></div>
 <div id="main">
   <div id="speed">
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#5BC0EB"><path d="M4.5 17a8.5 8.5 0 1 1 15 0"/><path d="M12 17l4.2-5.2"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/></svg>Velocità</span><small>km/h</small></div><div class="big" id="sp">--</div></div>
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#2EE077"><path d="M12 21s6.5-5.4 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.6 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.3"/></svg>Km percorsi</span></div><div class="big" id="km">0,0</div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#2EE077"><path d="M12 21s6.5-5.4 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15.6 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.3"/></svg>Km percorsi</span></div><div class="big" id="km">--</div></div>
   </div>
   <div class="grid2">
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF7A59"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Vel. max</span><small>km/h</small></div><div class="temp" id="vmax">0</div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF7A59"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Vel. max</span><small>km/h</small></div><div class="temp" id="vmax">--</div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FFB830"><path d="M4 20V11M10 20V5M16 20v-6M3 20.5h18"/></svg>Vel. media</span><small>km/h</small></div><div class="temp" id="avg">--</div></div>
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#B794F6"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.6 1.6M9.5 3h5"/></svg>In sella</span></div><div class="temp" id="elapsed">0:00</div></div>
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#2DD4BF"><circle cx="5.5" cy="16.5" r="3.5"/><circle cx="18.5" cy="16.5" r="3.5"/><path d="M5.5 16.5l4-7.5h5.5l3.5 7.5M9.5 9l3.2 7.5M8 6h3"/></svg>Pedalando</span></div><div class="temp" id="mov">0:00</div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#B794F6"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.6 1.6M9.5 3h5"/></svg>In sella</span></div><div class="temp" id="elapsed">--</div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#2DD4BF"><circle cx="5.5" cy="16.5" r="3.5"/><circle cx="18.5" cy="16.5" r="3.5"/><path d="M5.5 16.5l4-7.5h5.5l3.5 7.5M9.5 9l3.2 7.5M8 6h3"/></svg>Pedalando</span></div><div class="temp" id="mov">--</div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF6B4A"><path d="M14 14.8V5.5a2 2 0 0 0-4 0v9.3a4 4 0 1 0 4 0z"/><path d="M12 9v7"/></svg>Temperatura</span></div><div class="temp"><span id="t">--</span><small>°C</small></div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#7CC7FF"><path d="M8.5 14V5.5a2 2 0 0 0-4 0V14a3.6 3.6 0 1 0 4 0z"/><path d="M12.5 7.5h5a2 2 0 1 0-2-2M12.5 11.5h7a2 2 0 1 1-2 2"/></svg>Temp. percepita</span></div><div class="temp"><span id="feel">--</span><small>°C</small></div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF9F43"><path d="M3 19h18M6.5 19a5.5 5.5 0 0 1 11 0M12 5v4M4.8 9.8l2 2M19.2 9.8l-2 2"/></svg>Tramonto</span><small id="sunL"></small></div><div class="temp" id="sunT">--:--</div></div>
@@ -155,11 +169,11 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
   </g>
   <line x1="77" y1="58" x2="100" y2="92" class="leg"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><line x1="88" y1="92" x2="100" y2="92" class="crk"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><circle cx="100" cy="92" r="4.4" class="foot"><animate attributeName="cx" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="cy" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></circle>
 </svg><p>Kubo ti augura buona pedalata!</p></div>
+<div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
 <div class="mbtns" id="mbtns" style="display:none"><p class="mcap">Condividi</p>
-<button id="mshf" class="share">Foto</button><button id="mshg" class="share">GPX</button><button id="mshb" class="share">Entrambi</button>
-<button id="mstrava" class="strava">Carica su Strava</button>
-<button id="mjpg">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button></div></div>
+<button id="mshf" class="share">Foto</button><button id="mstrava" class="strava">Strava</button>
+<button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const dirs=['N','NE','E','SE','S','SO','O','NO'];
@@ -170,6 +184,7 @@ let track=[];
 let prevSpd=0,moveRun=0;
 let curPos=null,curSpd=0,ended=false,watchId=null,mapBlob=null;
 let gAlt=null,altOff=null;
+let recording=false,lastFixWall=0,geoErr=false,exported=false,savedStats=null,startTime=null;
 let wx=null,lastFetch=0,lastFetchPos=null,lastPt=null,heading=null;
 
 function dist(a,b){const R=6371e3,r=Math.PI/180,x=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
@@ -263,7 +278,8 @@ function kfUpdate(p,ts,acc){
 
 function onPos(pos){
   const c=pos.coords,p={lat:c.latitude,lon:c.longitude};
-  $('main').style.display='flex';
+  lastFixWall=Date.now();setGps();
+  if(geoErr){geoErr=false;$('err').textContent='';$('err').style.color=''}
   let rep=(c.speed==null||isNaN(c.speed))?null:c.speed;
   const k=kfUpdate(p,pos.timestamp,c.accuracy);
   const ks=k&&k.speed!=null?(k.speed<Math.max(0.7,KDZ*k.sv)?0:k.speed):null;
@@ -279,7 +295,7 @@ function onPos(pos){
   if(c.altitude!=null&&!isNaN(c.altitude)&&c.accuracy<=40&&(c.altitudeAccuracy==null||c.altitudeAccuracy<=40))gAlt=gAlt==null?c.altitude:gAlt+0.25*(c.altitude-gAlt);
   updateAlt();
   const sus=spd==null?0:Math.min(spd,prevSpd);            // velocità sostenuta per due fix di fila
-  if(sus>maxSpd&&sus<=27){maxSpd=sus;$('vmax').textContent=Math.round(maxSpd*3.6)}
+  if(recording&&sus>maxSpd&&sus<=27){maxSpd=sus;$('vmax').textContent=Math.round(maxSpd*3.6)}
   prevSpd=spd==null?0:spd;
   if(spd==null||c.accuracy>50){
     const gap=lastFixTs?Math.round((pos.timestamp-lastFixTs)/1000):0;
@@ -288,10 +304,12 @@ function onPos(pos){
   }else if(dbgShown){dbgShown=false;$('err').textContent='';$('err').style.color=''}
   lastFixTs=pos.timestamp;
   // km e tempo in movimento: integro la velocità sul tempo tra due posizioni
-  if(lastKTs&&spd!=null&&spd>=0.8){const dts=(pos.timestamp-lastKTs)/1000;if(dts>0&&dts<=15){km+=spd*dts;moving+=dts*1000}}
+  if(recording){
+    if(lastKTs&&spd!=null&&spd>=0.8){const dts=(pos.timestamp-lastKTs)/1000;if(dts>0&&dts<=15){km+=spd*dts;moving+=dts*1000}}
+    $('km').textContent=(km/1000).toFixed(1).replace('.',',');
+    $('avg').textContent=moving>=10000?((km/1000)/(moving/3600000)).toFixed(1).replace('.',','):'--';
+  }
   lastKTs=pos.timestamp;
-  $('km').textContent=(km/1000).toFixed(1).replace('.',',');
-  $('avg').textContent=moving>=10000?((km/1000)/(moving/3600000)).toFixed(1).replace('.',','):'--';
   if(!lastPt)lastPt=p;
   if(sus>=1.5){        // la direzione si aggiorna solo se ti stai davvero muovendo (due fix di fila)
     if(rep!=null&&c.heading!=null&&!isNaN(c.heading))heading=c.heading;
@@ -299,7 +317,7 @@ function onPos(pos){
     else if(rep!=null&&dist(lastPt,p)>15){heading=bearing(lastPt,p);lastPt=p}
   }
   // registro il punto per il GPX: se la posizione è poco precisa uso quella filtrata; da fermo salvo un punto ogni 30 s
-  if(c.accuracy<=100){
+  if(recording&&c.accuracy<=100){
     let la=p.lat,lo=p.lon;
     if(c.accuracy>20&&k&&k.n>=2){la=k.lat0+k.y/110540;lo=k.lon0+k.x/(111320*Math.cos(k.lat0*Math.PI/180))}
     const last=track[track.length-1],still=spd!=null&&spd<0.5;
@@ -309,8 +327,15 @@ function onPos(pos){
   else render();
 }
 
+function startWatch(){
+  if(watchId!=null)return true;
+  if(!navigator.geolocation){$('err').textContent='Questo browser non supporta la posizione.';return false}
+  watchId=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});
+  return true;
+}
 function onErr(e){
-  $('start').style.display='';
+  geoErr=true;$('err').style.color='';
+  if(e.code===1&&watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}
   $('err').textContent=e.code===1?'Permesso posizione negato: consentilo nelle impostazioni del browser e riprova.':'Posizione non disponibile. Esci all\'aperto e riprova.';
 }
 
@@ -328,8 +353,8 @@ function updateRose(h){
 
 function render(){
   updateRose(heading??0);
+  $('arr').style.opacity=wx?'':'0';
   if(!wx)return;
-  $('main').style.display='flex';
   $('t').textContent=Math.round(wx.t);
   const fl=feelsLike();if(fl!=null)$('feel').textContent=Math.round(fl);
   $('v').textContent=Math.round(wx.v);
@@ -343,14 +368,13 @@ function render(){
 }
 
 async function keepAwake(){try{await navigator.wakeLock.request('screen')}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&lastPt)keepAwake()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&recording)keepAwake()});
 
-let startTime=null;
+function setGps(){const ok=lastFixWall&&Date.now()-lastFixWall<15000,g=$('gps');g.classList.toggle('on',!!ok);g.classList.toggle('off',!ok)}
 function tick(){
   $('clock').textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-  if(startTime){const m=Math.floor((Date.now()-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0')}
-  const mm=Math.floor(moving/60000);$('mov').textContent=Math.floor(mm/60)+':'+String(mm%60).padStart(2,'0');
-  updateSun();updateRain();
+  if(recording&&startTime){const m=Math.floor((Date.now()-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0');const mm=Math.floor(moving/60000);$('mov').textContent=Math.floor(mm/60)+':'+String(mm%60).padStart(2,'0')}
+  setGps();updateSun();updateRain();
 }
 tick();setInterval(tick,1000);
 
@@ -362,7 +386,7 @@ function goFull(){
 // toccando un punto qualsiasi dello schermo si rientra a schermo intero
 document.addEventListener('click',goFull);
 
-updateRose(0);
+updateRose(0);$('arr').style.opacity='0';
 
 // batteria: la mette a disposizione Chrome, Firefox no; se il dato non è affidabile compare n/d
 function nd(){$('bat').textContent='n/d';$('batv').querySelector('small').style.display='none';$('batfill').setAttribute('width',0);$('bolt').textContent='';$('batv').style.color=''}
@@ -384,12 +408,16 @@ if(navigator.getBattery){
 
 // ---- percorso GPX: salvato anche nel browser, così non si perde se la pagina si chiude ----
 const TK='kubocycle-track';
-function saveTrack(){try{localStorage.setItem(TK,JSON.stringify(track))}catch(e){}}
+function saveTrack(){try{localStorage.setItem(TK,JSON.stringify(track));if(startTime)localStorage.setItem(TK+'-s',JSON.stringify({km,moving,maxSpd,el:Date.now()-startTime}))}catch(e){}}
+function clearSaved(){track=[];savedStats=null;try{localStorage.removeItem(TK);localStorage.removeItem(TK+'-s')}catch(e){}}
+function statsFromTrack(){let d=0,m=0;for(let i=1;i<track.length;i++){const a={lat:track[i-1][0],lon:track[i-1][1]},b={lat:track[i][0],lon:track[i][1]},sd=dist(a,b),dt=(track[i][2]-track[i-1][2])/1000;d+=sd;if(dt>0&&dt<=60&&sd/dt>=0.8)m+=dt*1000}return{km:d,moving:m,maxSpd:0,el:track[track.length-1][2]-track[0][2]}}
 try{const t=JSON.parse(localStorage.getItem(TK)||'[]');if(Array.isArray(t))track=t}catch(e){}
+try{savedStats=JSON.parse(localStorage.getItem(TK+'-s')||'null')}catch(e){}
+if(track.length>=2&&!savedStats)savedStats=statsFromTrack();
 setInterval(saveTrack,15000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveTrack()});
 addEventListener('pagehide',saveTrack);
-function toast(m){$('err').style.color='var(--mut)';$('err').textContent=m;setTimeout(()=>{if($('err').textContent===m)$('err').textContent=''},5000)}
+function toast(m){const e=$('mapov').classList.contains('on')?$('mapmsg'):$('err');if(e===$('err'))e.style.color='var(--mut)';e.textContent=m;setTimeout(()=>{if(e.textContent===m)e.textContent=''},5000)}
 function gpxData(){
   const iso=ms=>new Date(ms).toISOString(),pad=n=>String(n).padStart(2,'0'),d0=new Date(track[0][2]);
   const nome='Kubocycle '+d0.toLocaleString('it-IT');
@@ -406,7 +434,7 @@ function downloadGpx(){
   a.href=URL.createObjectURL(new Blob([x],{type:'application/gpx+xml'}));a.download=fn;
   document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
-  toast('Scaricato '+fn+' ('+track.length+' punti)');
+  exported=true;toast('Scaricato '+fn+' ('+track.length+' punti)');
 }
 
 // easter egg: 5 tocchi sul titolo
@@ -464,9 +492,9 @@ const fmtDur=ms=>{const m=Math.round(ms/60000),h=Math.floor(m/60);return h>0?h+'
 function rideStats(){
   const t0=track[0][2],tot=track[track.length-1][2]-t0;
   let d=0;for(let i=1;i<track.length;i++)d+=dist({lat:track[i-1][0],lon:track[i-1][1]},{lat:track[i][0],lon:track[i][1]});
-  const live=startTime!==null;
-  return {t0,tot,kmm:live?km:d,mov:live?moving:null,vm:live?maxSpd:null,
-    avg:live&&moving>=10000?(km/1000)/(moving/3600000):(tot>0?(d/1000)/(tot/3600000):null)};
+  const live=startTime!==null,sv=!live?savedStats:null;
+  return {t0,tot,kmm:live?km:(sv?sv.km:d),mov:live?moving:(sv?sv.moving:null),vm:live?maxSpd:(sv&&sv.maxSpd>0?sv.maxSpd:null),
+    avg:live&&moving>=10000?(km/1000)/(moving/3600000):(sv&&sv.moving>=10000?(sv.km/1000)/(sv.moving/3600000):(tot>0?(d/1000)/(tot/3600000):null))};
 }
 async function buildMap(){
   let pts=track.map(q=>[q[0],q[1]]);
@@ -524,64 +552,69 @@ function downloadJpg(){
   if(!mapBlob){toast('Immagine non disponibile');return}
   const d0=new Date(track[0][2]),pad=n=>String(n).padStart(2,'0');
   const fn='kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())+'.jpg';
-  const a=document.createElement('a');a.href=URL.createObjectURL(mapBlob);a.download=fn;
+  const a=document.createElement('a');a.href=URL.createObjectURL(mapBlob);a.download=fn;exported=true;
   document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
 }
-async function doFine(){
-  if(track.length<2){toast('Nessun percorso registrato: premi prima Avvia');return}
-  if(!confirm('Terminare il giro e creare la mappa?'))return;
+async function doFine(skip){
+  if(track.length<2){
+    if(recording){if(confirm('Il giro non ha ancora punti registrati. Annullarlo?')){clearSaved();location.reload()}}
+    else toast('Nessun percorso registrato: premi prima Avvia');
+    return;
+  }
+  if(skip!==true&&!confirm('Terminare il giro e creare la mappa?'))return;
+  $('resume').classList.remove('on');
   if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}
-  ended=true;saveTrack();
+  ended=true;recording=false;saveTrack();
   $('mapov').classList.add('on');$('mapmsg').textContent='Creo la mappa…';$('mapc').style.display='none';$('mbtns').style.display='none';
   let ok=0;
   try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
   $('mapc').style.display='block';$('mbtns').style.display='flex';
   $('mapmsg').textContent=!mapBlob?'Non sono riuscito a creare l\'immagine, ma il percorso è salvato: scarica il GPX.':ok?'':'Mappa satellitare non disponibile (serve la connessione dati): disegnato solo il percorso.';
-  $('start').style.display='';$('start').textContent='Nuovo giro';
 }
-$('fine').onclick=doFine;
-$('mstrava').onclick=()=>{downloadGpx();window.open('https://www.strava.com/upload/select','_blank','noopener');$('mapmsg').textContent="GPX scaricato: su Strava scegli il file dall'elenco Download."};
-async function shareFiles(kind){
+$('fine').onclick=()=>doFine(false);
+$('mstrava').onclick=()=>{downloadGpx();exported=true;window.open('https://www.strava.com/upload/select','_blank','noopener');$('mapmsg').textContent="GPX scaricato: su Strava scegli il file dall'elenco Download."};
+async function sharePhoto(){
   const msg=t=>{$('mapmsg').textContent=t};
-  if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione dei file: usa Salva JPG o Salva GPX.');return}
-  const files=[];let gpxNote='';
-  if(kind!=='gpx'){
-    if(!mapBlob&&kind==='foto'){msg('Immagine non disponibile');return}
-    if(mapBlob)files.push(new File([mapBlob],'kubocycle-'+new Date(track[0][2]).toISOString().slice(0,10)+'.jpg',{type:'image/jpeg'}));
-  }
-  if(kind!=='foto'&&track.length>=2){
-    const g=gpxData();
-    let f=new File([g.x],g.fn,{type:'application/gpx+xml'});
-    if(!navigator.canShare({files:[f]}))f=new File([g.x],g.fn,{type:'application/octet-stream'});
-    if(navigator.canShare({files:[f]}))files.push(f);
-    else gpxNote="Il browser non permette di condividere il file GPX: usa Salva GPX e invialo dai File. ";
-  }
-  if(!files.length){msg(gpxNote||'Niente da condividere');return}
-  if(!navigator.canShare({files})){msg('Il browser non permette di condividere questi file: usa Salva JPG o Salva GPX.');return}
-  try{await navigator.share({files,title:'Kubocycle'});msg(gpxNote.trim())}
-  catch(e){if(e&&e.name!=='AbortError')msg('Condivisione non riuscita: '+(e.message||e.name));else msg(gpxNote.trim())}
+  if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione: usa Salva JPG.');return}
+  if(!mapBlob){msg('Immagine non disponibile');return}
+  const f=new File([mapBlob],'kubocycle-'+new Date(track[0][2]).toISOString().slice(0,10)+'.jpg',{type:'image/jpeg'});
+  if(!navigator.canShare({files:[f]})){msg('Il browser non permette di condividere la foto: usa Salva JPG.');return}
+  try{await navigator.share({files:[f],title:'Kubocycle'});exported=true;msg('')}
+  catch(e){msg(e&&e.name!=='AbortError'?'Condivisione non riuscita: '+(e.message||e.name):'')}
 }
-$('mshf').onclick=()=>shareFiles('foto');
-$('mshg').onclick=()=>shareFiles('gpx');
-$('mshb').onclick=()=>shareFiles('tutti');
+$('mshf').onclick=sharePhoto;
 $('mjpg').onclick=downloadJpg;
 $('mgpx').onclick=downloadGpx;
-$('mclose').onclick=()=>$('mapov').classList.remove('on');
-
-$('start').onclick=()=>{
-  if(ended){location.reload();return}
-  if(track.length>=2&&!startTime){
-    if(!confirm('C\'è un percorso salvato ('+track.length+' punti). OK = cancellarlo e iniziarne uno nuovo. Annulla = tenerlo: scaricalo prima col pulsante GPX.'))return;
-    track=[];saveTrack();
-  }
-  goFull();
-  if(!startTime){startTime=Date.now();tick()}
-  if(!navigator.geolocation){$('err').textContent='Questo browser non supporta la posizione.';return}
-  $('start').style.display='none';$('err').textContent='Cerco la posizione...';
-  keepAwake();
-  watchId=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});
+$('mclose').onclick=()=>{
+  if(!exported&&!confirm('Non hai ancora salvato né condiviso nulla: chiudendo, il percorso viene cancellato. Chiudere?'))return;
+  clearSaved();location.reload();
 };
+
+// ---- avvio giro: il GPS è già attivo dall'apertura, qui parte la registrazione ----
+function startRide(resume){
+  goFull();keepAwake();
+  if(!startWatch())return;
+  if(resume){const v=savedStats||{km:0,moving:0,maxSpd:0,el:0};km=v.km;moving=v.moving;maxSpd=v.maxSpd||0;startTime=Date.now()-(v.el||0)}
+  else{clearSaved();km=0;moving=0;maxSpd=0;startTime=Date.now()}
+  recording=true;exported=false;document.body.classList.add('rec');saveTrack();
+  $('vmax').textContent=Math.round(maxSpd*3.6);
+  $('km').textContent=(km/1000).toFixed(1).replace('.',',');
+  $('avg').textContent=moving>=10000?((km/1000)/(moving/3600000)).toFixed(1).replace('.',','):'--';
+  tick();
+}
+$('start').onclick=()=>startRide(false);
+
+// percorso rimasto salvato (blocco, chiusura): riprendere, concludere o scartare
+if(track.length>=2){
+  const v=savedStats||statsFromTrack(),d0=new Date(track[0][2]);
+  $('rinfo').textContent=d0.toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · '+(v.km/1000).toFixed(1).replace('.',',')+' km · '+track.length+' punti';
+  $('resume').classList.add('on');
+  $('rres').onclick=()=>{$('resume').classList.remove('on');startRide(true)};
+  $('rend').onclick=()=>doFine(true);
+  $('rdel').onclick=()=>{if(confirm('Cancellare il percorso salvato?')){clearSaved();$('resume').classList.remove('on')}};
+}
+startWatch();
 </script>
 </body>
 </html>
