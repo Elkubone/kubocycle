@@ -58,7 +58,25 @@ body.rec #start{display:none}
 .tcard>span{color:var(--ink);font-size:1.05rem;font-weight:700}
 .foot{color:var(--mut);font-size:.85rem}
 body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
-#title{touch-action:manipulation;cursor:default;height:100%;min-width:0}
+#histbtn{display:flex;align-items:center;justify-content:center;justify-self:center;width:38px;height:38px;padding:0;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
+#histbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+#hist{position:fixed;inset:0;z-index:38;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom))}
+#hist.on{display:flex}
+.hh{display:flex;align-items:center;gap:10px;height:38px;flex:none}
+.hh button{height:38px;padding:0 16px;font:inherit;font-weight:800;font-size:1.1rem;border-radius:12px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.hh span{flex:1;text-align:center;font-weight:800;font-size:1.3rem;padding-right:60px}
+#hsum{flex:none;color:var(--mut);font-weight:700;font-size:1rem;text-align:center}
+#hlist{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+#hempty{margin:40px 10px;text-align:center;color:var(--mut);font-size:1.1rem;line-height:1.4}
+.hit{display:flex;gap:12px;align-items:center;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;width:100%;flex:none}
+.hit img,.hit .nophoto{width:64px;height:80px;object-fit:cover;border-radius:10px;flex:none;background:#0B1114}
+.hit .nophoto{display:flex;align-items:center;justify-content:center;color:var(--mut);font-weight:800}
+.hit b{display:block;font-size:.95rem;color:var(--mut);font-weight:700}
+.hit strong{display:block;font-size:1.3rem;margin:2px 0;font-weight:800}
+.hit i{display:block;font-style:normal;font-size:.95rem;color:var(--mut);font-weight:600}
+#mdel{display:none;flex:1 1 100%!important;background:transparent!important;color:#FF5448!important;border:1px solid #FF5448!important}
+#mapov.hm #mdel{display:block}
+#mapov.hm canvas{max-height:calc(100vh - 330px);max-height:calc(100dvh - 330px)}
 #egg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;overflow:hidden}
 #egg.on{display:flex}
 #egg svg{width:min(88vw,460px);height:auto;overflow:visible;animation:ride 4.8s ease-in-out forwards}
@@ -110,7 +128,7 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 </style>
 </head>
 <body>
-<div id="top"><div><button id="start">AVVIA ▶︎</button><button id="fine" aria-label="Termina il giro e crea la mappa">FINE ■</button></div><div id="title" aria-hidden="true"></div><div id="batv" aria-label="Batteria"><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg id="net" class="on" viewBox="0 0 24 24" aria-label="Dati"><rect x="2" y="15" width="3.6" height="6" rx="1"/><rect x="7.6" y="11" width="3.6" height="10" rx="1"/><rect x="13.2" y="7" width="3.6" height="14" rx="1"/><rect x="18.8" y="2.5" width="3.6" height="18.5" rx="1"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
+<div id="top"><div><button id="start">AVVIA ▶︎</button><button id="fine" aria-label="Termina il giro e crea la mappa">FINE ■</button></div><button id="histbtn" aria-label="Cronologia dei giri"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1" fill="currentColor"/><circle cx="3.5" cy="12" r="1" fill="currentColor"/><circle cx="3.5" cy="18" r="1" fill="currentColor"/></svg></button><div id="batv" aria-label="Batteria"><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg id="net" class="on" viewBox="0 0 24 24" aria-label="Dati"><rect x="2" y="15" width="3.6" height="6" rx="1"/><rect x="7.6" y="11" width="3.6" height="10" rx="1"/><rect x="13.2" y="7" width="3.6" height="14" rx="1"/><rect x="18.8" y="2.5" width="3.6" height="18.5" rx="1"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
 <div id="err"></div>
 <div id="main">
   <button id="hrbar" type="button" aria-label="Collega la fascia o l'orologio per i battiti"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 2.9 4.5 6.5 4.5c2 0 3.7 1.1 5.5 3.2 1.8-2.100 3.500-3.200 5.500-3.200 3.600 0 5.600 3.700 4.100 7.200C19.500 16.400 12 21 12 21z"/></svg><span id="hrv" class="idle">Cuore: tocca per collegare</span><span id="hrs"></span></button>
@@ -169,10 +187,11 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
   <line x1="77" y1="58" x2="100" y2="92" class="leg"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><line x1="88" y1="92" x2="100" y2="92" class="crk"><animate attributeName="x2" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="y2" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></line><circle cx="100" cy="92" r="4.4" class="foot"><animate attributeName="cx" values="100.0;96.5;88.0;79.5;76.0;79.5;88.0;96.5;100.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/><animate attributeName="cy" values="92.0;100.5;104.0;100.5;92.0;83.5;80.0;83.5;92.0" dur=".8s" begin="-0.4s" repeatCount="indefinite"/></circle>
 </svg><p>Kubo ti augura buona pedalata!</p></div>
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
+<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Giri</span></div><div id="hsum"></div><div id="hlist"></div></div>
 <div id="mapov"><p id="mapmsg"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
 <div class="mbtns" id="mbtns" style="display:none"><p class="mcap">Condividi</p>
 <button id="mshf" class="share">Foto</button><button id="mstrava" class="strava">Strava</button>
-<button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button></div></div>
+<button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button><button id="mdel">Elimina giro</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const dirs=['N','NE','E','SE','S','SO','O','NO'];
@@ -181,7 +200,7 @@ const COL={con:['var(--con)','rgba(255,84,72,.14)'],fav:['var(--fav)','rgba(46,2
 let km=0,lastDistPt=null,lastDistTs=0,moving=0,maxSpd=0;
 let track=[];
 let prevSpd=0,moveRun=0;
-let curPos=null,curSpd=0,ended=false,watchId=null,mapBlob=null;
+let curPos=null,curSpd=0,ended=false,watchId=null,mapBlob=null,cur=null;
 let gAlt=null,altOff=null;
 let wxFail=false,hrNote=null,hrDev=null,hrChar=null,hrWanted=false,hrBpm=null,hrTs=0,hrSum=0,hrN=0,hrMax=0,hrBusy=false,recording=false,lastFixWall=0,geoErr=false,exported=false,savedStats=null,startTime=null;
 let wx=null,lastFetch=0,lastFetchPos=null,lastPt=null,heading=null;
@@ -442,22 +461,22 @@ function gpxData(){
   x+='</trkseg></trk>\n</gpx>\n';
   return {x,fn:'kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())+'.gpx'};
 }
+function saveBlob(blob,fn){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
+}
 function downloadGpx(){
-  if(track.length<2){toast('Nessun percorso registrato: premi prima Avvia');return}
-  saveTrack();
-  const {x,fn}=gpxData();
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([x],{type:'application/gpx+xml'}));a.download=fn;
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
-  exported=true;toast('Scaricato '+fn+' ('+track.length+' punti)');
+  if(!cur||!cur.gpx){toast('GPX non disponibile');return}
+  saveBlob(new Blob([cur.gpx],{type:'application/gpx+xml'}),cur.base+'.gpx');
+  exported=true;toast('Scaricato '+cur.base+'.gpx ('+cur.pts+' punti)');
 }
 
-// easter egg: 5 tocchi sul titolo
+// easter egg: 5 tocchi sul riquadro Ora
 let taps=0,tapT=null;
 function showEgg(){const e=$('egg');e.classList.remove('on');void e.offsetWidth;e.classList.add('on')}
-['selectstart','contextmenu','dragstart'].forEach(ev=>$('title').addEventListener(ev,e=>e.preventDefault()));
-$('title').addEventListener('click',()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>{taps=0},1500);if(taps>=5){taps=0;showEgg()}});
+const eggTap=$('clock').closest('.tcard');eggTap.style.userSelect='none';eggTap.style.webkitUserSelect='none';
+['selectstart','contextmenu','dragstart'].forEach(ev=>eggTap.addEventListener(ev,e=>e.preventDefault()));
+eggTap.addEventListener('click',()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>{taps=0},1500);if(taps>=5){taps=0;showEgg()}});
 $('egg').addEventListener('click',e=>{e.stopPropagation();$('egg').classList.remove('on')});
 $('egg').querySelector('svg').addEventListener('animationend',e=>{if(e.animationName==='ride')$('egg').classList.remove('on')});
 
@@ -566,13 +585,60 @@ async function buildMap(){
   return okTiles;
 }
 function downloadJpg(){
-  if(!mapBlob){toast('Immagine non disponibile');return}
-  const d0=new Date(track[0][2]),pad=n=>String(n).padStart(2,'0');
-  const fn='kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())+'.jpg';
-  const a=document.createElement('a');a.href=URL.createObjectURL(mapBlob);a.download=fn;exported=true;
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
+  if(!cur||!cur.jpg){toast('Immagine non disponibile');return}
+  saveBlob(cur.jpg,cur.base+'.jpg');exported=true;
 }
+
+// ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
+const DBN='kubocycle',ST='rides';
+function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,1);r.onupgradeneeded=()=>r.result.createObjectStore(ST,{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function dbRun(mode,fn){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(ST,mode),rq=fn(t.objectStore(ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
+async function dbPut(rec){try{await dbRun('readwrite',o=>o.put(rec));try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}return true}catch(e){return false}}
+async function dbAll(){try{const l=await dbRun('readonly',o=>o.getAll());return (l||[]).sort((a,b)=>b.start-a.start)}catch(e){return null}}
+async function dbDel(id){try{await dbRun('readwrite',o=>o.delete(id));return true}catch(e){return false}}
+async function makeThumb(){
+  try{const src=$('mapc'),c=document.createElement('canvas');c.width=192;c.height=240;c.getContext('2d').drawImage(src,0,0,192,240);
+    return await new Promise(r=>c.toBlob(r,'image/jpeg',0.7))}catch(e){return null}
+}
+let histUrls=[];
+async function histOpen(){
+  $('hist').classList.add('on');
+  const L=await dbAll(),box=$('hlist');
+  histUrls.forEach(u=>URL.revokeObjectURL(u));histUrls=[];box.innerHTML='';
+  if(L==null){$('hsum').textContent='';box.innerHTML='<div id="hempty">La cronologia non è disponibile su questo browser.</div>';return}
+  if(!L.length){$('hsum').textContent='';box.innerHTML='<div id="hempty">Ancora nessun giro.<br>Quando premi FINE, il giro viene salvato qui con foto e GPX.</div>';return}
+  const kmT=L.reduce((a,r)=>a+(r.km||0),0)/1000,msT=L.reduce((a,r)=>a+(r.dur||0),0);
+  $('hsum').textContent=L.length+(L.length===1?' giro':' giri')+' · '+kmT.toFixed(1).replace('.',',')+' km · '+fmtDur(msT);
+  for(const r of L){
+    const b=document.createElement('button');b.className='hit';
+    const d=new Date(r.start),f1=x=>x.toFixed(1).replace('.',',');
+    let th;
+    if(r.thumb){th=document.createElement('img');const u=URL.createObjectURL(r.thumb);histUrls.push(u);th.src=u;th.alt=''}
+    else{th=document.createElement('div');th.className='nophoto';th.textContent='GPX'}
+    const t=document.createElement('div');
+    const det=[r.avg!=null?'media '+f1(r.avg)+' km/h':'',r.vmax!=null?'max '+Math.round(r.vmax*3.6)+' km/h':'',r.hrAvg!=null?'cuore '+Math.round(r.hrAvg)+'/'+r.hrMax:''].filter(Boolean).join(' · ');
+    t.innerHTML='<b></b><strong></strong><i></i>';
+    t.children[0].textContent=d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    t.children[1].textContent=f1((r.km||0)/1000)+' km · '+fmtDur(r.dur||0);
+    t.children[2].textContent=det;
+    b.append(th,t);b.onclick=()=>openRide(r);box.appendChild(b);
+  }
+}
+async function openRide(rec){
+  cur=rec;rec.fromHistory=true;
+  const cv=$('mapc');$('mapov').classList.add('on','hm');$('mapmsg').textContent='';$('mbtns').style.display='flex';
+  if(rec.jpg){
+    try{const bm=await createImageBitmap(rec.jpg);cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);cv.style.display='block'}
+    catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare la foto: puoi scaricare il GPX.'}
+  }else{cv.style.display='none';$('mapmsg').textContent='Foto non disponibile per questo giro: puoi scaricare il GPX.'}
+}
+$('histbtn').onclick=histOpen;
+$('hback').onclick=()=>$('hist').classList.remove('on');
+$('mdel').onclick=async()=>{
+  if(!cur||!confirm('Eliminare questo giro dalla cronologia?'))return;
+  if(await dbDel(cur.id)){$('mapov').classList.remove('on','hm');cur=null;histOpen()}else toast('Non sono riuscito a eliminarlo');
+};
+
 async function doFine(skip){
   if(track.length<2){
     if(recording){if(confirm('Il giro non ha ancora punti registrati. Annullarlo?')){clearSaved();location.reload()}}
@@ -583,19 +649,25 @@ async function doFine(skip){
   $('resume').classList.remove('on');
   if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}
   ended=true;recording=false;saveTrack();
-  $('mapov').classList.add('on');$('mapmsg').textContent='Creo la mappa…';$('mapc').style.display='none';$('mbtns').style.display='none';
+  $('mapov').classList.remove('hm');$('mapov').classList.add('on');$('mapmsg').textContent='Creo la mappa…';$('mapc').style.display='none';$('mbtns').style.display='none';
   let ok=0;
   try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
-  $('mapc').style.display='block';$('mbtns').style.display='flex';
-  $('mapmsg').textContent=!mapBlob?'Non sono riuscito a creare l\'immagine, ma il percorso è salvato: scarica il GPX.':ok?'':'Mappa satellitare non disponibile (serve la connessione dati): disegnato solo il percorso.';
+  const S=rideStats(),gx=gpxData();
+  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,pts:track.length,jpg:mapBlob,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
+  const saved=await dbPut(rec);
+  cur=rec;rec.fromHistory=false;
+  if(saved){exported=true;clearSaved()}
+  $('mapc').style.display=mapBlob?'block':'none';$('mbtns').style.display='flex';
+  const note=!mapBlob?'Non sono riuscito a creare l\'immagine, ma il GPX c\'è. ':ok?'':'Mappa satellitare non disponibile (serve la connessione dati): disegnato solo il percorso. ';
+  $('mapmsg').textContent=note+(saved?'Giro salvato nella cronologia.':'Non sono riuscito a salvarlo nella cronologia: scarica foto e GPX.');
 }
 $('fine').onclick=()=>doFine(false);
 $('mstrava').onclick=()=>{downloadGpx();exported=true;window.open('https://www.strava.com/upload/select','_blank','noopener');$('mapmsg').textContent="GPX scaricato: su Strava scegli il file dall'elenco Download."};
 async function sharePhoto(){
   const msg=t=>{$('mapmsg').textContent=t};
   if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione: usa Salva JPG.');return}
-  if(!mapBlob){msg('Immagine non disponibile');return}
-  const f=new File([mapBlob],'kubocycle-'+new Date(track[0][2]).toISOString().slice(0,10)+'.jpg',{type:'image/jpeg'});
+  if(!cur||!cur.jpg){msg('Immagine non disponibile');return}
+  const f=new File([cur.jpg],cur.base+'.jpg',{type:'image/jpeg'});
   if(!navigator.canShare({files:[f]})){msg('Il browser non permette di condividere la foto: usa Salva JPG.');return}
   try{await navigator.share({files:[f],title:'Kubocycle'});exported=true;msg('')}
   catch(e){msg(e&&e.name!=='AbortError'?'Condivisione non riuscita: '+(e.message||e.name):'')}
@@ -604,6 +676,7 @@ $('mshf').onclick=sharePhoto;
 $('mjpg').onclick=downloadJpg;
 $('mgpx').onclick=downloadGpx;
 $('mclose').onclick=()=>{
+  if(cur&&cur.fromHistory){$('mapov').classList.remove('on','hm');cur=null;return}   // dalla cronologia: torna all'elenco
   if(!exported&&!confirm('Non hai ancora salvato né condiviso nulla: chiudendo, il percorso viene cancellato. Chiudere?'))return;
   clearSaved();location.reload();
 };
