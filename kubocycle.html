@@ -74,9 +74,9 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .hit b{display:block;font-size:.95rem;color:var(--mut);font-weight:700}
 .hit strong{display:block;font-size:1.3rem;margin:2px 0;font-weight:800}
 .hit i{display:block;font-style:normal;font-size:.95rem;color:var(--mut);font-weight:600}
-#opts,#bt,#prof,#heat,#hist,#fold{position:fixed;inset:0;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom));overflow-y:auto}
-#opts{z-index:36}#hist,#bt,#prof,#fold{z-index:38}#heat{z-index:39}
-#opts.on,#bt.on,#prof.on,#heat.on,#fold.on{display:flex}
+#opts,#bt,#prof,#heat,#hist,#fold,#sos{position:fixed;inset:0;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom));overflow-y:auto}
+#opts{z-index:36}#hist,#bt,#prof,#fold,#sos{z-index:38}#heat{z-index:39}
+#opts.on,#bt.on,#prof.on,#heat.on,#fold.on,#sos.on{display:flex}
 .omenu{display:flex;flex-direction:column;gap:10px}
 .omenu button,.hrow button,#heat .mbtns button{font:inherit;font-size:1.1rem;font-weight:800;text-align:left;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
 .omenu button small{display:block;margin-top:3px;font-size:.85rem;font-weight:600;color:var(--mut)}
@@ -222,6 +222,15 @@ body.p2 #p2{transform:translateX(0)}
 #alrt.veh h2{color:var(--lat)}
 #atext{white-space:pre-line;font-size:1.1rem;color:var(--ink);line-height:1.4}
 #aok{padding:18px!important;font-size:1.3rem!important}
+#fall{position:fixed;inset:0;z-index:65;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(70,8,8,.97)}
+#fall.on{display:flex}
+#fall .rbox{border:3px solid var(--con);text-align:center}
+#fall h2{color:var(--con);font-size:1.6rem}
+#falln{font-size:min(30vw,8rem);font-weight:900;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+#falln:empty{display:none}
+#falltxt{font-size:1.15rem!important;color:var(--ink)!important}
+#fall a#fallcall{display:none;font-weight:900;font-size:1.4rem;text-align:center;text-decoration:none;padding:20px;border-radius:14px;background:var(--con);color:#fff}
+#fall button{padding:20px!important;font-size:1.3rem!important}
 </style>
 </head>
 <body>
@@ -301,13 +310,15 @@ body.p2 #p2{transform:translateX(0)}
 <div id="bike"><div class="rbox"><h2>Che bici usi?</h2><p>Il tipo di bici viene salvato nella cronologia e serve per stimare le calorie.</p><div class="bgrid"><button data-b="mtb">Mountain bike</button><button data-b="road">Bici da corsa</button><button data-b="gravel">Gravel</button><button data-b="ebike">E-bike</button></div><button id="bikecancel">Annulla</button></div></div>
 <div id="cd"><div id="cdl"></div><div id="cdn">3</div><button id="cdcancel">Annulla</button></div>
 <div id="alrt"><div class="rbox"><h2 id="atitle"></h2><p id="atext"></p><button id="aok" class="go">OK</button></div></div>
+<div id="fall"><div class="rbox"><h2>Caduta rilevata</h2><div id="falln"></div><p id="falltxt"></p><a id="fallcall" href="#">Chiama</a><button id="fallok" class="go">Sto bene</button></div></div>
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
-<div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
+<div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
 <div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
+<div id="sos"><div class="hh"><button id="sosback" aria-label="Indietro">←</button><span>Soccorso</span></div><label class="pf">Numero da chiamare<input id="sosnum" type="tel" inputmode="tel" placeholder="es. +39 3XX XXXXXXX"></label><div class="omenu"><button id="sossave">Salva</button><button id="sostest">Prova la schermata<small>Fa partire il conto alla rovescia senza chiamare davvero</small></button></div><p id="sosmsg" class="pnote"></p><p class="pnote">Se durante un giro registrato l'app sente un urto forte e poi resti fermo, compare un avviso rosso con 30 secondi di tempo: tocca «Sto bene» per annullare. Se non tocchi nulla si apre la chiamata al numero scelto: su Android il telefono mostra la tastiera con il numero già scritto e devi toccare il tasto verde per chiamare (un sito web non può chiamare da solo). Il numero resta solo su questo telefono e si cancella se cancelli i dati del browser. È una stima fatta con i sensori del telefono: può sbagliare, e non sostituisce un dispositivo di emergenza.</p></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
 <div class="mbtns" id="mbtns" style="display:none"><p class="mcap">Condividi</p>
@@ -338,6 +349,9 @@ let rainPts=null,rainSnooze=0,rainA=null,rainAt=null;
 let vhist=[],vOver=0,vSnooze=0,vehA=null,accSq=0,accN=0,accBlk=[],motionOn=false;
 // cartella sul telefono
 let dirH=null;
+// caduta: numero da chiamare (solo nel telefono)
+let sosNum='',fallT=0,fallSnooze=0,fallOn=false,fallTest=false,fallTimer=null,lastMoveTs=0,audioCtx=null;
+try{sosNum=localStorage.getItem('kubocycle-sos')||''}catch(e){}
 
 function dist(a,b){const R=6371e3,r=Math.PI/180,x=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
 function bearing(a,b){const r=Math.PI/180,y=Math.sin((b.lon-a.lon)*r)*Math.cos(b.lat*r),x=Math.cos(a.lat*r)*Math.sin(b.lat*r)-Math.sin(a.lat*r)*Math.cos(b.lat*r)*Math.cos((b.lon-a.lon)*r);return(Math.atan2(y,x)/r+360)%360}
@@ -425,7 +439,7 @@ function onPos(pos){
   updateAlt();
   const sus=spd==null?0:Math.min(spd,prevSpd);            // velocità sostenuta per due fix di fila
   if(recording&&!paused&&sus>maxSpd&&sus<=VMAX){maxSpd=sus;$('vmax').textContent=Math.round(maxSpd*3.6)}
-  prevSpd=spd==null?0:spd;
+  prevSpd=spd==null?0:spd;if(spd!=null&&spd>3)lastMoveTs=Date.now();
   if(recording&&!paused){try{vehCheck(pos.timestamp,spd,raw)}catch(e){}}
   lastFixTs=pos.timestamp;
   // km e tempo in movimento: integro la velocità sul tempo tra due posizioni
@@ -1438,13 +1452,16 @@ function onMotion(ev){
   let a=ev.acceleration,m=null;
   if(a&&a.x!=null&&a.y!=null&&a.z!=null)m=Math.hypot(a.x,a.y,a.z);
   else{const g=ev.accelerationIncludingGravity;if(g&&g.x!=null&&g.y!=null&&g.z!=null)m=Math.abs(Math.hypot(g.x,g.y,g.z)-9.81)}
+  const gg=ev.accelerationIncludingGravity;let tot=null;
+  if(gg&&gg.x!=null&&gg.y!=null&&gg.z!=null)tot=Math.hypot(gg.x,gg.y,gg.z);
+  if(tot!=null&&tot>=FALL.peak&&recording&&!paused&&sosNum&&!fallT&&!fallOn&&Date.now()>fallSnooze&&Date.now()-lastMoveTs<6000)fallT=Date.now();   // urto forte mentre ti stavi muovendo
   if(m==null||!isFinite(m))return;
   accSq+=m*m;accN++;
 }
 function motionStart(){if(motionOn)return;motionOn=true;try{addEventListener('devicemotion',onMotion)}catch(e){}}
 function motionTick(){      // ogni secondo: un blocco di vibrazione (media quadratica) mentre registri
-  if(!(recording&&!paused)){accBlk=[];accSq=0;accN=0;return}
-  accBlk.push(accN>0?accSq/accN:null);if(accBlk.length>60)accBlk.shift();accSq=0;accN=0;
+  if(!(recording&&!paused)){accBlk=[];accSq=0;accN=0;fallT=0;return}
+  accBlk.push(accN>0?accSq/accN:null);if(accBlk.length>60)accBlk.shift();accSq=0;accN=0;fallCheck();
 }
 function accRms(){const v=accBlk.filter(x=>x!=null);if(v.length<45)return null;return Math.sqrt(v.reduce((a,b)=>a+b,0)/v.length)}
 function vehAlert(why){
@@ -1553,6 +1570,53 @@ $('fsync').onclick=folderSync;
 $('foff').onclick=async()=>{dirH=null;await metaDel();folderShow();$('fmsg').textContent='Cartella scollegata: i file restano dove sono.'};
 metaGet().then(h=>{if(h){dirH=h}folderShow()});
 
+
+// ================= caduta: urto forte + poi fermo => conto alla rovescia e chiamata =================
+const FALL={peak:30,wait:12000,still:1.0,speed:1,secs:30};     // picco in m/s² (~3 g); soglie da tarare con l'uso reale
+function fallCheck(){
+  if(!fallT||fallOn)return;
+  if(Date.now()-fallT<FALL.wait)return;
+  fallT=0;
+  const v=accBlk.slice(-8).filter(x=>x!=null),rms=v.length>=5?Math.sqrt(v.reduce((a,b)=>a+b,0)/v.length):null;
+  if(curSpd<FALL.speed&&rms!=null&&rms<FALL.still)fallStart(false);     // dopo l'urto sei fermo e il telefono non si muove
+}
+const telNum=()=>sosNum.replace(/[^\d+]/g,'');
+function navTel(u){location.href=u}
+function fallAudio(){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
+function fallBeep(){
+  try{navigator.vibrate&&navigator.vibrate(500)}catch(e){}
+  try{if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=880;g.gain.value=.4;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.3)}catch(e){}
+}
+function fallDraw(c){$('falln').textContent=c;$('falltxt').textContent=(fallTest?'PROVA: ':'')+'Chiamo '+sosNum+' tra '+c+' secondi. Se stai bene, tocca «Sto bene».'}
+function fallStart(test){
+  if(fallOn||!sosNum)return;
+  fallOn=true;fallTest=!!test;let c=FALL.secs;
+  $('fallcall').style.display='none';$('fallok').textContent='Sto bene';$('fall').className='on';fallDraw(c);fallBeep();
+  fallTimer=setInterval(()=>{c--;if(c>0){fallDraw(c);fallBeep();return}clearInterval(fallTimer);fallTimer=null;fallDial()},1000);
+}
+function fallDial(){
+  $('falln').textContent='';$('fallok').textContent='Chiudi';
+  if(fallTest){$('falltxt').textContent='PROVA terminata: a questo punto si aprirebbe la chiamata a '+sosNum+'.';return}
+  $('falltxt').textContent='Apro la chiamata a '+sosNum+'. Se la tastiera non compare, tocca «Chiama», poi il tasto verde.';
+  $('fallcall').href='tel:'+telNum();$('fallcall').style.display='block';
+  try{navTel('tel:'+telNum())}catch(e){}
+}
+$('fallok').onclick=()=>{clearInterval(fallTimer);fallTimer=null;fallOn=false;fallT=0;fallSnooze=Date.now()+60000;$('fall').className='';try{navigator.vibrate&&navigator.vibrate(0)}catch(e){}};
+function sosShow(){$('sosnum').value=sosNum;$('ososst').textContent=sosNum?'Numero: '+sosNum:'Chiamata a un numero se cadi'}
+$('osos').onclick=()=>{$('sosmsg').textContent='';sosShow();show('sos')};
+$('sosback').onclick=()=>hide('sos');
+$('sossave').onclick=()=>{
+  const v=$('sosnum').value.trim(),d=v.replace(/\D/g,'');
+  if(v&&(d.length<3||/[^\d+\s().-]/.test(v))){$('sosmsg').textContent='Scrivi un numero valido, per esempio +39 3XX XXXXXXX.';return}
+  sosNum=v;try{v?localStorage.setItem('kubocycle-sos',v):localStorage.removeItem('kubocycle-sos')}catch(e){}
+  sosShow();$('sosmsg').textContent=v?'Salvato.':'Numero cancellato: la funzione è disattivata.';
+};
+$('sostest').onclick=()=>{
+  if(!sosNum){$('sosmsg').textContent='Salva prima un numero.';return}
+  fallAudio();hide('sos');hide('opts');fallStart(true);
+};
+sosShow();
+
 // ---- avvio giro: il GPS è già attivo dall'apertura, qui parte la registrazione ----
 function startRide(resume,bk){
   goFull();keepAwake();
@@ -1568,7 +1632,7 @@ function startRide(resume,bk){
 }
 function pauseRide(){if(!recording||paused)return;paused=true;pausedAt=Date.now();document.body.classList.add('pau');saveTrack()}
 function resumeRide(){if(!recording||!paused)return;goFull();keepAwake();vhist=[];vOver=0;startTime+=Date.now()-pausedAt;paused=false;pausedAt=0;newSeg=true;document.body.classList.remove('pau')}
-$('start').onclick=()=>{if(startBusy)return;if(!recording)bikeOpen();else resumeRide()};
+$('start').onclick=()=>{fallAudio();if(startBusy)return;if(!recording)bikeOpen();else resumeRide()};
 $('pause').onclick=pauseRide;
 
 // percorso rimasto salvato (blocco, chiusura): riprendere, concludere o scartare
