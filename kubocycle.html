@@ -74,9 +74,9 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .hit b{display:block;font-size:.95rem;color:var(--mut);font-weight:700}
 .hit strong{display:block;font-size:1.3rem;margin:2px 0;font-weight:800}
 .hit i{display:block;font-style:normal;font-size:.95rem;color:var(--mut);font-weight:600}
-#opts,#bt,#prof,#heat,#hist,#fold,#sos{position:fixed;inset:0;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom));overflow-y:auto}
-#opts{z-index:36}#hist,#bt,#prof,#fold,#sos{z-index:38}#heat{z-index:39}
-#opts.on,#bt.on,#prof.on,#heat.on,#fold.on,#sos.on{display:flex}
+#opts,#bt,#prof,#heat,#hist,#fold,#sos,#srv{position:fixed;inset:0;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom));overflow-y:auto}
+#opts{z-index:36}#hist,#bt,#prof,#fold,#sos,#srv{z-index:38}#heat{z-index:39}
+#opts.on,#bt.on,#prof.on,#heat.on,#fold.on,#sos.on,#srv.on{display:flex}
 .omenu{display:flex;flex-direction:column;gap:10px}
 .omenu button,.hrow button,#heat .mbtns button{font:inherit;font-size:1.1rem;font-weight:800;text-align:left;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
 .omenu button small{display:block;margin-top:3px;font-size:.85rem;font-weight:600;color:var(--mut)}
@@ -312,13 +312,14 @@ body.p2 #p2{transform:translateX(0)}
 <div id="alrt"><div class="rbox"><h2 id="atitle"></h2><p id="atext"></p><button id="aok" class="go">OK</button></div></div>
 <div id="fall"><div class="rbox"><h2>Caduta rilevata</h2><div id="falln"></div><p id="falltxt"></p><a id="fallcall" href="#">Chiama</a><button id="fallok" class="go">Sto bene</button></div></div>
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
-<div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
+<div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
 <div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
 <div id="sos"><div class="hh"><button id="sosback" aria-label="Indietro">←</button><span>Soccorso</span></div><label class="pf">Numero da chiamare<input id="sosnum" type="tel" inputmode="tel" placeholder="es. +39 3XX XXXXXXX"></label><div class="omenu"><button id="sossave">Salva</button><button id="sostest">Prova la schermata<small>Fa partire il conto alla rovescia senza chiamare davvero</small></button></div><p id="sosmsg" class="pnote"></p><p class="pnote">Se durante un giro registrato l'app sente un urto forte e poi resti fermo, compare un avviso rosso con 30 secondi di tempo: tocca «Sto bene» per annullare. Se non tocchi nulla si apre la chiamata al numero scelto: su Android il telefono mostra la tastiera con il numero già scritto e devi toccare il tasto verde per chiamare (un sito web non può chiamare da solo). Il numero resta solo su questo telefono e si cancella se cancelli i dati del browser. È una stima fatta con i sensori del telefono: può sbagliare, e non sostituisce un dispositivo di emergenza.</p></div>
+<div id="srv"><div class="hh"><button id="srvback" aria-label="Indietro">←</button><span>Server giri</span></div><label class="pf">Indirizzo del server<input id="srvurl" type="url" inputmode="url" placeholder="https://giri.tuodominio.it" autocapitalize="off" autocomplete="off"></label><label class="pf">Chiave personale<input id="srvkey" type="password" autocomplete="off" autocapitalize="off"></label><div class="omenu"><button id="srvsave">Salva e prova la connessione</button><button id="srvsync">Carica ora i giri mancanti<small id="srvpend"></small></button><button id="srvoff">Scollega il server</button></div><p id="srvmsg" class="pnote"></p><p class="pnote">Se il server è collegato, ogni giro viene inviato da solo appena premi Stop (con foto, GPX, vento, temperatura e quota). Se sei offline resta in coda e parte alla prossima apertura dell'app. Indirizzo e chiave restano solo su questo telefono. Eliminare un giro qui non lo cancella dal server.</p></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
 <div class="mbtns" id="mbtns" style="display:none"><p class="mcap">Condividi</p>
@@ -349,6 +350,9 @@ let rainPts=null,rainSnooze=0,rainA=null,rainAt=null;
 let vhist=[],vOver=0,vSnooze=0,vehA=null,accSq=0,accN=0,accBlk=[],motionOn=false;
 // cartella sul telefono
 let dirH=null;
+// ambiente del giro (vento, temperatura) e server giri
+let envS=[],srvCfg=null,srvBusy=false;
+try{srvCfg=JSON.parse(localStorage.getItem('kubocycle-server')||'null')}catch(e){}
 // caduta: numero da chiamare (solo nel telefono)
 let sosNum='',fallT=0,fallSnooze=0,fallOn=false,fallTest=false,fallTimer=null,lastMoveTs=0,audioCtx=null;
 try{sosNum=localStorage.getItem('kubocycle-sos')||''}catch(e){}
@@ -366,6 +370,7 @@ async function getWx(p){
     // altitudine: la quota GPS è liscia ma sfalsata; la allineo a quella del modello del terreno di Open-Meteo
     if(wx.elev!=null&&gAlt!=null){const off=wx.elev-gAlt;altOff=altOff==null?off:altOff*0.6+off*0.4}
     wxFail=false;setNet();
+    if(recording&&!paused){const fl=feelsLike();envS.push({t:Date.now(),tp:wx.t,h:wx.h,v:wx.v,d:wx.d,g:wx.g,f:fl==null?null:Math.round(fl*10)/10});if(envS.length>300)envS.shift()}
     getRain(p);
   }catch(e){
     lastFetch=Date.now()-270000;
@@ -587,7 +592,7 @@ if(navigator.getBattery){
 
 // ---- percorso GPX: salvato anche nel browser, così non si perde se la pagina si chiude ----
 const TK='kubocycle-track';
-function saveTrack(){try{localStorage.setItem(TK,JSON.stringify(track));if(startTime)localStorage.setItem(TK+'-s',JSON.stringify({km,moving,maxSpd,hs:hrSum,hn:hrN,hm:hrMax,kc:kcal,bk:bike,el:(paused?pausedAt:Date.now())-startTime}))}catch(e){}}
+function saveTrack(){try{localStorage.setItem(TK,JSON.stringify(track));if(startTime)localStorage.setItem(TK+'-s',JSON.stringify({km,moving,maxSpd,hs:hrSum,hn:hrN,hm:hrMax,kc:kcal,bk:bike,ev:envS,el:(paused?pausedAt:Date.now())-startTime}))}catch(e){}}
 function clearSaved(){track=[];savedStats=null;try{localStorage.removeItem(TK);localStorage.removeItem(TK+'-s')}catch(e){}}
 function statsFromTrack(){let d=0,m=0;for(let i=1;i<track.length;i++){const a={lat:track[i-1][0],lon:track[i-1][1]},b={lat:track[i][0],lon:track[i][1]},sd=dist(a,b),dt=(track[i][2]-track[i-1][2])/1000;d+=sd;if(dt>0&&dt<=60&&sd/dt>=0.8)m+=dt*1000}let hs=0,hn=0,hm=0;for(const q of track)if(q[4]>0){hs+=q[4];hn++;hm=Math.max(hm,q[4])}return{km:d,moving:m,maxSpd:0,hs,hn,hm,kc:null,el:track[track.length-1][2]-track[0][2]}}
 try{const t=JSON.parse(localStorage.getItem(TK)||'[]');if(Array.isArray(t))track=t}catch(e){}
@@ -766,7 +771,7 @@ async function histOpen(){
     else{th=document.createElement('div');th.className='nophoto';th.textContent='GPX'}
     const t=document.createElement('div');
     const ds=d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-    const det=[r.bike&&BIKES[r.bike]?BIKES[r.bike]:'',r.avg!=null?'media '+f1(r.avg)+' km/h':'',r.vmax!=null?'max '+Math.round(r.vmax*3.6)+' km/h':'',r.hrAvg!=null?'cuore '+Math.round(r.hrAvg)+'/'+r.hrMax:'',r.kcal>0?Math.round(r.kcal)+' kcal':''].filter(Boolean).join(' · ');
+    const det=[r.bike&&BIKES[r.bike]?BIKES[r.bike]:'',r.avg!=null?'media '+f1(r.avg)+' km/h':'',r.vmax!=null?'max '+Math.round(r.vmax*3.6)+' km/h':'',r.hrAvg!=null?'cuore '+Math.round(r.hrAvg)+'/'+r.hrMax:'',r.kcal>0?Math.round(r.kcal)+' kcal':'',srvOk()?(r.srv&&r.srv.at&&r.srv.name===(r.name||'')?'sul server':'da caricare'):''].filter(Boolean).join(' · ');
     t.innerHTML='<b></b><strong></strong><i></i>';
     t.children[0].textContent=r.name||ds;
     t.children[1].textContent=f1((r.km||0)/1000)+' km · '+fmtDur(r.dur||0);
@@ -807,7 +812,7 @@ async function doFine(skip){
   let ok=0;
   try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
   const S=rideStats(),gx=gpxData();
-  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,kcal:S.kcal,bike:bike,pts:track.length,jpg:mapBlob,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
+  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,kcal:S.kcal,bike:bike,env:envSummary(),alt:altSummary(),pts:track.length,jpg:mapBlob,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
   const saved=await dbPut(rec);
   const fsaved=saved&&dirH?await folderPut(rec):null;
   cur=rec;rec.fromHistory=false;
@@ -815,6 +820,7 @@ async function doFine(skip){
   $('mapc').style.display=mapBlob?'block':'none';$('mbtns').style.display='flex';
   const note=!mapBlob?'Non sono riuscito a creare l\'immagine, ma il GPX c\'è. ':ok?'':'Mappa satellitare non disponibile (serve la connessione dati): disegnato solo il percorso. ';
   $('mapmsg').textContent=note+(saved?'Giro salvato nella cronologia'+(fsaved?' e nella cartella.':(dirH?'. La cartella non è stata aggiornata: apri Opzioni → Cartella e tocca Sincronizza.':'.')):'Non sono riuscito a salvarlo nella cronologia: scarica foto e GPX.');
+  if(saved&&srvOk()){const M=' Carico sul server…';$('mapmsg').textContent+=M;srvSyncAll().then(x=>{const m=$('mapmsg');m.textContent=m.textContent.replace(M,x&&x.n&&!x.bad?' Caricato sul server.':' Server non raggiunto: il giro resta in coda.')})}
 }
 $('fine').onclick=()=>doFine(false);
 $('mstrava').onclick=()=>{downloadGpx();exported=true;window.open('https://www.strava.com/upload/select','_blank','noopener');$('mapmsg').textContent="GPX scaricato: su Strava scegli il file dall'elenco Download."};
@@ -1503,7 +1509,7 @@ async function dirPerm(h,ask){
   return false;
 }
 async function fwrite(name,data){const fh=await dirH.getFileHandle(name,{create:true}),w=await fh.createWritable();try{await w.write(data)}finally{await w.close()}}
-const rideMeta=r=>({v:1,id:r.id,start:r.start,dur:r.dur,km:r.km,mov:r.mov,avg:r.avg,vmax:r.vmax,hrAvg:r.hrAvg,hrMax:r.hrMax,kcal:r.kcal,pts:r.pts,name:r.name||'',base:r.base,bike:r.bike||null});
+const rideMeta=r=>({v:1,id:r.id,start:r.start,dur:r.dur,km:r.km,mov:r.mov,avg:r.avg,vmax:r.vmax,hrAvg:r.hrAvg,hrMax:r.hrMax,kcal:r.kcal,pts:r.pts,name:r.name||'',base:r.base,bike:r.bike||null,env:r.env||null,alt:r.alt||null});
 async function folderPut(r){
   if(!dirH||!(await dirPerm(dirH,false)))return false;
   try{
@@ -1542,7 +1548,7 @@ async function folderSync(){
       try{
         const mt=JSON.parse(await (await (await dirH.getFileHandle(base+'.json')).getFile()).text());
         if(!mt||!mt.start)throw 0;
-        const rec={id:mt.id||mt.start,start:mt.start,dur:mt.dur,km:mt.km,mov:mt.mov,avg:mt.avg,vmax:mt.vmax,hrAvg:mt.hrAvg,hrMax:mt.hrMax,kcal:mt.kcal,pts:mt.pts,name:mt.name||'',bike:mt.bike||null,base};
+        const rec={id:mt.id||mt.start,start:mt.start,dur:mt.dur,km:mt.km,mov:mt.mov,avg:mt.avg,vmax:mt.vmax,hrAvg:mt.hrAvg,hrMax:mt.hrMax,kcal:mt.kcal,pts:mt.pts,name:mt.name||'',bike:mt.bike||null,env:mt.env||null,alt:mt.alt||null,base};
         try{rec.gpx=await (await (await dirH.getFileHandle(base+'.gpx')).getFile()).text()}catch(e){rec.gpx=''}
         try{const f=await (await dirH.getFileHandle(base+'.jpg')).getFile();rec.jpg=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.jpg=null}
         rec.thumb=rec.jpg?await thumbFrom(rec.jpg):null;
@@ -1617,13 +1623,88 @@ $('sostest').onclick=()=>{
 };
 sosShow();
 
+
+// ================= vento, temperatura e quota del giro =================
+function envSummary(){
+  if(!envS.length)return null;
+  const a=k=>envS.map(x=>x[k]).filter(x=>x!=null&&isFinite(x)),avg=v=>v.length?v.reduce((p,x)=>p+x,0)/v.length:null,r1=x=>x==null?null:Math.round(x*10)/10,mn=v=>v.length?r1(Math.min(...v)):null,mx=v=>v.length?r1(Math.max(...v)):null;
+  const T=a('tp'),F=a('f'),V=a('v'),G=a('g'),H=a('h');
+  let sx=0,sy=0;for(const x of envS)if(x.d!=null&&x.v!=null){const w=x.v||0.1,r=x.d*Math.PI/180;sx+=Math.sin(r)*w;sy+=Math.cos(r)*w}
+  return {n:envS.length,tAvg:r1(avg(T)),tMin:mn(T),tMax:mx(T),fAvg:r1(avg(F)),fMin:mn(F),fMax:mx(F),vAvg:r1(avg(V)),vMax:mx(V),gMax:mx(G),dir:(sx||sy)?(Math.round(Math.atan2(sx,sy)*180/Math.PI)+360)%360:null,hAvg:H.length?Math.round(avg(H)):null};
+}
+function altSummary(){
+  let mn=null,mx=null,gain=0,loss=0,ref=null;
+  for(const q of track){const a=q[3];if(a==null||!isFinite(a))continue;mn=mn==null?a:Math.min(mn,a);mx=mx==null?a:Math.max(mx,a);
+    if(ref==null){ref=a;continue}
+    if(a-ref>=3){gain+=a-ref;ref=a}else if(ref-a>=3){loss+=ref-a;ref=a}}      // salite e discese contate a gradini da 3 m, per non sommare il rumore del GPS
+  return mn==null?null:{min:Math.round(mn),max:Math.round(mx),gain:Math.round(gain),loss:Math.round(loss)};
+}
+
+// ================= server giri (opzionale) =================
+const srvOk=()=>!!(srvCfg&&srvCfg.url&&srvCfg.key);
+const b64=blob=>new Promise(res=>{if(!blob)return res(null);const f=new FileReader();f.onload=()=>res(String(f.result).split(',')[1]||null);f.onerror=()=>res(null);f.readAsDataURL(blob)});
+async function srvFetch(path,opt){
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),60000);
+  try{return await fetch(srvCfg.url.replace(/\/+$/,'')+path,{...opt,signal:ctl.signal,headers:{'Authorization':'Bearer '+srvCfg.key,'Content-Type':'application/json'}})}
+  finally{clearTimeout(tm)}
+}
+async function srvUpload(r){
+  const body=JSON.stringify({id:String(r.id),start:r.start,name:r.name||'',bike:r.bike||null,stats:rideMeta(r),gpx:r.gpx||'',jpg:await b64(r.jpg),thumb:await b64(r.thumb)});
+  const x=await srvFetch('/api/rides',{method:'POST',body});
+  if(!x.ok)throw new Error('HTTP '+x.status);
+  r.srv={at:Date.now(),name:r.name||''};await dbPut(r);
+}
+const srvPending=r=>!(r.srv&&r.srv.at&&r.srv.name===(r.name||''));
+async function srvSyncAll(){
+  if(!srvOk()||srvBusy||navigator.onLine===false)return null;
+  srvBusy=true;let n=0,bad=0,auth=false;
+  try{
+    for(const r of ((await dbAll())||[])){
+      if(!srvPending(r))continue;
+      try{await srvUpload(r);n++}catch(e){bad++;if(String(e.message).includes('401')||String(e.message).includes('429')){auth=true;break}}
+    }
+  }finally{srvBusy=false}
+  return {n,bad,auth};
+}
+function srvShow(){
+  let h='';try{h=srvCfg?new URL(srvCfg.url).host:''}catch(e){}
+  $('srvurl').value=srvCfg?srvCfg.url:'';$('srvkey').value=srvCfg?srvCfg.key:'';
+  $('osrvst').textContent=srvOk()?'Collegato: '+h:'Archivio dei giri sul tuo server';
+  $('srvoff').style.display=srvCfg?'':'none';
+  dbAll().then(L=>{$('srvpend').textContent=srvOk()?'Giri in attesa: '+((L||[]).filter(srvPending).length):''});
+}
+$('osrv').onclick=()=>{$('srvmsg').textContent='';srvShow();show('srv')};
+$('srvback').onclick=()=>hide('srv');
+$('srvsave').onclick=async()=>{
+  const m=$('srvmsg'),url=$('srvurl').value.trim().replace(/\/+$/,''),key=$('srvkey').value.trim();
+  if(!/^https?:\/\/[^\s/]+/.test(url)||key.length<8){m.textContent='Scrivi l\'indirizzo completo (https://…) e la chiave.';return}
+  if(url.startsWith('http://')&&location.protocol==='https:'&&!/^http:\/\/(localhost|127\.0\.0\.1)/.test(url)){m.textContent='Da questa app sono ammessi solo indirizzi https://.';return}
+  srvCfg={url,key};m.textContent='Provo la connessione…';
+  try{
+    const x=await srvFetch('/api/ping',{method:'GET'});
+    if(x.status===401){m.textContent='Chiave non accettata.';srvCfg=null;try{localStorage.removeItem('kubocycle-server')}catch(e){}srvShow();return}
+    if(!x.ok)throw new Error('HTTP '+x.status);
+    const j=await x.json();
+    try{localStorage.setItem('kubocycle-server',JSON.stringify(srvCfg))}catch(e){}
+    srvShow();m.textContent='Collegato. Giri già sul server: '+j.rides+'.';
+  }catch(e){srvCfg=null;try{const o=localStorage.getItem('kubocycle-server');srvCfg=o?JSON.parse(o):null}catch(_){}m.textContent='Server non raggiungibile: controlla indirizzo e connessione.';srvShow()}
+};
+$('srvsync').onclick=async()=>{
+  const m=$('srvmsg');if(!srvOk()){m.textContent='Collega prima il server.';return}
+  m.textContent='Carico…';const x=await srvSyncAll();
+  m.textContent=!x?'Non posso caricare adesso (offline o già in corso).':x.auth?'Chiave non accettata o troppi tentativi: riprova più tardi.':'Caricati '+x.n+' giri'+(x.bad?', '+x.bad+' non riusciti.':'.');srvShow();
+};
+$('srvoff').onclick=()=>{srvCfg=null;try{localStorage.removeItem('kubocycle-server')}catch(e){}srvShow();$('srvmsg').textContent='Server scollegato: i giri già inviati restano sul server.'};
+srvShow();
+if(srvOk()){setTimeout(()=>{srvSyncAll()},4000);addEventListener('online',()=>{srvSyncAll()})}
+
 // ---- avvio giro: il GPS è già attivo dall'apertura, qui parte la registrazione ----
 function startRide(resume,bk){
   goFull();keepAwake();
   if(!startWatch())return;
   vhist=[];vOver=0;vehA=null;accBlk=[];motionStart();
-  if(resume){const v=savedStats||{km:0,moving:0,maxSpd:0,el:0};bike=v.bk||null;km=v.km;moving=v.moving;maxSpd=Math.min(v.maxSpd||0,VMAX);hrSum=v.hs||0;hrN=v.hn||0;hrMax=v.hm||0;kcal=v.kc||0;startTime=Date.now()-(v.el||0)}
-  else{clearSaved();bike=bk||null;km=0;moving=0;maxSpd=0;hrSum=0;hrN=0;hrMax=0;kcal=0;startTime=Date.now()}
+  if(resume){const v=savedStats||{km:0,moving:0,maxSpd:0,el:0};bike=v.bk||null;envS=Array.isArray(v.ev)?v.ev:[];km=v.km;moving=v.moving;maxSpd=Math.min(v.maxSpd||0,VMAX);hrSum=v.hs||0;hrN=v.hn||0;hrMax=v.hm||0;kcal=v.kc||0;startTime=Date.now()-(v.el||0)}
+  else{clearSaved();bike=bk||null;envS=[];km=0;moving=0;maxSpd=0;hrSum=0;hrN=0;hrMax=0;kcal=0;startTime=Date.now()}
   recording=true;paused=false;newSeg=false;exported=false;document.body.classList.remove('pau');document.body.classList.add('rec');saveTrack();showKcal();
   $('vmax').textContent=Math.round(maxSpd*3.6);
   $('km').textContent=(km/1000).toFixed(1).replace('.',',');
@@ -1637,7 +1718,7 @@ $('pause').onclick=pauseRide;
 
 // percorso rimasto salvato (blocco, chiusura): riprendere, concludere o scartare
 if(track.length>=2){
-  const v=savedStats||statsFromTrack(),d0=new Date(track[0][2]);bike=(savedStats&&savedStats.bk)||null;
+  const v=savedStats||statsFromTrack(),d0=new Date(track[0][2]);bike=(savedStats&&savedStats.bk)||null;envS=(savedStats&&Array.isArray(savedStats.ev))?savedStats.ev:[];
   $('rinfo').textContent=d0.toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · '+(v.km/1000).toFixed(1).replace('.',',')+' km · '+track.length+' punti';
   $('resume').classList.add('on');
   $('rres').onclick=()=>{$('resume').classList.remove('on');startRide(true)};
