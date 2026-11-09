@@ -98,6 +98,8 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 #mdel{display:none;background:transparent!important;color:#FF5448!important;border:1px solid #FF5448!important}
 #mapov.hm #mdel{display:block}
 #mapov canvas{max-height:calc(100vh - 360px);max-height:calc(100dvh - 360px)}
+#mapov.pv canvas{max-height:calc(100vh - 420px);max-height:calc(100dvh - 420px)}
+#mview{flex:1 1 100%!important;background:var(--card)!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
 #egg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;overflow:hidden}
 #egg.on{display:flex}
 #egg.splash{background:#000}
@@ -318,7 +320,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
-<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
+<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea i profili altimetrici</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
@@ -327,7 +329,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="srvnav"><div class="hh"><button id="snback" aria-label="Indietro">←</button><span>Giri sul server</span></div><input id="snq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><p id="snmsg" class="pnote"></p><div id="snlist"></div></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
-<div class="mbtns" id="mbtns" style="display:none"><p class="mcap">Condividi</p>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Profilo altimetrico</button><p class="mcap">Condividi</p>
 <button id="mshf" class="share">Foto</button><button id="mstrava" class="strava">Strava</button>
 <button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button><button id="mren" class="sec">Rinomina</button><button id="mdel">Elimina giro</button></div></div>
 <script>
@@ -750,8 +752,8 @@ async function buildMap(src){      // src (facoltativo): {pts:[[lat,lon]..],S:{.
   return okTiles;
 }
 function downloadJpg(){
-  if(!cur||!cur.jpg){toast('Immagine non disponibile');return}
-  saveBlob(cur.jpg,cur.base+'.jpg');exported=true;
+  if(!cur||!curImg()){toast('Immagine non disponibile');return}
+  saveBlob(curImg(),cur.base+curSuffix()+'.jpg');exported=true;
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
@@ -790,13 +792,27 @@ async function histOpen(){
     b.append(th,t);b.onclick=()=>openRide(r);box.appendChild(b);
   }
 }
+let curView='map';
+async function showImg(blob,none){
+  const cv=$('mapc');
+  if(!blob){cv.style.display='none';$('mapmsg').textContent=none;return}
+  try{const bm=await createImageBitmap(blob);cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);cv.style.display='block';$('mapmsg').textContent=''}
+  catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare l\'immagine: puoi scaricare il GPX.'}
+}
+function viewInit(){curView='map';const on=!!(cur&&cur.prof);$('mview').style.display=on?'':'none';$('mview').textContent='Profilo altimetrico';$('mapov').classList.toggle('pv',on)}
+const curImg=()=>cur?(curView==='prof'&&cur.prof?cur.prof:cur.jpg):null;
+const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-profilo':'';
+$('mview').onclick=async()=>{
+  if(!cur||!cur.prof)return;
+  curView=curView==='prof'?'map':'prof';
+  $('mview').textContent=curView==='prof'?'Mappa del percorso':'Profilo altimetrico';
+  await showImg(curImg(),'Foto non disponibile per questo giro: puoi scaricare il GPX.');
+};
 async function openRide(rec){
   cur=rec;rec.fromHistory=true;
-  const cv=$('mapc');$('mapov').classList.add('on','hm');$('mapmsg').textContent='';$('mapttl').textContent=rec.name||'';$('mapttl').style.display=rec.name?'block':'none';$('mbtns').style.display='flex';
-  if(rec.jpg){
-    try{const bm=await createImageBitmap(rec.jpg);cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);cv.style.display='block'}
-    catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare la foto: puoi scaricare il GPX.'}
-  }else{cv.style.display='none';$('mapmsg').textContent='Foto non disponibile per questo giro: puoi scaricare il GPX.'}
+  $('mapov').classList.add('on','hm');$('mapmsg').textContent='';$('mapttl').textContent=rec.name||'';$('mapttl').style.display=rec.name?'block':'none';$('mbtns').style.display='flex';
+  viewInit();
+  await showImg(rec.jpg,'Foto non disponibile per questo giro: puoi scaricare il GPX.');
 }
 const show=id=>$(id).classList.add('on'),hide=id=>$(id).classList.remove('on');
 $('optbtn').onclick=()=>show('opts');$('oback').onclick=()=>hide('opts');
@@ -823,12 +839,13 @@ async function doFine(skip){
   let ok=0;
   try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
   const S=rideStats(),gx=gpxData();
-  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,kcal:S.kcal,bike:bike,env:envSummary(),alt:altSummary(),pm:lastPhotoSat?'sat':(ok?'osm':'none'),pts:track.length,jpg:mapBlob,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
+  let prof=null;try{prof=await buildProfile(track.map(q=>[q[0],q[1],q[3]]),{t0:S.t0,km:S.kmm,alt:altSummary()})}catch(e){prof=null}
+  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,kcal:S.kcal,bike:bike,env:envSummary(),alt:altSummary(),pm:lastPhotoSat?'sat':(ok?'osm':'none'),pts:track.length,jpg:mapBlob,prof:prof,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
   const saved=await dbPut(rec);
   const fsaved=saved&&dirH?await folderPut(rec):null;
   cur=rec;rec.fromHistory=false;
   if(saved){exported=true;clearSaved()}
-  $('mapc').style.display=mapBlob?'block':'none';$('mbtns').style.display='flex';
+  $('mapc').style.display=mapBlob?'block':'none';$('mbtns').style.display='flex';viewInit();
   const note=!mapBlob?'Non sono riuscito a creare l\'immagine, ma il GPX c\'è. ':ok?'':'Mappa non disponibile (serve la connessione dati): disegnato solo il percorso. ';
   $('mapmsg').textContent=note+(saved?'Giro salvato nella cronologia'+(fsaved?' e nella cartella.':(dirH?'. La cartella non è stata aggiornata: apri Opzioni → Cartella e tocca Sincronizza.':'.')):'Non sono riuscito a salvarlo nella cronologia: scarica foto e GPX.');
   if(saved&&srvOk()){const M=' Carico sul server…';$('mapmsg').textContent+=M;srvSyncAll().then(x=>{const m=$('mapmsg');m.textContent=m.textContent.replace(M,x&&x.n&&!x.bad?' Caricato sul server.':' Server non raggiunto: il giro resta in coda.')})}
@@ -838,8 +855,8 @@ $('mstrava').onclick=()=>{downloadGpx();exported=true;window.open('https://www.s
 async function sharePhoto(){
   const msg=t=>{$('mapmsg').textContent=t};
   if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione: usa Salva JPG.');return}
-  if(!cur||!cur.jpg){msg('Immagine non disponibile');return}
-  const f=new File([cur.jpg],cur.base+'.jpg',{type:'image/jpeg'});
+  if(!cur||!curImg()){msg('Immagine non disponibile');return}
+  const f=new File([curImg()],cur.base+curSuffix()+'.jpg',{type:'image/jpeg'});
   if(!navigator.canShare({files:[f]})){msg('Il browser non permette di condividere la foto: usa Salva JPG.');return}
   try{await navigator.share({files:[f],title:'Kubocycle'});exported=true;msg('')}
   catch(e){msg(e&&e.name!=='AbortError'?'Condivisione non riuscita: '+(e.message||e.name):'')}
@@ -1013,12 +1030,13 @@ async function exportAll(){
       const d=new Date(r.start),base=r.base+(r.name&&slug(r.name)?'-'+slug(r.name):'');
       if(r.gpx)files.push({name:'gpx/'+base+'.gpx',data:enc.encode(r.gpx),date:d});
       if(r.jpg)files.push({name:'foto/'+base+'.jpg',data:new Uint8Array(await r.jpg.arrayBuffer()),date:d});
+      if(r.prof)files.push({name:'profili/'+base+'-profilo.jpg',data:new Uint8Array(await r.prof.arrayBuffer()),date:d});
       csv+=[d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),pad(d.getHours())+':'+pad(d.getMinutes()),'"'+(r.name||'').replace(/"/g,'""')+'"',f1((r.km||0)/1000),Math.round((r.dur||0)/60000),r.mov!=null?Math.round(r.mov/60000):'',f1(r.avg),r.vmax!=null?Math.round(r.vmax*3.6):'',r.hrAvg!=null?Math.round(r.hrAvg):'',r.hrMax||'',r.kcal>0?Math.round(r.kcal):'',base+'.gpx',r.bike&&BIKES[r.bike]?BIKES[r.bike]:''].join(';')+'\n';
     }
     files.push({name:'cronologia.csv',data:enc.encode('\ufeff'+csv),date:new Date()});
     const t=new Date();
     saveBlob(mkZip(files),'kubocycle-cronologia-'+t.getFullYear()+pad(t.getMonth()+1)+pad(t.getDate())+'.zip');
-    m.textContent='Scaricato il file con '+L.length+(L.length===1?' giro':' giri')+' (GPX, foto e cronologia.csv).';
+    m.textContent='Scaricato il file con '+L.length+(L.length===1?' giro':' giri')+' (GPX, foto, profili e cronologia.csv).';
   }catch(e){m.textContent='Esportazione non riuscita: '+((e&&e.message)||e)}
 }
 
@@ -1520,12 +1538,13 @@ async function dirPerm(h,ask){
   return false;
 }
 async function fwrite(name,data){const fh=await dirH.getFileHandle(name,{create:true}),w=await fh.createWritable();try{await w.write(data)}finally{await w.close()}}
-const rideMeta=r=>({v:1,id:r.id,start:r.start,dur:r.dur,km:r.km,mov:r.mov,avg:r.avg,vmax:r.vmax,hrAvg:r.hrAvg,hrMax:r.hrMax,kcal:r.kcal,pts:r.pts,name:r.name||'',base:r.base,bike:r.bike||null,env:r.env||null,alt:r.alt||null,pm:r.pm||null});
+const rideMeta=r=>({v:1,id:r.id,start:r.start,dur:r.dur,km:r.km,mov:r.mov,avg:r.avg,vmax:r.vmax,hrAvg:r.hrAvg,hrMax:r.hrMax,kcal:r.kcal,pts:r.pts,name:r.name||'',base:r.base,bike:r.bike||null,env:r.env||null,alt:r.alt||null,pm:r.pm||null,pr:r.prof?1:0});
 async function folderPut(r){
   if(!dirH||!(await dirPerm(dirH,false)))return false;
   try{
     if(r.gpx)await fwrite(r.base+'.gpx',r.gpx);
     if(r.jpg)await fwrite(r.base+'.jpg',r.jpg);
+    if(r.prof)await fwrite(r.base+'-profilo.jpg',r.prof);
     await fwrite(r.base+'.json',JSON.stringify(rideMeta(r)));      // il file dei dati per ultimo: se manca, il giro non è completo
     return true;
   }catch(e){return false}
@@ -1533,6 +1552,7 @@ async function folderPut(r){
 async function folderDel(r){
   if(!dirH||!(await dirPerm(dirH,false)))return;
   for(const x of ['json','gpx','jpg']){try{await dirH.removeEntry(r.base+'.'+x)}catch(e){}}
+  try{await dirH.removeEntry(r.base+'-profilo.jpg')}catch(e){}
 }
 async function thumbFrom(blob){
   try{const bm=await createImageBitmap(blob),c=document.createElement('canvas');c.width=192;c.height=240;c.getContext('2d').drawImage(bm,0,0,192,240);
@@ -1562,6 +1582,7 @@ async function folderSync(){
         const rec={id:mt.id||mt.start,start:mt.start,dur:mt.dur,km:mt.km,mov:mt.mov,avg:mt.avg,vmax:mt.vmax,hrAvg:mt.hrAvg,hrMax:mt.hrMax,kcal:mt.kcal,pts:mt.pts,name:mt.name||'',bike:mt.bike||null,env:mt.env||null,alt:mt.alt||null,pm:mt.pm||null,base};
         try{rec.gpx=await (await (await dirH.getFileHandle(base+'.gpx')).getFile()).text()}catch(e){rec.gpx=''}
         try{const f=await (await dirH.getFileHandle(base+'.jpg')).getFile();rec.jpg=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.jpg=null}
+        try{const f=await (await dirH.getFileHandle(base+'-profilo.jpg')).getFile();rec.prof=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.prof=null}
         rec.thumb=rec.jpg?await thumbFrom(rec.jpg):null;
         if(await dbPut(rec))imp++;else bad++;
       }catch(e){bad++}
@@ -1660,10 +1681,11 @@ async function srvFetch(path,opt){
   finally{clearTimeout(tm)}
 }
 async function srvUpload(r){
-  const body=JSON.stringify({id:String(r.id),start:r.start,name:r.name||'',bike:r.bike||null,stats:rideMeta(r),gpx:r.gpx||'',jpg:await b64(r.jpg),thumb:await b64(r.thumb),app:location.origin+location.pathname});
+  const body=JSON.stringify({id:String(r.id),start:r.start,name:r.name||'',bike:r.bike||null,stats:(({pr,...x})=>x)(rideMeta(r)),gpx:r.gpx||'',jpg:await b64(r.jpg),thumb:await b64(r.thumb),prof:await b64(r.prof),app:location.origin+location.pathname});
   const x=await srvFetch('/api/rides',{method:'POST',body});
   if(!x.ok)throw new Error('HTTP '+x.status);
-  r.srv={at:Date.now(),name:r.name||'',pm:r.pm||null};await dbPut(r);
+  let j=null;try{j=await x.json()}catch(e){}
+  r.srv={at:Date.now(),name:r.name||'',pm:r.pm||null,pr:!!(r.prof&&j&&j.pr)};await dbPut(r);
 }
 const srvPending=r=>!(r.srv&&r.srv.at&&r.srv.name===(r.name||''));
 async function srvSyncAll(){
@@ -1764,6 +1786,114 @@ $('nsrv').onclick=snOpen;$('rtsrv').onclick=snOpen;$('snback').onclick=()=>hide(
 addEventListener('hashchange',navFromHash);setTimeout(navFromHash,900);
 srvUi();
 
+
+
+// ================= profilo altimetrico (foto 1080x1350 con quota/distanza) =================
+function gpxEle(txt){
+  const doc=new DOMParser().parseFromString(txt,'application/xml'),out=[];
+  for(const e of doc.getElementsByTagName('trkpt')){
+    const a=parseFloat(e.getAttribute('lat')),b=parseFloat(e.getAttribute('lon')),el=e.getElementsByTagName('ele')[0],z=el?parseFloat(el.textContent):NaN;
+    if(isFinite(a)&&isFinite(b))out.push([a,b,isFinite(z)?z:null]);
+  }
+  return out;
+}
+function altFromArr(v){      // stesso calcolo di altSummary: gradini da 3 m
+  let mn=null,mx=null,gain=0,loss=0,ref=null;
+  for(const a of v){mn=mn==null?a:Math.min(mn,a);mx=mx==null?a:Math.max(mx,a);
+    if(ref==null){ref=a;continue}
+    if(a-ref>=3){gain+=a-ref;ref=a}else if(ref-a>=3){loss+=ref-a;ref=a}}
+  return mn==null?null:{min:Math.round(mn),max:Math.round(mx),gain:Math.round(gain),loss:Math.round(loss)};
+}
+async function buildProfile(pts,info){      // pts: [[lat,lon,quota]..]; info: {t0,km,alt}; restituisce un Blob JPG o null
+  const P=pts.filter(p=>p[2]!=null&&isFinite(p[2]));
+  if(P.length<10)return null;
+  const D=[0];for(let i=1;i<P.length;i++)D.push(D[i-1]+dist({lat:P[i-1][0],lon:P[i-1][1]},{lat:P[i][0],lon:P[i][1]}));
+  const tot=D[D.length-1];if(!(tot>=300))return null;
+  const N=Math.min(600,Math.max(60,Math.round(tot/20))),st=tot/N,xs=[],raw=[];let j=0;
+  for(let k=0;k<=N;k++){const d=tot*k/N;while(j<D.length-2&&D[j+1]<d)j++;const a=D[j],b=D[j+1],t=b>a?Math.max(0,Math.min(1,(d-a)/(b-a))):0;xs.push(d);raw.push(P[j][2]+(P[j+1][2]-P[j][2])*t)}
+  const w=Math.max(1,Math.round(100/st)),el=raw.map((_,i)=>{let s=0,n=0;for(let q=Math.max(0,i-w);q<=Math.min(N,i+w);q++){s+=raw[q];n++}return s/n});     // quota smussata su ~200 m
+  const h=Math.max(1,Math.round(50/st)),sl=el.map((_,i)=>{const a=Math.max(0,i-h),b=Math.min(N,i+h);return b>a?(el[b]-el[a])/(xs[b]-xs[a])*100:0});
+  let lo=Math.min(...el),hi=Math.max(...el),ip=el.indexOf(hi),smax=Math.min(30,Math.max(0,...sl));
+  const alt=info.alt||altFromArr(P.map(p=>p[2])),kmTot=(info.km!=null?info.km:tot)/1000;
+  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
+  const f1=x=>x.toFixed(1).replace('.',','),dt=new Date(info.t0||Date.now());
+  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0B1114');bg.addColorStop(1,'#000');g.fillStyle=bg;g.fillRect(0,0,W,H);
+  const tg=g.createLinearGradient(50,0,420,0);tg.addColorStop(0,'#5BC0EB');tg.addColorStop(1,'#2EE077');
+  g.textAlign='left';g.textBaseline='alphabetic';
+  g.fillStyle=tg;g.font='900 62px system-ui,sans-serif';g.fillText('KUBOCYCLE',50,92);
+  g.fillStyle='#F2F5F6';g.font='600 30px system-ui,sans-serif';
+  g.fillText(dt.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),50,140);
+  g.fillStyle='#BCC9D0';g.font='800 34px system-ui,sans-serif';g.fillText('Profilo altimetrico',50,208);
+  // area del grafico
+  const X0=150,X1=W-60,Y0=300,Y1=850,rg=Math.max(hi-lo,40),yl=lo-rg*0.1,yh=hi+rg*0.2;
+  const px=d=>X0+(X1-X0)*d/tot,py=e=>Y1-(Y1-Y0)*(e-yl)/(yh-yl);
+  const steps=[10,20,25,50,100,200,250,500,1000];let ys=steps.find(s=>(yh-yl)/s<=6)||1000;
+  g.font='600 26px system-ui,sans-serif';g.lineWidth=2;
+  for(let v=Math.ceil(yl/ys)*ys;v<=yh;v+=ys){const y=py(v);g.strokeStyle='rgba(255,255,255,.14)';g.beginPath();g.moveTo(X0,y);g.lineTo(X1,y);g.stroke();g.fillStyle='#BCC9D0';g.textAlign='right';g.fillText(String(v),X0-14,y+9)}
+  g.textAlign='left';g.fillStyle='#8A9BA3';g.fillText('m',X0-62,Y0-14);
+  const kt=[0.5,1,2,5,10,20,25,50,100],xk=kt.find(s=>(tot/1000)/s<=7)||100;
+  g.textAlign='center';
+  for(let v=0;v*1000<=tot+1;v+=xk){const x=px(v*1000);g.strokeStyle='rgba(255,255,255,.14)';g.beginPath();g.moveTo(x,Y0);g.lineTo(x,Y1);g.stroke();g.fillStyle='#BCC9D0';g.fillText(String(v).replace('.',','),x,Y1+40)}
+  g.textAlign='right';g.fillStyle='#8A9BA3';g.fillText('km',X1,Y1+78);
+  // area sotto la curva
+  const ar=g.createLinearGradient(0,Y0,0,Y1);ar.addColorStop(0,'rgba(91,192,235,.38)');ar.addColorStop(1,'rgba(91,192,235,.03)');
+  g.beginPath();g.moveTo(px(0),Y1);xs.forEach((d,i)=>g.lineTo(px(d),py(el[i])));g.lineTo(px(tot),Y1);g.closePath();g.fillStyle=ar;g.fill();
+  // linea: contorno scuro e tratti colorati per pendenza
+  g.lineJoin='round';g.lineCap='round';g.beginPath();xs.forEach((d,i)=>i?g.lineTo(px(d),py(el[i])):g.moveTo(px(d),py(el[i])));g.strokeStyle='rgba(0,0,0,.7)';g.lineWidth=14;g.stroke();
+  const col=p=>p<-2?'#5BC0EB':p<3?'#2EE077':p<6?'#FFD43B':p<9?'#FF9F1C':'#FF5448';
+  g.lineWidth=8;for(let i=1;i<=N;i++){g.beginPath();g.moveTo(px(xs[i-1]),py(el[i-1]));g.lineTo(px(xs[i]),py(el[i]));g.strokeStyle=col((sl[i-1]+sl[i])/2);g.stroke()}
+  // punto più alto
+  {const x=px(xs[ip]),y=py(hi),t=Math.round(hi)+' m';g.beginPath();g.arc(x,y,15,0,7);g.fillStyle='#fff';g.fill();g.lineWidth=6;g.strokeStyle='#000';g.stroke();
+   g.font='800 30px system-ui,sans-serif';const tw=g.measureText(t).width+28,bx=Math.max(X0,Math.min(X1-tw,x-tw/2)),by=y-62<Y0-20?y+26:y-62;
+   g.fillStyle='rgba(0,0,0,.85)';g.beginPath();g.roundRect(bx,by,tw,42,12);g.fill();g.fillStyle='#fff';g.textAlign='center';g.fillText(t,bx+tw/2,by+31)}
+  // legenda
+  const lg=[['discesa','#5BC0EB'],['piano','#2EE077'],['3-6%','#FFD43B'],['6-9%','#FF9F1C'],['oltre 9%','#FF5448']];
+  g.font='700 24px system-ui,sans-serif';g.textAlign='left';let lx=X0-60;
+  lg.forEach(([t,c])=>{g.fillStyle=c;g.beginPath();g.roundRect(lx,946,22,22,6);g.fill();g.fillStyle='#BCC9D0';g.fillText(t,lx+32,966);lx+=32+g.measureText(t).width+30});
+  // riquadro in basso
+  const cells=[['Distanza',f1(kmTot)+' km'],['Salita',alt?alt.gain+' m':'n/d'],['Discesa',alt?alt.loss+' m':'n/d'],['Quota max',Math.round(hi)+' m'],['Quota min',Math.round(lo)+' m'],['Pend. max',f1(smax)+' %']];
+  const bh=125*2+20,boxTop=H-50-bh,cw=(W-80)/3;
+  g.fillStyle='rgba(255,255,255,.07)';g.beginPath();g.roundRect(40,boxTop,W-80,bh,32);g.fill();
+  g.textAlign='left';
+  cells.forEach(([l,v],i)=>{const x=40+cw*(i%3)+34,y=boxTop+Math.floor(i/3)*125;
+    g.fillStyle='#BCC9D0';g.font='700 28px system-ui,sans-serif';g.fillText(l,x,y+58);
+    g.fillStyle='#F2F5F6';let fs=44;g.font='800 '+fs+'px system-ui,sans-serif';while(fs>26&&g.measureText(v).width>cw-50){fs-=2;g.font='800 '+fs+'px system-ui,sans-serif'}g.fillText(v,x,y+108)});
+  return await new Promise(res=>{try{cv.toBlob(res,'image/jpeg',0.9)}catch(e){res(null)}});
+}
+async function srvProf(r){      // manda al server solo il profilo; segna «inviato» solo se il server conferma (campo pr)
+  const x=await srvFetch('/api/rides/'+r.id,{method:'PATCH',body:JSON.stringify({prof:await b64(r.prof)})});
+  if(!x.ok)throw new Error('HTTP '+x.status);
+  let j=null;try{j=await x.json()}catch(e){}
+  if(!(j&&j.pr))throw new Error('server non aggiornato');
+  r.srv={...(r.srv||{}),pr:true};await dbPut(r);
+}
+let profBusy=false;
+async function profAll(){
+  if(profBusy||recording)return;profBusy=true;const m=$('hmsg');
+  try{
+    m.textContent='Cerco i giri senza profilo…';
+    const L=(await dbAll())||[],onSrv=r=>srvOk()&&r.srv&&r.srv.at,
+      todo=L.filter(r=>(!r.prof&&r.gpx)||(r.prof&&onSrv(r)&&!r.srv.pr));
+    if(!todo.length){m.textContent='Tutti i giri hanno già il profilo altimetrico.';return}
+    let ok=0,none=0,srvBad=0,i=0;
+    for(const r of todo){
+      i++;m.textContent='Profilo '+i+' di '+todo.length+'…';
+      try{
+        if(!r.prof){
+          const p=await buildProfile(gpxEle(r.gpx),{t0:r.start,km:r.km,alt:r.alt});
+          if(!p){none++;continue}
+          r.prof=p;await dbPut(r);if(dirH)await folderPut(r);ok++;
+        }
+        if(onSrv(r)&&!r.srv.pr){try{await srvProf(r)}catch(e){srvBad++}}
+      }catch(e){none++}
+      await new Promise(res=>setTimeout(res,20));
+    }
+    m.textContent='Fatto: '+ok+(ok===1?' profilo creato':' profili creati')+(none?', '+none+' giri senza quote nel GPX o troppo corti':'')+(srvBad?'; '+srvBad+' non inviati al server (se il server non è aggiornato o non risponde si riprova al prossimo tocco)':'')+'.';
+    const keep=m.textContent;await histOpen();$('hmsg').textContent=keep;
+  }catch(e){m.textContent='Non riesco a creare i profili: '+((e&&e.message)||e)}
+  finally{profBusy=false}
+}
+$('hprof').onclick=profAll;
 
 // ================= foto vecchie: rifarle con la mappa stradale =================
 function gpxPoints(txt){
