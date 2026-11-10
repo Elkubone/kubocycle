@@ -99,7 +99,11 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 #mapov.hm #mdel{display:block}
 #mapov canvas{max-height:calc(100vh - 360px);max-height:calc(100dvh - 360px)}
 #mapov.pv canvas{max-height:calc(100vh - 420px);max-height:calc(100dvh - 420px)}
-#mview{flex:1 1 100%!important;background:var(--card)!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
+#mview,#mreplay{flex:1 1 40%!important;background:var(--card)!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
+#rpov{position:fixed;inset:0;z-index:41;display:none;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
+#rpov.on{display:flex}
+#rpc,#rpv{max-width:100%;max-height:calc(100vh - 190px);max-height:calc(100dvh - 190px);border-radius:14px;background:#000}
+#rpmsg{margin:0;color:var(--ink);font-weight:700;text-align:center;font-size:1.05rem;padding:0 16px}
 #egg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;overflow:hidden}
 #egg.on{display:flex}
 #egg.splash{background:#000}
@@ -329,9 +333,11 @@ body.p2 #p2{transform:translateX(0)}
 <div id="srvnav"><div class="hh"><button id="snback" aria-label="Indietro">←</button><span>Giri sul server</span></div><input id="snq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><p id="snmsg" class="pnote"></p><div id="snlist"></div></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
-<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Profilo altimetrico</button><p class="mcap">Condividi</p>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Profilo</button><button id="mreplay" class="sec" style="display:none">Replay video</button><p class="mcap">Condividi</p>
 <button id="mshf" class="share">Foto</button><button id="mstrava" class="strava">Strava</button>
 <button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button><button id="mren" class="sec">Rinomina</button><button id="mdel">Elimina giro</button></div></div>
+<div id="rpov"><p id="rpmsg"></p><canvas id="rpc" width="720" height="900" style="display:none"></canvas><video id="rpv" controls playsinline style="display:none"></video>
+<div class="mbtns" id="rpbtns"><button id="rpshare" class="share" style="display:none">Condividi</button><button id="rpsave" class="sec" style="display:none">Salva video</button><button id="rpclose" class="sec">Chiudi</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const dirs=['N','NE','E','SE','S','SO','O','NO'];
@@ -799,13 +805,13 @@ async function showImg(blob,none){
   try{const bm=await createImageBitmap(blob);cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);cv.style.display='block';$('mapmsg').textContent=''}
   catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare l\'immagine: puoi scaricare il GPX.'}
 }
-function viewInit(){curView='map';const on=!!(cur&&cur.prof);$('mview').style.display=on?'':'none';$('mview').textContent='Profilo altimetrico';$('mapov').classList.toggle('pv',on)}
+function viewInit(){curView='map';const on=!!(cur&&cur.prof),rp=!!(cur&&cur.gpx);$('mview').style.display=on?'':'none';$('mview').textContent='Profilo';$('mreplay').style.display=rp?'':'none';$('mapov').classList.toggle('pv',on||rp)}
 const curImg=()=>cur?(curView==='prof'&&cur.prof?cur.prof:cur.jpg):null;
 const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-profilo':'';
 $('mview').onclick=async()=>{
   if(!cur||!cur.prof)return;
   curView=curView==='prof'?'map':'prof';
-  $('mview').textContent=curView==='prof'?'Mappa del percorso':'Profilo altimetrico';
+  $('mview').textContent=curView==='prof'?'Mappa':'Profilo';
   await showImg(curImg(),'Foto non disponibile per questo giro: puoi scaricare il GPX.');
 };
 async function openRide(rec){
@@ -1894,6 +1900,154 @@ async function profAll(){
   finally{profBusy=false}
 }
 $('hprof').onclick=profAll;
+
+
+// ================= replay animato del giro (video) =================
+function replayPrep(gpx){
+  const doc=new DOMParser().parseFromString(gpx,'application/xml'),P=[];
+  for(const e of doc.getElementsByTagName('trkpt')){
+    const la=parseFloat(e.getAttribute('lat')),lo=parseFloat(e.getAttribute('lon')),te=e.getElementsByTagName('time')[0],ee=e.getElementsByTagName('ele')[0],he=e.getElementsByTagNameNS('*','hr')[0];
+    const t=te?Date.parse(te.textContent):NaN,z=ee?parseFloat(ee.textContent):NaN,hr=he?parseInt(he.textContent,10):NaN;
+    if(isFinite(la)&&isFinite(lo)&&isFinite(t))P.push({la,lo,t,z:isFinite(z)?z:null,hr:hr>0?hr:null});
+  }
+  const n=P.length;if(n<10)return null;
+  const cd=[0],vt=[0],sp=new Array(n).fill(0);
+  for(let i=1;i<n;i++){
+    const dt=P[i].t-P[i-1].t,d=dist({lat:P[i-1].la,lon:P[i-1].lo},{lat:P[i].la,lon:P[i].lo});
+    cd.push(cd[i-1]+((dt>0&&d/(dt/1000)>26.1)?0:d));      // salto del GPS (oltre 94 km/h): non conta
+    vt.push(vt[i-1]+Math.max(0,Math.min(dt,5000)));        // le soste lunghe nel replay durano al massimo 5 s
+  }
+  if(!(cd[n-1]>=100)||!(vt[n-1]>0))return null;
+  for(let i=0;i<n;i++){const a=Math.max(0,i-4),b=Math.min(n-1,i+4),dt=(P[b].t-P[a].t)/1000;sp[i]=dt>0&&dt<=30?(cd[b]-cd[a])/dt:0}
+  let el=null,gain=null,slope=null;
+  if(P.filter(p=>p.z!=null).length>=n*0.8){
+    const z=[];let last=P.find(p=>p.z!=null).z;for(const p of P){if(p.z!=null)last=p.z;z.push(last)}
+    el=new Array(n);let a=0,b=0,s=0,c=0;
+    for(let i=0;i<n;i++){while(b<n&&cd[b]-cd[i]<=100){s+=z[b];c++;b++}while(cd[i]-cd[a]>100){s-=z[a];c--;a++}el[i]=s/c}      // quota smussata su ~200 m
+    gain=new Array(n).fill(0);let ref=z[0],g=0;for(let i=1;i<n;i++){if(z[i]-ref>=3){g+=z[i]-ref;ref=z[i]}else if(ref-z[i]>=3)ref=z[i];gain[i]=g}
+    slope=new Array(n).fill(0);let j0=0,j1=0;
+    for(let i=0;i<n;i++){while(cd[i]-cd[j0]>50)j0++;while(j1<n-1&&cd[j1+1]-cd[i]<=50)j1++;const dd=cd[j1]-cd[j0];slope[i]=dd>=20?Math.max(-30,Math.min(30,(el[j1]-el[j0])/dd*100)):0}
+  }
+  return {P,n,cd,vt,sp,el,gain,slope,tot:cd[n-1],t0:P[0].t,hasHr:P.some(p=>p.hr!=null)};
+}
+const rpIdx=(R,v)=>{let a=0,b=R.n-1;while(a<b){const m=(a+b+1)>>1;if(R.vt[m]<=v)a=m;else b=m-1}return a};
+async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {draw(g,p),dur,tiles}
+  const R=replayPrep(gpx);if(!R)return null;
+  const W=1080,H=1350,MB={x:60,y:170,w:960,h:640},PB={x:150,y:850,w:850,h:120};
+  let a=90,b=-90,c=180,d=-180;for(const p of R.P){a=Math.min(a,p.la);b=Math.max(b,p.la);c=Math.min(c,p.lo);d=Math.max(d,p.lo)}
+  let z=17;for(;z>3;z--){if(mx(d,z)-mx(c,z)<=MB.w-90&&my(a,z)-my(b,z)<=MB.h-90)break}
+  const ox=(mx(c,z)+mx(d,z))/2-(MB.x+MB.w/2),oy=(my(a,z)+my(b,z))/2-(MB.y+MB.h/2);
+  const bg=document.createElement('canvas');bg.width=W;bg.height=H;const g=bg.getContext('2d');
+  const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#0B1114');gr.addColorStop(1,'#000');g.fillStyle=gr;g.fillRect(0,0,W,H);
+  const f1=x=>x.toFixed(1).replace('.',','),dt0=new Date(R.t0);
+  g.textAlign='left';g.textBaseline='alphabetic';
+  const tg=g.createLinearGradient(50,0,420,0);tg.addColorStop(0,'#5BC0EB');tg.addColorStop(1,'#2EE077');
+  g.fillStyle=tg;g.font='900 62px system-ui,sans-serif';g.fillText('KUBOCYCLE',50,92);
+  g.fillStyle='#F2F5F6';g.font='600 30px system-ui,sans-serif';
+  g.fillText(dt0.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+dt0.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),50,140);
+  // mappa
+  g.save();g.beginPath();g.roundRect(MB.x,MB.y,MB.w,MB.h,28);g.clip();g.fillStyle='#0B1114';g.fillRect(MB.x,MB.y,MB.w,MB.h);
+  const n2=2**z,tx0=Math.floor((ox+MB.x)/256),tx1=Math.floor((ox+MB.x+MB.w)/256),ty0=Math.max(0,Math.floor((oy+MB.y)/256)),ty1=Math.min(n2-1,Math.floor((oy+MB.y+MB.h)/256));
+  const grab=u=>{const jobs=[];for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++)jobs.push(loadTile(z,((tx%n2)+n2)%n2,ty,u).then(im=>{if(im)g.drawImage(im,tx*256-ox,ty*256-oy,256,256);return !!im}));return Promise.all(jobs)};
+  let okT=(await grab(OSMT)).filter(Boolean).length,sat=false;if(!okT){okT=(await grab(null)).filter(Boolean).length;sat=okT>0}
+  g.fillStyle='rgba(0,0,0,.28)';g.fillRect(MB.x,MB.y,MB.w,MB.h);g.restore();
+  {const att=okT?(sat?'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community':'© OpenStreetMap contributors'):'Mappa non disponibile';
+   g.font='19px system-ui,sans-serif';const tw=g.measureText(att).width;g.fillStyle='rgba(0,0,0,.6)';g.beginPath();g.roundRect(MB.x+MB.w-tw-34,MB.y+MB.h-40,tw+22,30,10);g.fill();g.textAlign='right';g.fillStyle='rgba(255,255,255,.92)';g.fillText(att,MB.x+MB.w-23,MB.y+MB.h-18);g.textAlign='left'}
+  // punti sullo schermo (ne tengo uno ogni ~2 px per non appesantire il disegno)
+  const sx=R.P.map(p=>mx(p.lo,z)-ox),sy=R.P.map(p=>my(p.la,z)-oy),K=[0];
+  for(let i=1;i<R.n;i++){const k=K[K.length-1];if(Math.hypot(sx[i]-sx[k],sy[i]-sy[k])>=2)K.push(i)}
+  if(K[K.length-1]!==R.n-1)K.push(R.n-1);
+  const full=new Path2D();K.forEach((i,q)=>q?full.lineTo(sx[i],sy[i]):full.moveTo(sx[i],sy[i]));
+  // profilo
+  const hasEl=!!R.el;let lo=0,hi=1,ylo=0,yhi=1;
+  const pyf=e=>PB.y+PB.h-PB.h*(e-ylo)/(yhi-ylo),pxf=dd=>PB.x+PB.w*dd/R.tot;
+  g.font='600 24px system-ui,sans-serif';
+  if(hasEl){
+    lo=Math.min(...R.el);hi=Math.max(...R.el);const rg=Math.max(hi-lo,20);ylo=lo-rg*0.1;yhi=hi+rg*0.15;
+    g.strokeStyle='rgba(255,255,255,.14)';g.lineWidth=2;
+    for(const v of [lo,hi]){const y=pyf(v);g.beginPath();g.moveTo(PB.x,y);g.lineTo(PB.x+PB.w,y);g.stroke();g.fillStyle='#BCC9D0';g.textAlign='right';g.fillText(Math.round(v)+' m',PB.x-12,y+8)}
+    const ar=g.createLinearGradient(0,PB.y,0,PB.y+PB.h);ar.addColorStop(0,'rgba(91,192,235,.25)');ar.addColorStop(1,'rgba(91,192,235,.02)');
+    g.beginPath();g.moveTo(PB.x,PB.y+PB.h);K.forEach(i=>g.lineTo(pxf(R.cd[i]),pyf(R.el[i])));g.lineTo(PB.x+PB.w,PB.y+PB.h);g.closePath();g.fillStyle=ar;g.fill();
+    g.textAlign='left';g.fillStyle='#8A9BA3';g.fillText('0 km',PB.x,PB.y+PB.h+34);g.textAlign='right';g.fillText(f1(R.tot/1000)+' km',PB.x+PB.w,PB.y+PB.h+34);
+  }else{g.textAlign='center';g.fillStyle='#8A9BA3';g.font='700 28px system-ui,sans-serif';g.fillText('Quote non disponibili per questo giro',W/2,PB.y+PB.h/2+10)}
+  // riquadro dei valori (etichette fisse)
+  const labels=['Tempo','Distanza','Velocità','Quota','Salita',R.hasHr?'Battiti':'Pendenza'],bh=125*2+20,bt=H-50-bh,cw=(W-80)/3;
+  g.fillStyle='rgba(255,255,255,.07)';g.beginPath();g.roundRect(40,bt,W-80,bh,32);g.fill();
+  g.textAlign='left';g.fillStyle='#BCC9D0';g.font='700 28px system-ui,sans-serif';labels.forEach((l,i)=>g.fillText(l,40+cw*(i%3)+34,bt+Math.floor(i/3)*125+58));
+  const fmtT=ms=>{const s=Math.max(0,Math.round(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s/60)%60,q=s%60;return h+':'+String(m).padStart(2,'0')+':'+String(q).padStart(2,'0')};
+  const draw=(gx,p)=>{
+    p=Math.max(0,Math.min(1,p));
+    const v=p*R.vt[R.n-1],i=rpIdx(R,v),j=Math.min(R.n-1,i+1),f=R.vt[j]>R.vt[i]?(v-R.vt[i])/(R.vt[j]-R.vt[i]):0,L=(u,w)=>u+(w-u)*f;
+    const X=L(sx[i],sx[j]),Y=L(sy[i],sy[j]),dd=L(R.cd[i],R.cd[j]);
+    gx.drawImage(bg,0,0);
+    gx.lineJoin='round';gx.lineCap='round';
+    gx.save();gx.beginPath();gx.roundRect(MB.x,MB.y,MB.w,MB.h,28);gx.clip();
+    gx.strokeStyle='rgba(255,255,255,.4)';gx.lineWidth=8;gx.stroke(full);
+    gx.beginPath();let q=0;K.forEach(k=>{if(k<=i){q?gx.lineTo(sx[k],sy[k]):gx.moveTo(sx[k],sy[k]);q++}});if(!q)gx.moveTo(sx[0],sy[0]);gx.lineTo(X,Y);
+    gx.strokeStyle='rgba(0,0,0,.65)';gx.lineWidth=17;gx.stroke();gx.strokeStyle='#5BC0EB';gx.lineWidth=9;gx.stroke();
+    const pin=(x,y,col)=>{gx.beginPath();gx.arc(x,y,20,0,7);gx.fillStyle=col;gx.fill();gx.lineWidth=6;gx.strokeStyle='#fff';gx.stroke()};
+    pin(sx[0],sy[0],'#2EE077');if(p>=1)pin(sx[R.n-1],sy[R.n-1],'#FF5448');
+    gx.beginPath();gx.arc(X,Y,26,0,7);gx.fillStyle='rgba(91,192,235,.35)';gx.fill();
+    gx.beginPath();gx.arc(X,Y,15,0,7);gx.fillStyle='#fff';gx.fill();gx.lineWidth=6;gx.strokeStyle='#5BC0EB';gx.stroke();
+    gx.restore();
+    if(hasEl){
+      const ex=pxf(dd),ey=pyf(L(R.el[i],R.el[j]));
+      gx.save();gx.beginPath();gx.rect(PB.x,PB.y-10,ex-PB.x,PB.h+20);gx.clip();
+      const ar2=gx.createLinearGradient(0,PB.y,0,PB.y+PB.h);ar2.addColorStop(0,'rgba(91,192,235,.45)');ar2.addColorStop(1,'rgba(91,192,235,.05)');
+      gx.beginPath();gx.moveTo(PB.x,PB.y+PB.h);K.forEach(k=>{if(R.cd[k]<=dd)gx.lineTo(pxf(R.cd[k]),pyf(R.el[k]))});gx.lineTo(ex,ey);gx.lineTo(ex,PB.y+PB.h);gx.closePath();gx.fillStyle=ar2;gx.fill();
+      gx.beginPath();let r=0;K.forEach(k=>{if(R.cd[k]<=dd){r?gx.lineTo(pxf(R.cd[k]),pyf(R.el[k])):gx.moveTo(pxf(R.cd[k]),pyf(R.el[k]));r++}});if(!r)gx.moveTo(ex,ey);gx.lineTo(ex,ey);gx.strokeStyle='#5BC0EB';gx.lineWidth=6;gx.stroke();gx.restore();
+      gx.strokeStyle='rgba(255,255,255,.55)';gx.lineWidth=3;gx.beginPath();gx.moveTo(ex,PB.y-6);gx.lineTo(ex,PB.y+PB.h);gx.stroke();
+      gx.beginPath();gx.arc(ex,ey,12,0,7);gx.fillStyle='#fff';gx.fill();gx.lineWidth=5;gx.strokeStyle='#5BC0EB';gx.stroke();
+    }
+    const vals=[fmtT(L(R.P[i].t,R.P[j].t)-R.t0),f1(dd/1000)+' km',Math.round(L(R.sp[i],R.sp[j])*3.6)+' km/h',hasEl?Math.round(L(R.el[i],R.el[j]))+' m':'n/d',hasEl?Math.round(R.gain[i])+' m':'n/d',R.hasHr?(R.P[i].hr!=null?R.P[i].hr+' bpm':'--'):(hasEl?f1(R.slope[i])+' %':'n/d')];
+    gx.textAlign='left';gx.fillStyle='#F2F5F6';
+    vals.forEach((t,k)=>{const x=40+cw*(k%3)+34,y=bt+Math.floor(k/3)*125;let fs=44;gx.font='800 '+fs+'px system-ui,sans-serif';while(fs>26&&gx.measureText(t).width>cw-50){fs-=2;gx.font='800 '+fs+'px system-ui,sans-serif'}gx.fillText(t,x,y+108)});
+  };
+  return {draw,dur:18000,tiles:okT?(sat?'sat':'osm'):'none'};
+}
+let rpBusy=false,rpAbort=false,rpUrl=null,rpBlob=null,rpName='';
+const rpMime=()=>window.MediaRecorder?['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'':'';
+async function replayStart(){
+  if(rpBusy||!cur||!cur.gpx)return;rpBusy=true;rpAbort=false;
+  const msg=$('rpmsg'),cv=$('rpc'),vd=$('rpv');
+  $('rpov').classList.add('on');vd.style.display='none';vd.removeAttribute('src');cv.style.display='none';$('rpshare').style.display='none';$('rpsave').style.display='none';
+  msg.textContent='Preparo il replay e scarico la mappa…';
+  let wl=null;try{wl=await navigator.wakeLock.request('screen')}catch(e){}
+  try{
+    const B=await replayBuild(cur.gpx);
+    if(!B){msg.textContent='Il giro non ha abbastanza punti con orario per fare il replay.';return}
+    if(rpAbort)return;
+    cv.width=720;cv.height=900;const g=cv.getContext('2d');g.setTransform(2/3,0,0,2/3,0,0);cv.style.display='block';B.draw(g,0);
+    const mime=rpMime(),chunks=[];let rec=null;
+    if(mime&&cv.captureStream){try{rec=new MediaRecorder(cv.captureStream(30),{mimeType:mime,videoBitsPerSecond:5000000});rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)}}catch(e){rec=null}}
+    const done=new Promise(res=>{if(!rec)return res(null);rec.onstop=()=>res(chunks.length?new Blob(chunks,{type:rec.mimeType||mime}):null)});
+    if(rec)rec.start(500);
+    const HOLD=1500,t0=performance.now();
+    await new Promise(res=>{const step=now=>{if(rpAbort)return res();const e=Math.max(0,now-t0),p=Math.min(1,e/B.dur);B.draw(g,p);msg.textContent=(rec?'Registro il video… ':'Replay… ')+Math.round(p*100)+' % (non uscire dall\'app)';if(e>=B.dur+HOLD)return res();requestAnimationFrame(step)};requestAnimationFrame(step)});
+    if(rec&&rec.state!=='inactive')rec.stop();
+    const blob=await done;
+    if(rpAbort)return;
+    if(!blob){msg.textContent=rec?'Non sono riuscito a registrare il video.':'Questo browser non registra il video del replay: qui puoi solo guardarlo.';return}
+    const mp4=/mp4/.test(blob.type);rpBlob=blob;rpName=cur.base+'-replay.'+(mp4?'mp4':'webm');
+    if(rpUrl)URL.revokeObjectURL(rpUrl);rpUrl=URL.createObjectURL(blob);
+    vd.onloadedmetadata=()=>{if(vd.duration===Infinity){vd.currentTime=1e7;vd.ontimeupdate=()=>{vd.ontimeupdate=null;vd.currentTime=0}}};      // il WebM registrato non ha la durata: la si ricava così
+    vd.src=rpUrl;cv.style.display='none';vd.style.display='block';$('rpshare').style.display='';$('rpsave').style.display='';
+    msg.textContent='Video pronto ('+(blob.size/1048576).toFixed(1)+' MB, '+(mp4?'MP4':'WebM')+')'+(mp4?'':'. Se un\'app non accetta il WebM, salvalo e mandalo dalla galleria.');
+  }catch(e){msg.textContent='Replay non riuscito: '+((e&&e.message)||e)}
+  finally{rpBusy=false;try{wl&&wl.release()}catch(e){}}
+}
+async function replayShare(){
+  const msg=t=>{$('rpmsg').textContent=t};
+  if(!rpBlob)return;
+  if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione: usa Salva video.');return}
+  const f=new File([rpBlob],rpName,{type:rpBlob.type});
+  if(!navigator.canShare({files:[f]})){msg('Il browser non permette di condividere questo video: usa Salva video.');return}
+  try{await navigator.share({files:[f],title:'Kubocycle'});msg('')}catch(e){msg(e&&e.name!=='AbortError'?'Condivisione non riuscita: '+(e.message||e.name):'')}
+}
+$('mreplay').onclick=replayStart;
+$('rpshare').onclick=replayShare;
+$('rpsave').onclick=()=>{if(rpBlob){saveBlob(rpBlob,rpName);$('rpmsg').textContent='Salvato '+rpName}};
+$('rpclose').onclick=()=>{rpAbort=true;$('rpov').classList.remove('on');try{$('rpv').pause()}catch(e){}$('rpv').removeAttribute('src');if(rpUrl){URL.revokeObjectURL(rpUrl);rpUrl=null}rpBlob=null};
 
 // ================= foto vecchie: rifarle con la mappa stradale =================
 function gpxPoints(txt){
