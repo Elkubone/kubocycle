@@ -324,7 +324,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
-<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea profili e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
+<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
@@ -333,7 +333,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="srvnav"><div class="hh"><button id="snback" aria-label="Indietro">←</button><span>Giri sul server</span></div><input id="snq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><p id="snmsg" class="pnote"></p><div id="snlist"></div></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
-<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Profilo</button><button id="mhr" class="sec" style="display:none">Battiti</button><button id="mreplay" class="sec" style="display:none">Replay</button><p class="mcap">Condividi</p>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Altimetria</button><button id="mhr" class="sec" style="display:none">Battiti</button><button id="mreplay" class="sec" style="display:none">Replay</button><p class="mcap">Condividi</p>
 <button id="mshf" class="share">Foto</button>
 <button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button><button id="mren" class="sec">Rinomina</button><button id="mdel">Elimina giro</button></div></div>
 <div id="rpov"><p id="rpmsg"></p><canvas id="rpc" width="720" height="900" style="display:none"></canvas><video id="rpv" controls playsinline style="display:none"></video>
@@ -806,11 +806,11 @@ async function showImg(blob,none){
   catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare l\'immagine: puoi scaricare il GPX.'}
 }
 function viewInit(){curView='map';const p=!!(cur&&cur.prof),h=!!(cur&&cur.hrc),rp=!!(cur&&cur.gpx);
-  $('mview').style.display=p?'':'none';$('mview').textContent='Profilo';$('mhr').style.display=h?'':'none';$('mhr').textContent='Battiti';$('mreplay').style.display=rp?'':'none';$('mapov').classList.toggle('pv',p||h||rp)}
+  $('mview').style.display=p?'':'none';$('mview').textContent='Altimetria';$('mhr').style.display=h?'':'none';$('mhr').textContent='Battiti';$('mreplay').style.display=rp?'':'none';$('mapov').classList.toggle('pv',p||h||rp)}
 const curImg=()=>cur?(curView==='prof'&&cur.prof?cur.prof:(curView==='hr'&&cur.hrc?cur.hrc:cur.jpg)):null;
-const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-profilo':(curView==='hr'&&cur&&cur.hrc?'-battiti':'');
+const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-altimetria':(curView==='hr'&&cur&&cur.hrc?'-battiti':'');
 async function setView(v){
-  curView=v;$('mview').textContent=v==='prof'?'Mappa':'Profilo';$('mhr').textContent=v==='hr'?'Mappa':'Battiti';
+  curView=v;$('mview').textContent=v==='prof'?'Mappa':'Altimetria';$('mhr').textContent=v==='hr'?'Mappa':'Battiti';
   await showImg(curImg(),'Foto non disponibile per questo giro: puoi scaricare il GPX.');
 }
 $('mview').onclick=async()=>{if(cur&&cur.prof)await setView(curView==='prof'?'map':'prof')};
@@ -1037,14 +1037,14 @@ async function exportAll(){
       const d=new Date(r.start),base=r.base+(r.name&&slug(r.name)?'-'+slug(r.name):'');
       if(r.gpx)files.push({name:'gpx/'+base+'.gpx',data:enc.encode(r.gpx),date:d});
       if(r.jpg)files.push({name:'foto/'+base+'.jpg',data:new Uint8Array(await r.jpg.arrayBuffer()),date:d});
-      if(r.prof)files.push({name:'profili/'+base+'-profilo.jpg',data:new Uint8Array(await r.prof.arrayBuffer()),date:d});
+      if(r.prof)files.push({name:'altimetrie/'+base+'-altimetria.jpg',data:new Uint8Array(await r.prof.arrayBuffer()),date:d});
       if(r.hrc)files.push({name:'battiti/'+base+'-battiti.jpg',data:new Uint8Array(await r.hrc.arrayBuffer()),date:d});
       csv+=[d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),pad(d.getHours())+':'+pad(d.getMinutes()),'"'+(r.name||'').replace(/"/g,'""')+'"',f1((r.km||0)/1000),Math.round((r.dur||0)/60000),r.mov!=null?Math.round(r.mov/60000):'',f1(r.avg),r.vmax!=null?Math.round(r.vmax*3.6):'',r.hrAvg!=null?Math.round(r.hrAvg):'',r.hrMax||'',r.kcal>0?Math.round(r.kcal):'',base+'.gpx',r.bike&&BIKES[r.bike]?BIKES[r.bike]:''].join(';')+'\n';
     }
     files.push({name:'cronologia.csv',data:enc.encode('\ufeff'+csv),date:new Date()});
     const t=new Date();
     saveBlob(mkZip(files),'kubocycle-cronologia-'+t.getFullYear()+pad(t.getMonth()+1)+pad(t.getDate())+'.zip');
-    m.textContent='Scaricato il file con '+L.length+(L.length===1?' giro':' giri')+' (GPX, foto, profili, grafici dei battiti e cronologia.csv).';
+    m.textContent='Scaricato il file con '+L.length+(L.length===1?' giro':' giri')+' (GPX, foto, altimetrie, grafici dei battiti e cronologia.csv).';
   }catch(e){m.textContent='Esportazione non riuscita: '+((e&&e.message)||e)}
 }
 
@@ -1552,7 +1552,7 @@ async function folderPut(r){
   try{
     if(r.gpx)await fwrite(r.base+'.gpx',r.gpx);
     if(r.jpg)await fwrite(r.base+'.jpg',r.jpg);
-    if(r.prof)await fwrite(r.base+'-profilo.jpg',r.prof);
+    if(r.prof)await fwrite(r.base+'-altimetria.jpg',r.prof);
     if(r.hrc)await fwrite(r.base+'-battiti.jpg',r.hrc);
     await fwrite(r.base+'.json',JSON.stringify(rideMeta(r)));      // il file dei dati per ultimo: se manca, il giro non è completo
     return true;
@@ -1561,6 +1561,7 @@ async function folderPut(r){
 async function folderDel(r){
   if(!dirH||!(await dirPerm(dirH,false)))return;
   for(const x of ['json','gpx','jpg']){try{await dirH.removeEntry(r.base+'.'+x)}catch(e){}}
+  try{await dirH.removeEntry(r.base+'-altimetria.jpg')}catch(e){}
   try{await dirH.removeEntry(r.base+'-profilo.jpg')}catch(e){}
   try{await dirH.removeEntry(r.base+'-battiti.jpg')}catch(e){}
 }
@@ -1592,7 +1593,7 @@ async function folderSync(){
         const rec={id:mt.id||mt.start,start:mt.start,dur:mt.dur,km:mt.km,mov:mt.mov,avg:mt.avg,vmax:mt.vmax,hrAvg:mt.hrAvg,hrMax:mt.hrMax,kcal:mt.kcal,pts:mt.pts,name:mt.name||'',bike:mt.bike||null,env:mt.env||null,alt:mt.alt||null,pm:mt.pm||null,base};
         try{rec.gpx=await (await (await dirH.getFileHandle(base+'.gpx')).getFile()).text()}catch(e){rec.gpx=''}
         try{const f=await (await dirH.getFileHandle(base+'.jpg')).getFile();rec.jpg=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.jpg=null}
-        try{const f=await (await dirH.getFileHandle(base+'-profilo.jpg')).getFile();rec.prof=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.prof=null}
+        try{let fh;try{fh=await dirH.getFileHandle(base+'-altimetria.jpg')}catch(e){fh=await dirH.getFileHandle(base+'-profilo.jpg')}const f=await fh.getFile();rec.prof=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.prof=null}
         try{const f=await (await dirH.getFileHandle(base+'-battiti.jpg')).getFile();rec.hrc=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.hrc=null}
         rec.thumb=rec.jpg?await thumbFrom(rec.jpg):null;
         if(await dbPut(rec))imp++;else bad++;
@@ -1903,7 +1904,7 @@ async function profAll(){
       }catch(e){none++}
       await new Promise(res=>setTimeout(res,20));
     }
-    m.textContent='Fatto: '+okP+(okP===1?' profilo':' profili')+' e '+okH+(okH===1?' grafico dei battiti creati':' grafici dei battiti creati')+(none?'; '+none+' giri senza quote nel GPX o troppo corti':'')+(srvBad?'; '+srvBad+' non inviati al server (server non aggiornato o non raggiungibile: si riprova al prossimo tocco)':'')+'.';
+    m.textContent='Fatto: '+okP+(okP===1?' altimetria':' altimetrie')+' e '+okH+(okH===1?' grafico dei battiti creati':' grafici dei battiti creati')+(none?'; '+none+' giri senza quote nel GPX o troppo corti':'')+(srvBad?'; '+srvBad+' non inviati al server (server non aggiornato o non raggiungibile: si riprova al prossimo tocco)':'')+'.';
     const keep=m.textContent;await histOpen();$('hmsg').textContent=keep;
   }catch(e){m.textContent='Non riesco a completare i giri: '+((e&&e.message)||e)}
   finally{profBusy=false}
