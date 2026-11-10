@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Kubocycle · Flyover 3D (prova)</title>
+<style>
+:root{--ink:#F2F5F6;--mut:#8A9BA3;--card:#11181c;--line:#26343b;--acc:#5BC0EB;--ok:#2EE077}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:700}
+button{font:inherit;font-weight:800;color:var(--ink)}
+#home,#load{min-height:100%;padding:14px 14px 30px;max-width:560px;margin:0 auto}
+#fly{position:fixed;inset:0;display:none;background:linear-gradient(#3f78ad 0%,#8db5d6 55%,#c9dcea 100%)}
+#fly.on{display:block}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+h1{margin:6px 0 4px;font-size:1.5rem}
+.sub{color:var(--mut);margin:0 0 14px;font-size:1rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}
+.row button,.big{flex:1 1 40%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 8px;font-size:1.05rem}
+.row button.on{background:var(--acc);color:#001a26;border-color:var(--acc)}
+.item{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 10px}
+.item b{display:block;font-size:1.15rem}
+.item small{color:var(--mut);font-size:.95rem;font-weight:700}
+#msg{color:var(--ink);font-size:1.05rem;margin:10px 0;min-height:1.4em}
+#msg.err{color:#ff8a80}
+a.back{display:inline-block;color:var(--acc);text-decoration:none;margin:0 0 8px;font-size:1.05rem}
+#lmsg{font-size:1.2rem;margin:18px 0 8px}
+#lbar{height:12px;background:var(--card);border-radius:8px;overflow:hidden;margin:0 0 16px}
+#lbar i{display:block;height:100%;width:0;background:var(--acc)}
+.hud{position:absolute;left:0;right:0;pointer-events:none;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.9)}
+#htop{top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 0;font-size:1.15rem}
+#htop small{display:block;font-size:.9rem;opacity:.92}
+#hbot{bottom:0;padding:0 10px calc(env(safe-area-inset-bottom,0px) + 10px)}
+#hbtns{display:flex;gap:8px;margin:0 0 8px;pointer-events:auto}
+#hbtns button{flex:1;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:13px 4px;font-size:1rem;text-shadow:none}
+#hstat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:rgba(0,0,0,.62);border-radius:16px;padding:10px 6px}
+#hstat div{text-align:center;line-height:1.15}
+#hstat span{display:block;font-size:.78rem;color:#c8d6dc;text-shadow:none}
+#hstat b{font-size:1.1rem;white-space:nowrap;text-shadow:none}
+#hnote{position:absolute;left:0;right:0;top:56px;text-align:center;font-size:.95rem;pointer-events:none;color:#fff;text-shadow:0 1px 4px #000}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="back" href="kubocycle.html">← Kubocycle</a>
+  <h1>Flyover 3D</h1>
+  <p class="sub">Prova: il percorso visto dall'alto sul rilievo vero. Se è troppo pesante o non va, chiudi questa pagina: l'app non cambia.</p>
+  <div class="row">
+    <button id="bidb">Cronologia dell'app</button>
+    <button id="bsrv">Server giri</button>
+    <button id="bfile">File GPX</button>
+  </div>
+  <input type="file" id="fgpx" accept=".gpx,application/gpx+xml,text/xml,application/xml" style="display:none">
+  <div id="msg"></div>
+  <div id="list"></div>
+</div>
+
+<div id="load" style="display:none">
+  <h1 id="ltitle">Preparo il volo</h1>
+  <p id="lmsg">…</p>
+  <div id="lbar"><i id="lfill"></i></div>
+  <div class="row"><button id="lcancel">Annulla</button></div>
+  <p class="sub" id="lnote"></p>
+</div>
+
+<div id="fly">
+  <canvas id="gl"></canvas>
+  <div class="hud" id="htop"><span id="ftitle"></span><small id="fdate"></small></div>
+  <div id="hnote"></div>
+  <div class="hud" id="hbot">
+    <div id="hbtns"><button id="bpause">Pausa</button><button id="bexag">Rilievo ×2</button><button id="bexit">Esci</button></div>
+    <div id="hstat"><div><span>Distanza</span><b id="sKm">0,0 km</b></div><div><span>Quota</span><b id="sAlt">-- m</b></div><div><span>Velocità</span><b id="sSp">-- km/h</b></div><div><span>Pendenza</span><b id="sSl">-- %</b></div></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const f1=x=>x.toFixed(1).replace('.',',');
+const SAT=(z,x,y)=>'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'+z+'/'+y+'/'+x;
+const DEM=(z,x,y)=>'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/'+z+'/'+x+'/'+y+'.png';
+const show=id=>{['home','load'].forEach(k=>$(k).style.display=k===id?'':'none');$('fly').classList.toggle('on',id==='fly')};
+const msg=(t,err)=>{$('msg').textContent=t||'';$('msg').className=err?'err':''};
+
+// ======================= scelta del giro =======================
+const renderList=items=>{
+  const L=$('list');L.replaceChildren();
+  if(!items.length){msg('Nessun giro trovato.',true);return}
+  msg('');
+  items.forEach(it=>{const b=document.createElement('button');b.className='item';const t=document.createElement('b');t.textContent=it.title;const s=document.createElement('small');s.textContent=it.sub;b.append(t,s);b.onclick=()=>startFly(it);L.append(b)});
+};
+const fmtDate=ms=>{const d=new Date(ms);return d.toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})};
+const rideItem=(r,getGpx)=>({title:r.name||fmtDate(r.start),sub:(r.name?fmtDate(r.start)+' · ':'')+f1((r.km||0)/1000)+' km',start:r.start,getGpx});
+$('bidb').onclick=async()=>{
+  $('list').replaceChildren();msg('Leggo la cronologia dell\'app…');
+  try{
+    if(!indexedDB.databases){msg('Questo browser non permette di leggere la cronologia da qui: usa il server o un file GPX.',true);return}
+    const dbs=await indexedDB.databases();
+    if(!dbs.some(d=>d.name==='kubocycle')){msg('Non trovo la cronologia di Kubocycle su questo indirizzo: usa il server o un file GPX.',true);return}
+    const db=await new Promise((res,rej)=>{const r=indexedDB.open('kubocycle',3);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);r.onupgradeneeded=()=>{r.transaction.abort()}});
+    const all=await new Promise((res,rej)=>{const q=db.transaction('rides','readonly').objectStore('rides').getAll();q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+    db.close();
+    renderList(all.filter(r=>r.gpx).sort((a,b)=>b.start-a.start).map(r=>rideItem(r,async()=>r.gpx)));
+  }catch(e){msg('Non riesco a leggere la cronologia: '+((e&&e.message)||e),true)}
+};
+$('bsrv').onclick=async()=>{
+  $('list').replaceChildren();
+  let cfg=null;try{cfg=JSON.parse(localStorage.getItem('kubocycle-server')||'null')}catch(e){}
+  if(!cfg||!cfg.url||!cfg.key){msg('Il server non è impostato in questa pagina: aprilo prima dalle Opzioni dell\'app (Server giri).',true);return}
+  msg('Leggo i giri dal server…');const base=cfg.url.replace(/\/+$/,''),H={Authorization:'Bearer '+cfg.key};
+  try{
+    const r=await fetch(base+'/api/rides',{headers:H});if(!r.ok)throw new Error(r.status===401?'chiave non accettata':'il server ha risposto '+r.status);
+    const j=await r.json();
+    renderList(j.map(x=>rideItem({start:x.start,name:x.name,km:(x.stats||{}).km},async()=>{const g=await fetch(base+'/api/rides/'+x.id+'/gpx',{headers:H});if(!g.ok)throw new Error('GPX non disponibile ('+g.status+')');return await g.text()})));
+  }catch(e){msg('Server non raggiungibile: '+((e&&e.message)||e),true)}
+};
+$('bfile').onclick=()=>$('fgpx').click();
+$('fgpx').onchange=async e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  try{const txt=await f.text();startFly({title:f.name.replace(/\.gpx$/i,''),sub:'',start:null,getGpx:async()=>txt})}catch(er){msg('Non riesco a leggere il file.',true)}
+  e.target.value='';
+};
+
+// ======================= dati del giro =======================
+const R_EARTH=6371000,rad=x=>x*Math.PI/180;
+const hav=(a,b,c,d)=>{const p=rad(c-a),q=rad(d-b),h=Math.sin(p/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(q/2)**2;return 2*R_EARTH*Math.asin(Math.min(1,Math.sqrt(h)))};
+function parseRoute(gpx){
+  const doc=new DOMParser().parseFromString(gpx,'application/xml'),P=[];
+  for(const e of doc.getElementsByTagName('trkpt')){
+    const la=parseFloat(e.getAttribute('lat')),lo=parseFloat(e.getAttribute('lon')),te=e.getElementsByTagName('time')[0],ee=e.getElementsByTagName('ele')[0];
+    const t=te?Date.parse(te.textContent):NaN,z=ee?parseFloat(ee.textContent):NaN;
+    if(isFinite(la)&&isFinite(lo))P.push({la,lo,t:isFinite(t)?t:null,z:isFinite(z)?z:null});
+  }
+  const n=P.length;if(n<10)return null;
+  const cd=[0];
+  for(let i=1;i<n;i++){const d=hav(P[i-1].la,P[i-1].lo,P[i].la,P[i].lo),dt=(P[i].t!=null&&P[i-1].t!=null)?(P[i].t-P[i-1].t)/1000:0;cd.push(cd[i-1]+((dt>0&&d/dt>26.1)?0:d))}
+  if(!(cd[n-1]>=200))return null;
+  const sp=new Array(n).fill(0);
+  for(let i=0;i<n;i++){const a=Math.max(0,i-4),b=Math.min(n-1,i+4);if(P[a].t!=null&&P[b].t!=null){const dt=(P[b].t-P[a].t)/1000;sp[i]=dt>0&&dt<=30?(cd[b]-cd[a])/dt:0}}
+  let el=null,slope=null;
+  if(P.filter(p=>p.z!=null).length>=n*0.8){
+    const z=[];let last=P.find(p=>p.z!=null).z;for(const p of P){if(p.z!=null)last=p.z;z.push(last)}
+    el=new Array(n);let a=0,b=0,s=0,c=0;
+    for(let i=0;i<n;i++){while(b<n&&cd[b]-cd[i]<=100){s+=z[b];c++;b++}while(cd[i]-cd[a]>100){s-=z[a];c--;a++}el[i]=s/c}
+    slope=new Array(n).fill(0);let j0=0,j1=0;
+    for(let i=0;i<n;i++){while(cd[i]-cd[j0]>50)j0++;while(j1<n-1&&cd[j1+1]-cd[i]<=50)j1++;const dd=cd[j1]-cd[j0];slope[i]=dd>=20?Math.max(-30,Math.min(30,(el[j1]-el[j0])/dd*100)):0}
+  }
+  return {P,n,cd,sp,el,slope,tot:cd[n-1]};
+}
+const idxAt=(cd,s)=>{let a=0,b=cd.length-1;while(a<b){const m=(a+b+1)>>1;if(cd[m]<=s)a=m;else b=m-1}return a};
+
+// ======================= tessere e terreno =======================
+const mercX=(lon,z)=>(lon+180)/360*256*2**z;
+const mercY=(lat,z)=>{const s=Math.sin(rad(lat));return (0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*256*2**z};
+function loadImg(url,ms){return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';let done=false;const fin=v=>{if(!done){done=true;clearTimeout(tm);res(v)}};const tm=setTimeout(()=>{im.src='';fin(null)},ms||15000);im.onload=()=>fin(im);im.onerror=()=>fin(null);im.src=url})}
+async function pool(items,n,fn,isCancelled){let k=0;const w=async()=>{while(k<items.length&&!isCancelled()){const i=k++;await fn(items[i],i)}};await Promise.all(Array.from({length:n},w))}
+
+let CANCEL=false,FLY=null;
+const setLoad=(t,p)=>{$('lmsg').textContent=t;if(p!=null)$('lfill').style.width=Math.round(p*100)+'%'};
+const fail=(t)=>{show('load');$('ltitle').textContent='Non riesco a fare il volo';setLoad(t);$('lnote').textContent='Puoi riprovare più tardi o chiudere la pagina: l\'app non è stata modificata.';$('lcancel').textContent='Indietro'};
+
+async function startFly(item){
+  CANCEL=false;show('load');$('ltitle').textContent='Preparo il volo';$('lcancel').textContent='Annulla';$('lnote').textContent='';setLoad('Leggo il percorso…',0.02);
+  $('lcancel').onclick=()=>{CANCEL=true;show('home')};
+  const cancelled=()=>CANCEL;
+  try{
+    const gpx=await item.getGpx();if(cancelled())return;
+    const R=parseRoute(gpx);if(!R){fail('Il giro ha troppo pochi punti o è più corto di 200 m.');return}
+    // riquadro del percorso con un margine
+    let la0=90,la1=-90,lo0=180,lo1=-180;for(const p of R.P){la0=Math.min(la0,p.la);la1=Math.max(la1,p.la);lo0=Math.min(lo0,p.lo);lo1=Math.max(lo1,p.lo)}
+    const lat0=(la0+la1)/2,mpd=111320,wm=(lo1-lo0)*mpd*Math.cos(rad(lat0)),hm=(la1-la0)*mpd,span=Math.max(wm,hm,1500),mg=Math.max(span*0.22,900);
+    const dLat=mg/mpd,dLon=mg/(mpd*Math.cos(rad(lat0)));
+    const B={la0:la0-dLat,la1:la1+dLat,lo0:lo0-dLon,lo1:lo1+dLon};
+    // zoom del satellite: il più alto che resta entro 8x8 tessere
+    let zs=16,tx0,tx1,ty0,ty1;
+    for(;zs>6;zs--){tx0=Math.floor(mercX(B.lo0,zs)/256);tx1=Math.floor(mercX(B.lo1,zs)/256);ty0=Math.floor(mercY(B.la1,zs)/256);ty1=Math.floor(mercY(B.la0,zs)/256);if(tx1-tx0+1<=8&&ty1-ty0+1<=8)break}
+    const nx=tx1-tx0+1,ny=ty1-ty0+1,TW=nx*256,TH=ny*256;
+    const zd=Math.max(5,Math.min(14,zs-1)),k=2**(zd-zs),dx0=Math.floor(tx0*k),dx1=Math.floor((tx1+1)*k-1e-9),dy0=Math.floor(ty0*k),dy1=Math.floor((ty1+1)*k-1e-9),dnx=dx1-dx0+1,dny=dy1-dy0+1;
+    const satJobs=[],demJobs=[];
+    for(let y=ty0;y<=ty1;y++)for(let x=tx0;x<=tx1;x++)satJobs.push([x,y]);
+    for(let y=dy0;y<=dy1;y++)for(let x=dx0;x<=dx1;x++)demJobs.push([x,y]);
+    const total=satJobs.length+demJobs.length;let done=0,t0=performance.now(),slowNoted=false;
+    const tick=t=>{if(!slowNoted&&performance.now()-t0>45000){slowNoted=true;$('lnote').textContent='Sta impiegando più del solito: se vuoi puoi annullare.'}setLoad(t+' ('+done+' di '+total+')',0.05+0.8*done/total)};
+    // quote del terreno
+    setLoad('Scarico le quote del terreno…',0.05);
+    const dw=dnx*256,dh=dny*256,H=new Float32Array(dw*dh);let demFail=0;
+    const tc=document.createElement('canvas');tc.width=tc.height=256;const tg=tc.getContext('2d',{willReadFrequently:true});
+    await pool(demJobs,6,async([x,y])=>{
+      const im=await loadImg(DEM(zd,x,y));done++;tick('Scarico le quote del terreno');
+      if(!im){demFail++;return}
+      try{tg.clearRect(0,0,256,256);tg.drawImage(im,0,0);const d=tg.getImageData(0,0,256,256).data;
+        for(let j=0;j<256;j++)for(let i=0;i<256;i++){const q=(j*256+i)*4;H[((y-dy0)*256+j)*dw+(x-dx0)*256+i]=d[q]*256+d[q+1]+d[q+2]/256-32768}}
+      catch(e){demFail++}
+    },cancelled);
+    if(cancelled())return;
+    const demOk=demFail<=demJobs.length*0.25;
+    // texture satellitare
+    const tex=document.createElement('canvas');tex.width=TW;tex.height=TH;const tx=tex.getContext('2d');tx.fillStyle='#4a5a45';tx.fillRect(0,0,TW,TH);let satFail=0;
+    await pool(satJobs,6,async([x,y])=>{
+      const im=await loadImg(SAT(zs,x,y));done++;tick('Scarico la mappa satellitare');
+      if(im)tx.drawImage(im,(x-tx0)*256,(y-ty0)*256,256,256);else satFail++;
+    },cancelled);
+    if(cancelled())return;
+    if(satFail>satJobs.length*0.5){fail('Non riesco a scaricare la mappa satellitare ('+satFail+' tessere su '+satJobs.length+').');return}
+    setLoad('Costruisco il rilievo…',0.9);await new Promise(r=>setTimeout(r,30));
+    // coordinate del mondo in metri: X verso est, Z verso sud, Y in alto
+    const res=156543.03392804097*Math.cos(rad(lat0))/2**zs,pxc=(tx0+nx/2)*256,pyc=(ty0+ny/2)*256;
+    const wx=lon=>(mercX(lon,zs)-pxc)*res,wz=lat=>(mercY(lat,zs)-pyc)*res;
+    const X0=-TW/2*res,X1=TW/2*res,Z0=-TH/2*res,Z1=TH/2*res;
+    const demAt=(X,Z)=>{ // quota in metri in un punto del mondo (interpolazione bilineare)
+      if(!demOk)return 0;
+      const fx=((X/res+pxc)*k)-dx0*256-0.5,fz=((Z/res+pyc)*k)-dy0*256-0.5,i=Math.max(0,Math.min(dw-2,Math.floor(fx))),j=Math.max(0,Math.min(dh-2,Math.floor(fz))),u=Math.max(0,Math.min(1,fx-i)),v=Math.max(0,Math.min(1,fz-j));
+      const a=H[j*dw+i],b=H[j*dw+i+1],c=H[(j+1)*dw+i],d=H[(j+1)*dw+i+1];return (a*(1-u)+b*u)*(1-v)+(c*(1-u)+d*u)*v;
+    };
+    // griglia del terreno
+    const gx=Math.min(300,Math.max(40,Math.floor(TW/3))),gz=Math.min(300,Math.max(40,Math.floor(TH/3))),NV=(gx+1)*(gz+1);
+    const pos=new Float32Array(NV*3),nor=new Float32Array(NV*3),hg=new Float32Array(NV);
+    for(let j=0;j<=gz;j++)for(let i=0;i<=gx;i++){const X=X0+(X1-X0)*i/gx,Z=Z0+(Z1-Z0)*j/gz,h=demAt(X,Z),q=j*(gx+1)+i;pos[q*3]=X;pos[q*3+1]=h;pos[q*3+2]=Z;hg[q]=h}
+    const dX=(X1-X0)/gx,dZ=(Z1-Z0)/gz;
+    for(let j=0;j<=gz;j++)for(let i=0;i<=gx;i++){const q=j*(gx+1)+i,hl=hg[j*(gx+1)+Math.max(0,i-1)],hr=hg[j*(gx+1)+Math.min(gx,i+1)],hu=hg[Math.max(0,j-1)*(gx+1)+i],hd=hg[Math.min(gz,j+1)*(gx+1)+i];
+      let nxv=(hl-hr)/(2*dX),nzv=(hu-hd)/(2*dZ);const l=Math.hypot(nxv,1,nzv);nor[q*3]=nxv/l;nor[q*3+1]=1/l;nor[q*3+2]=nzv/l}
+    const idx=new Uint32Array(gx*gz*6);let w=0;
+    for(let j=0;j<gz;j++)for(let i=0;i<gx;i++){const a=j*(gx+1)+i,b=a+1,c=a+gx+1,d=c+1;idx[w++]=a;idx[w++]=c;idx[w++]=b;idx[w++]=b;idx[w++]=c;idx[w++]=d}
+    let hmin=1e9,hmax=-1e9;for(let q=0;q<NV;q++){hmin=Math.min(hmin,hg[q]);hmax=Math.max(hmax,hg[q])}
+    // percorso in coordinate del mondo (qualche migliaio di punti al massimo)
+    const stp=Math.max(6,R.tot/3000),pts=[];let lastS=-1e9;
+    for(let i=0;i<R.n;i++){if(R.cd[i]-lastS>=stp||i===R.n-1){lastS=R.cd[i];const X=wx(R.P[i].lo),Z=wz(R.P[i].la);pts.push({X,Z,s:R.cd[i],h:demAt(X,Z)})}}
+    // il tracciato è un po' più corto della somma dei segmenti: uso la distanza fra i punti scelti
+    let acc=0;for(let i=1;i<pts.length;i++){acc+=Math.hypot(pts[i].X-pts[i-1].X,pts[i].Z-pts[i-1].Z);pts[i].m=acc}pts[0].m=0;
+    FLY={R,pts,Lm:acc,tex,pos,nor,idx,gx,gz,X0,X1,Z0,Z1,demAt,demOk,hmin,hmax,res,title:item.title,sub:item.sub,start:item.start||R.P[0].t,satFail,demFail,extent:Math.max(X1-X0,Z1-Z0)};
+    if(cancelled())return;
+    setLoad('Avvio il volo…',1);
+    beginRender();
+  }catch(e){if(!cancelled())fail('Qualcosa è andato storto: '+((e&&e.message)||e))}
+}
+
+// ======================= WebGL =======================
+const m4={
+  persp(f,a,n,fa){const t=1/Math.tan(f/2),nf=1/(n-fa);return new Float32Array([t/a,0,0,0,0,t,0,0,0,0,(fa+n)*nf,-1,0,0,2*fa*n*nf,0])},
+  look(e,c,u){let zx=e[0]-c[0],zy=e[1]-c[1],zz=e[2]-c[2],l=Math.hypot(zx,zy,zz)||1;zx/=l;zy/=l;zz/=l;
+    let xx=u[1]*zz-u[2]*zy,xy=u[2]*zx-u[0]*zz,xz=u[0]*zy-u[1]*zx;l=Math.hypot(xx,xy,xz)||1;xx/=l;xy/=l;xz/=l;
+    const yx=zy*xz-zz*xy,yy=zz*xx-zx*xz,yz=zx*xy-zy*xx;
+    return new Float32Array([xx,yx,zx,0,xy,yy,zy,0,xz,yz,zz,0,-(xx*e[0]+xy*e[1]+xz*e[2]),-(yx*e[0]+yy*e[1]+yz*e[2]),-(zx*e[0]+zy*e[1]+zz*e[2]),1])},
+  mul(a,b){const o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s}return o}
+};
+const VS_T=`attribute vec3 aPos;attribute vec3 aNor;uniform mat4 uVP;uniform float uExag;uniform vec3 uCam;uniform vec4 uBox;varying vec2 vUV;varying vec3 vN;varying float vD;
+void main(){vec3 p=vec3(aPos.x,aPos.y*uExag,aPos.z);gl_Position=uVP*vec4(p,1.0);vUV=vec2((aPos.x-uBox.x)/uBox.z,(aPos.z-uBox.y)/uBox.w);vN=normalize(vec3(aNor.x,aNor.y/uExag,aNor.z));vD=length(uCam-p);}`;
+const FS_T=`precision mediump float;uniform sampler2D uTex;uniform float uFog;uniform vec3 uFogC;varying vec2 vUV;varying vec3 vN;varying float vD;
+void main(){vec3 c=texture2D(uTex,vUV).rgb;float l=0.5+0.65*max(dot(normalize(vN),normalize(vec3(-0.45,0.8,-0.35))),0.0);c*=l;float f=1.0-exp(-vD*uFog);gl_FragColor=vec4(mix(c,uFogC,clamp(f,0.0,0.92)),1.0);}`;
+const VS_L=`attribute vec3 aP0;attribute vec3 aP1;attribute vec2 aC;uniform mat4 uVP;uniform float uExag;uniform float uLift;uniform vec2 uRes;uniform float uHalf;
+void main(){vec3 a=vec3(aP0.x,aP0.y*uExag+uLift,aP0.z),b=vec3(aP1.x,aP1.y*uExag+uLift,aP1.z);vec4 ca=uVP*vec4(a,1.0),cb=uVP*vec4(b,1.0);
+ if(ca.w<1.0||cb.w<1.0){gl_Position=vec4(2.0,2.0,2.0,1.0);return;}
+ vec2 sa=ca.xy/ca.w*uRes*0.5,sb=cb.xy/cb.w*uRes*0.5;vec2 d=sb-sa;float len=length(d);d=len>0.0001?d/len:vec2(1.0,0.0);vec2 n=vec2(-d.y,d.x);
+ vec4 p=mix(ca,cb,aC.x);p.xy+=n*aC.y*uHalf*2.0/uRes*p.w;gl_Position=p;}`;
+const FS_L=`precision mediump float;uniform vec4 uCol;void main(){gl_FragColor=uCol;}`;
+const VS_P=`attribute vec3 aPos;uniform mat4 uVP;uniform float uSize;void main(){gl_Position=uVP*vec4(aPos,1.0);gl_PointSize=uSize;}`;
+const FS_P=`precision mediump float;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;gl_FragColor=d>0.34?vec4(1.0,1.0,1.0,1.0):vec4(0.36,0.75,0.92,1.0);}`;
+
+let GL=null;
+function beginRender(){
+  show('fly');
+  const cv=$('gl');
+  let gl=GL&&GL.gl;
+  const first=!gl;
+  if(first){
+    gl=cv.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:true,powerPreference:'high-performance'});
+    if(!gl){show('load');fail('Questo browser non offre il 3D (WebGL 2).');return}
+    cv.addEventListener('webglcontextlost',e=>{e.preventDefault();stopLoop();$('hnote').textContent='Il telefono ha interrotto il 3D (troppo pesante). Premi Esci.'});
+  }
+  const mk=(vs,fs)=>{const p=gl.createProgram();for(const [t,s] of [[gl.VERTEX_SHADER,vs],[gl.FRAGMENT_SHADER,fs]]){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh));gl.attachShader(p,sh)}gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));return p};
+  let T,L,PT;
+  try{T=mk(VS_T,FS_T);L=mk(VS_L,FS_L);PT=mk(VS_P,FS_P)}catch(e){show('load');fail('Errore nel 3D: '+e.message);return}
+  const F=FLY;
+  const mkBuf=(data,type)=>{const b=gl.createBuffer();gl.bindBuffer(type||gl.ARRAY_BUFFER,b);gl.bufferData(type||gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return b};
+  const bPos=mkBuf(F.pos),bNor=mkBuf(F.nor),bIdx=mkBuf(F.idx,gl.ELEMENT_ARRAY_BUFFER);
+  const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,F.tex);
+  const pow2=v=>(v&(v-1))===0;
+  gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  const ex=gl.getExtension('EXT_texture_filter_anisotropic');if(ex)gl.texParameterf(gl.TEXTURE_2D,ex.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(ex.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+  // linea del percorso: 6 vertici per segmento
+  const S=F.pts.length-1,LV=new Float32Array(S*6*8),cor=[[0,-1],[1,-1],[1,1],[0,-1],[1,1],[0,1]];let o=0;
+  for(let i=0;i<S;i++){const a=F.pts[i],b=F.pts[i+1];for(const [t,sd] of cor){LV[o++]=a.X;LV[o++]=a.h;LV[o++]=a.Z;LV[o++]=b.X;LV[o++]=b.h;LV[o++]=b.Z;LV[o++]=t;LV[o++]=sd}}
+  const bLine=mkBuf(LV),bDot=gl.createBuffer();
+  GL={gl,cv,T,L,PT,bPos,bNor,bIdx,texture,bLine,bDot,S,idxCount:F.idx.length};
+  // stato del volo
+  const exagList=[1,2,3,4],relief=F.hmax-F.hmin;let ei=relief>900?0:1;
+  const st={ei,paused:false,t:0,last:performance.now(),scale:Math.min(window.devicePixelRatio||1,1.5),slow:0,frames:0,acc:0,cam:null,look:null,raf:0,dur:Math.max(40,Math.min(75,F.Lm/1000*1.6+30)),nsl:false};
+  GL.st=st;
+  const exagTxt=()=>{$('bexag').textContent=F.demOk?'Rilievo ×'+exagList[st.ei]:'Senza rilievo'};
+  exagTxt();$('bpause').textContent='Pausa';
+  $('bpause').onclick=()=>{st.paused=!st.paused;$('bpause').textContent=st.paused?'Riprendi':'Pausa';st.last=performance.now()};
+  $('bexag').onclick=()=>{if(!F.demOk)return;st.ei=(st.ei+1)%exagList.length;exagTxt()};
+  $('bexit').onclick=()=>{stopLoop();show('home')};
+  $('ftitle').textContent=F.title;$('fdate').textContent=F.sub||(F.start?fmtDate(F.start):'');
+  const notes=[];if(!F.demOk)notes.push('Quote del terreno non scaricate: terreno piatto.');if(F.satFail)notes.push(F.satFail+' tessere satellite mancanti.');
+  $('hnote').textContent=notes.join(' ');
+  const resize=()=>{const c=$('gl'),sc=GL.st.scale;c.width=Math.max(160,Math.round(c.clientWidth*sc));c.height=Math.max(160,Math.round(c.clientHeight*sc))};
+  GL.resize=resize;
+  resize();
+  const pathAt=m=>{ // posizione sul percorso a distanza m (metri); fuori dai capi prosegue in linea retta
+    const P=F.pts,n=P.length;
+    if(m<=0){const q=P[Math.min(n-1,Math.max(1,idxAtM(60)))],a=P[0],dx=q.X-a.X,dz=q.Z-a.Z,l=Math.hypot(dx,dz)||1;return [a.X+dx/l*m,a.h,a.Z+dz/l*m]}
+    if(m>=F.Lm){const a=P[n-1],q=P[Math.max(0,idxAtM(F.Lm-60))],dx=a.X-q.X,dz=a.Z-q.Z,l=Math.hypot(dx,dz)||1;return [a.X+dx/l*(m-F.Lm),a.h,a.Z+dz/l*(m-F.Lm)]}
+    const i=idxAtM(m),a=P[i],b=P[Math.min(n-1,i+1)],u=b.m>a.m?(m-a.m)/(b.m-a.m):0;return [a.X+(b.X-a.X)*u,a.h+(b.h-a.h)*u,a.Z+(b.Z-a.Z)*u];
+  };
+  const idxAtM=m=>{const P=F.pts;let a=0,b=P.length-1;while(a<b){const q=(a+b+1)>>1;if(P[q].m<=m)a=q;else b=q-1}return a};
+  const smoothAt=(m,w)=>{let x=0,y=0,z=0;for(let k=-2;k<=2;k++){const p=pathAt(m+k*w);x+=p[0];y+=p[1];z+=p[2]}return [x/5,y/5,z/5]};
+  GL.pathAt=pathAt;GL.idxAtM=idxAtM;
+  const frame=now=>{
+    st.raf=requestAnimationFrame(frame);
+    let dt=Math.min(0.1,(now-st.last)/1000);st.last=now;
+    if(!st.paused)st.t+=dt;
+    const p=Math.min(1,st.t/st.dur),f=0.7*p+0.3*(p*p*(3-2*p)),m=f*F.Lm,ex=exagList[st.ei];
+    const back=Math.max(120,Math.min(700,F.Lm*0.012)),hgt=back*0.55+40;
+    const cp=smoothAt(m-back,back*0.25),lp=smoothAt(m+back*1.1,back*0.25),rp=pathAt(m);
+    let cy=Math.max(F.demAt(cp[0],cp[2])*ex+hgt,cp[1]*ex+hgt*0.6);
+    const lookT=[lp[0],F.demAt(lp[0],lp[2])*ex,lp[2]],hz=Math.hypot(lookT[0]-cp[0],lookT[2]-cp[2])||1;
+    cy=Math.max(cy,lookT[1]+hz*0.16+20);      // la camera guarda sempre un po' verso il basso, anche dietro una cresta
+    const camT=[cp[0],cy,cp[2]];
+    if(!st.cam){st.cam=camT.slice();st.look=lookT.slice()}
+    const kk=1-Math.exp(-dt*5);for(let i=0;i<3;i++){st.cam[i]+=(camT[i]-st.cam[i])*kk;st.look[i]+=(lookT[i]-st.look[i])*kk}
+    // la camera non scende sotto il terreno
+    st.cam[1]=Math.max(st.cam[1],F.demAt(st.cam[0],st.cam[2])*ex+30);
+    const W=cv.width,Hh=cv.height,P=m4.persp(0.95,W/Hh,8,F.extent*3),V=m4.look(st.cam,st.look,[0,1,0]),VP=m4.mul(P,V);
+    gl.viewport(0,0,W,Hh);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
+    // terreno
+    gl.useProgram(T);
+    const aP=gl.getAttribLocation(T,'aPos'),aN=gl.getAttribLocation(T,'aNor');
+    gl.bindBuffer(gl.ARRAY_BUFFER,bPos);gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,bNor);gl.enableVertexAttribArray(aN);gl.vertexAttribPointer(aN,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,bIdx);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.uniform1i(gl.getUniformLocation(T,'uTex'),0);
+    gl.uniformMatrix4fv(gl.getUniformLocation(T,'uVP'),false,VP);gl.uniform1f(gl.getUniformLocation(T,'uExag'),ex);gl.uniform3fv(gl.getUniformLocation(T,'uCam'),st.cam);
+    gl.uniform4f(gl.getUniformLocation(T,'uBox'),F.X0,F.Z0,F.X1-F.X0,F.Z1-F.Z0);gl.uniform1f(gl.getUniformLocation(T,'uFog'),1.0/F.extent);gl.uniform3f(gl.getUniformLocation(T,'uFogC'),0.78,0.86,0.92);
+    gl.disable(gl.BLEND);gl.drawElements(gl.TRIANGLES,GL.idxCount,gl.UNSIGNED_INT,0);
+    gl.disableVertexAttribArray(aN);
+    // percorso: tutto in bianco, la parte già fatta in azzurro
+    gl.useProgram(L);gl.depthMask(false);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+    gl.bindBuffer(gl.ARRAY_BUFFER,bLine);
+    const l0=gl.getAttribLocation(L,'aP0'),l1=gl.getAttribLocation(L,'aP1'),l2=gl.getAttribLocation(L,'aC');
+    gl.enableVertexAttribArray(l0);gl.vertexAttribPointer(l0,3,gl.FLOAT,false,32,0);gl.enableVertexAttribArray(l1);gl.vertexAttribPointer(l1,3,gl.FLOAT,false,32,12);gl.enableVertexAttribArray(l2);gl.vertexAttribPointer(l2,2,gl.FLOAT,false,32,24);
+    const lift=Math.max(4,F.extent*0.0007);
+    gl.uniformMatrix4fv(gl.getUniformLocation(L,'uVP'),false,VP);gl.uniform1f(gl.getUniformLocation(L,'uExag'),ex);gl.uniform1f(gl.getUniformLocation(L,'uLift'),lift);gl.uniform2f(gl.getUniformLocation(L,'uRes'),W,Hh);
+    const px=st.scale/ (Math.min(window.devicePixelRatio||1,1.5));
+    gl.uniform1f(gl.getUniformLocation(L,'uHalf'),4.0*st.scale);gl.uniform4f(gl.getUniformLocation(L,'uCol'),1,1,1,0.6);gl.drawArrays(gl.TRIANGLES,0,GL.S*6);
+    const doneSeg=Math.max(0,Math.min(GL.S,idxAtM(m)+1));
+    gl.uniform1f(gl.getUniformLocation(L,'uHalf'),6.5*st.scale);gl.uniform4f(gl.getUniformLocation(L,'uCol'),0.36,0.75,0.92,1);gl.drawArrays(gl.TRIANGLES,0,doneSeg*6);
+    gl.disableVertexAttribArray(l0);gl.disableVertexAttribArray(l1);gl.disableVertexAttribArray(l2);gl.depthMask(true);
+    // ciclista
+    gl.useProgram(PT);gl.bindBuffer(gl.ARRAY_BUFFER,bDot);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([rp[0],rp[1]*ex+lift,rp[2]]),gl.DYNAMIC_DRAW);
+    const ap=gl.getAttribLocation(PT,'aPos');gl.enableVertexAttribArray(ap);gl.vertexAttribPointer(ap,3,gl.FLOAT,false,0,0);
+    gl.uniformMatrix4fv(gl.getUniformLocation(PT,'uVP'),false,VP);gl.uniform1f(gl.getUniformLocation(PT,'uSize'),26*st.scale);gl.drawArrays(gl.POINTS,0,1);gl.disableVertexAttribArray(ap);
+    // dati
+    const sGpx=F.R.tot*(m/F.Lm),i=idxAt(F.R.cd,sGpx),R=F.R;
+    $('sKm').textContent=f1(sGpx/1000)+' km';
+    $('sAlt').textContent=Math.round(R.el?R.el[i]:(F.demOk?F.demAt(rp[0],rp[2]):NaN)||0)+' m';
+    $('sSp').textContent=Math.round(R.sp[i]*3.6)+' km/h';
+    $('sSl').textContent=R.slope?f1(R.slope[i])+' %':'n/d';
+    // se è troppo pesante riduco la risoluzione
+    if(!st.paused){st.frames++;st.acc+=dt;if(st.frames>=45){const avg=st.acc/st.frames;st.frames=0;st.acc=0;if(avg>0.05&&st.scale>0.5){st.scale=Math.max(0.5,st.scale*0.75);resize();$('hnote').textContent=($('hnote').textContent+' Qualità ridotta per fluidità.').trim()}}}
+  };
+  window.onresize=()=>{if(GL&&GL.st&&GL.st.raf)resize()};
+  st.last=performance.now();st.raf=requestAnimationFrame(frame);
+}
+function stopLoop(){if(GL&&GL.st){cancelAnimationFrame(GL.st.raf);GL.st.raf=0}}
+</script>
+</body>
+</html>
