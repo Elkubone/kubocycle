@@ -99,7 +99,8 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 #mapov.hm #mdel{display:block}
 #mapov canvas{max-height:calc(100vh - 360px);max-height:calc(100dvh - 360px)}
 #mapov.pv canvas{max-height:calc(100vh - 420px);max-height:calc(100dvh - 420px)}
-#mview,#m3d,#mreplay{flex:1 1 28%!important;background:var(--card)!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
+#mshf{flex:1 1 100%!important}
+#mview,#mhr,#mreplay{flex:1 1 28%!important;background:var(--card)!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
 #rpov{position:fixed;inset:0;z-index:41;display:none;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
 #rpov.on{display:flex}
 #rpc,#rpv{max-width:100%;max-height:calc(100vh - 190px);max-height:calc(100dvh - 190px);border-radius:14px;background:#000}
@@ -160,7 +161,6 @@ body{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-c
 .wvu{font:700 8.5px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--mut);text-anchor:middle}
 .mbtns .mcap{flex:1 1 100%;margin:0;color:var(--mut);font-size:.85rem;font-weight:700;text-align:left}
 .mbtns .share{flex:1 1 40%;background:#2EE077;color:#001a0d}
-.mbtns .strava{flex:1 1 40%;background:#FC4C02;color:#fff}
 
 #pager{position:fixed;inset:0;overflow:hidden}
 .page{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;transition:transform .28s ease}
@@ -324,7 +324,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
-<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea i profili altimetrici</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
+<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea profili e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
@@ -333,8 +333,8 @@ body.p2 #p2{transform:translateX(0)}
 <div id="srvnav"><div class="hh"><button id="snback" aria-label="Indietro">←</button><span>Giri sul server</span></div><input id="snq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><p id="snmsg" class="pnote"></p><div id="snlist"></div></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
-<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Profilo</button><button id="m3d" class="sec" style="display:none">3D</button><button id="mreplay" class="sec" style="display:none">Replay</button><p class="mcap">Condividi</p>
-<button id="mshf" class="share">Foto</button><button id="mstrava" class="strava">Strava</button>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Profilo</button><button id="mhr" class="sec" style="display:none">Battiti</button><button id="mreplay" class="sec" style="display:none">Replay</button><p class="mcap">Condividi</p>
+<button id="mshf" class="share">Foto</button>
 <button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button><button id="mren" class="sec">Rinomina</button><button id="mdel">Elimina giro</button></div></div>
 <div id="rpov"><p id="rpmsg"></p><canvas id="rpc" width="720" height="900" style="display:none"></canvas><video id="rpv" controls playsinline style="display:none"></video>
 <div class="mbtns" id="rpbtns"><button id="rpshare" class="share" style="display:none">Condividi</button><button id="rpsave" class="sec" style="display:none">Salva video</button><button id="rpclose" class="sec">Chiudi</button></div></div>
@@ -805,26 +805,16 @@ async function showImg(blob,none){
   try{const bm=await createImageBitmap(blob);cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);cv.style.display='block';$('mapmsg').textContent=''}
   catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare l\'immagine: puoi scaricare il GPX.'}
 }
-let cur3=null;
-function viewInit(){curView='map';cur3=null;const on=!!(cur&&cur.prof),rp=!!(cur&&cur.gpx),d3=rp&&(cur.gpx.match(/<ele>/g)||[]).length>=10;
-  $('mview').style.display=on?'':'none';$('mview').textContent='Profilo';$('m3d').style.display=d3?'':'none';$('m3d').textContent='3D';$('mreplay').style.display=rp?'':'none';$('mapov').classList.toggle('pv',on||rp)}
-const curImg=()=>cur?(curView==='prof'&&cur.prof?cur.prof:(curView==='3d'&&cur3?cur3:cur.jpg)):null;
-const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-profilo':(curView==='3d'&&cur3?'-3d':'');
+function viewInit(){curView='map';const p=!!(cur&&cur.prof),h=!!(cur&&cur.hrc),rp=!!(cur&&cur.gpx);
+  $('mview').style.display=p?'':'none';$('mview').textContent='Profilo';$('mhr').style.display=h?'':'none';$('mhr').textContent='Battiti';$('mreplay').style.display=rp?'':'none';$('mapov').classList.toggle('pv',p||h||rp)}
+const curImg=()=>cur?(curView==='prof'&&cur.prof?cur.prof:(curView==='hr'&&cur.hrc?cur.hrc:cur.jpg)):null;
+const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-profilo':(curView==='hr'&&cur&&cur.hrc?'-battiti':'');
 async function setView(v){
-  curView=v;$('mview').textContent=v==='prof'?'Mappa':'Profilo';$('m3d').textContent=v==='3d'?'Mappa':'3D';
+  curView=v;$('mview').textContent=v==='prof'?'Mappa':'Profilo';$('mhr').textContent=v==='hr'?'Mappa':'Battiti';
   await showImg(curImg(),'Foto non disponibile per questo giro: puoi scaricare il GPX.');
 }
-$('mview').onclick=async()=>{if(!cur||!cur.prof)return;await setView(curView==='prof'?'map':'prof')};
-$('m3d').onclick=async()=>{
-  if(!cur||!cur.gpx)return;
-  if(curView==='3d'){await setView('map');return}
-  if(!cur3){
-    $('mapmsg').textContent='Creo la vista 3D…';
-    try{cur3=await build3d(cur.gpx,{alt:cur.alt,km:cur.km,t0:cur.start})}catch(e){cur3=null}
-    if(!cur3){$('mapmsg').textContent='Non riesco a creare la vista 3D: nel GPX non ci sono abbastanza quote.';return}
-  }
-  await setView('3d');
-};
+$('mview').onclick=async()=>{if(cur&&cur.prof)await setView(curView==='prof'?'map':'prof')};
+$('mhr').onclick=async()=>{if(cur&&cur.hrc)await setView(curView==='hr'?'map':'hr')};
 async function openRide(rec){
   cur=rec;rec.fromHistory=true;
   $('mapov').classList.add('on','hm');$('mapmsg').textContent='';$('mapttl').textContent=rec.name||'';$('mapttl').style.display=rec.name?'block':'none';$('mbtns').style.display='flex';
@@ -856,8 +846,9 @@ async function doFine(skip){
   let ok=0;
   try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
   const S=rideStats(),gx=gpxData();
+  let hrc=null;try{hrc=await buildHrChart(gx.x,{t0:S.t0,dur:S.tot,km:S.kmm,hrAvg:S.hrAvg,hrMax:S.hrMax})}catch(e){hrc=null}
   let prof=null;try{prof=await buildProfile(track.map(q=>[q[0],q[1],q[3]]),{t0:S.t0,km:S.kmm,alt:altSummary()})}catch(e){prof=null}
-  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,kcal:S.kcal,bike:bike,env:envSummary(),alt:altSummary(),pm:lastPhotoSat?'sat':(ok?'osm':'none'),pts:track.length,jpg:mapBlob,prof:prof,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
+  const rec={id:S.t0,start:S.t0,dur:S.tot,km:S.kmm,mov:S.mov,avg:S.avg,vmax:S.vm,hrAvg:S.hrAvg,hrMax:S.hrMax,kcal:S.kcal,bike:bike,env:envSummary(),alt:altSummary(),pm:lastPhotoSat?'sat':(ok?'osm':'none'),pts:track.length,jpg:mapBlob,prof:prof,hrc:hrc,thumb:mapBlob?await makeThumb():null,gpx:gx.x,base:gx.fn.replace(/\.gpx$/,'')};
   const saved=await dbPut(rec);
   const fsaved=saved&&dirH?await folderPut(rec):null;
   cur=rec;rec.fromHistory=false;
@@ -868,7 +859,6 @@ async function doFine(skip){
   if(saved&&srvOk()){const M=' Carico sul server…';$('mapmsg').textContent+=M;srvSyncAll().then(x=>{const m=$('mapmsg');m.textContent=m.textContent.replace(M,x&&x.n&&!x.bad?' Caricato sul server.':' Server non raggiunto: il giro resta in coda.')})}
 }
 $('fine').onclick=()=>doFine(false);
-$('mstrava').onclick=()=>{downloadGpx();exported=true;window.open('https://www.strava.com/upload/select','_blank','noopener');$('mapmsg').textContent="GPX scaricato: su Strava scegli il file dall'elenco Download."};
 async function sharePhoto(){
   const msg=t=>{$('mapmsg').textContent=t};
   if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione: usa Salva JPG.');return}
@@ -1048,12 +1038,13 @@ async function exportAll(){
       if(r.gpx)files.push({name:'gpx/'+base+'.gpx',data:enc.encode(r.gpx),date:d});
       if(r.jpg)files.push({name:'foto/'+base+'.jpg',data:new Uint8Array(await r.jpg.arrayBuffer()),date:d});
       if(r.prof)files.push({name:'profili/'+base+'-profilo.jpg',data:new Uint8Array(await r.prof.arrayBuffer()),date:d});
+      if(r.hrc)files.push({name:'battiti/'+base+'-battiti.jpg',data:new Uint8Array(await r.hrc.arrayBuffer()),date:d});
       csv+=[d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),pad(d.getHours())+':'+pad(d.getMinutes()),'"'+(r.name||'').replace(/"/g,'""')+'"',f1((r.km||0)/1000),Math.round((r.dur||0)/60000),r.mov!=null?Math.round(r.mov/60000):'',f1(r.avg),r.vmax!=null?Math.round(r.vmax*3.6):'',r.hrAvg!=null?Math.round(r.hrAvg):'',r.hrMax||'',r.kcal>0?Math.round(r.kcal):'',base+'.gpx',r.bike&&BIKES[r.bike]?BIKES[r.bike]:''].join(';')+'\n';
     }
     files.push({name:'cronologia.csv',data:enc.encode('\ufeff'+csv),date:new Date()});
     const t=new Date();
     saveBlob(mkZip(files),'kubocycle-cronologia-'+t.getFullYear()+pad(t.getMonth()+1)+pad(t.getDate())+'.zip');
-    m.textContent='Scaricato il file con '+L.length+(L.length===1?' giro':' giri')+' (GPX, foto, profili e cronologia.csv).';
+    m.textContent='Scaricato il file con '+L.length+(L.length===1?' giro':' giri')+' (GPX, foto, profili, grafici dei battiti e cronologia.csv).';
   }catch(e){m.textContent='Esportazione non riuscita: '+((e&&e.message)||e)}
 }
 
@@ -1555,13 +1546,14 @@ async function dirPerm(h,ask){
   return false;
 }
 async function fwrite(name,data){const fh=await dirH.getFileHandle(name,{create:true}),w=await fh.createWritable();try{await w.write(data)}finally{await w.close()}}
-const rideMeta=r=>({v:1,id:r.id,start:r.start,dur:r.dur,km:r.km,mov:r.mov,avg:r.avg,vmax:r.vmax,hrAvg:r.hrAvg,hrMax:r.hrMax,kcal:r.kcal,pts:r.pts,name:r.name||'',base:r.base,bike:r.bike||null,env:r.env||null,alt:r.alt||null,pm:r.pm||null,pr:r.prof?1:0});
+const rideMeta=r=>({v:1,id:r.id,start:r.start,dur:r.dur,km:r.km,mov:r.mov,avg:r.avg,vmax:r.vmax,hrAvg:r.hrAvg,hrMax:r.hrMax,kcal:r.kcal,pts:r.pts,name:r.name||'',base:r.base,bike:r.bike||null,env:r.env||null,alt:r.alt||null,pm:r.pm||null,pr:r.prof?1:0,hc:r.hrc?1:0});
 async function folderPut(r){
   if(!dirH||!(await dirPerm(dirH,false)))return false;
   try{
     if(r.gpx)await fwrite(r.base+'.gpx',r.gpx);
     if(r.jpg)await fwrite(r.base+'.jpg',r.jpg);
     if(r.prof)await fwrite(r.base+'-profilo.jpg',r.prof);
+    if(r.hrc)await fwrite(r.base+'-battiti.jpg',r.hrc);
     await fwrite(r.base+'.json',JSON.stringify(rideMeta(r)));      // il file dei dati per ultimo: se manca, il giro non è completo
     return true;
   }catch(e){return false}
@@ -1570,6 +1562,7 @@ async function folderDel(r){
   if(!dirH||!(await dirPerm(dirH,false)))return;
   for(const x of ['json','gpx','jpg']){try{await dirH.removeEntry(r.base+'.'+x)}catch(e){}}
   try{await dirH.removeEntry(r.base+'-profilo.jpg')}catch(e){}
+  try{await dirH.removeEntry(r.base+'-battiti.jpg')}catch(e){}
 }
 async function thumbFrom(blob){
   try{const bm=await createImageBitmap(blob),c=document.createElement('canvas');c.width=192;c.height=240;c.getContext('2d').drawImage(bm,0,0,192,240);
@@ -1600,6 +1593,7 @@ async function folderSync(){
         try{rec.gpx=await (await (await dirH.getFileHandle(base+'.gpx')).getFile()).text()}catch(e){rec.gpx=''}
         try{const f=await (await dirH.getFileHandle(base+'.jpg')).getFile();rec.jpg=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.jpg=null}
         try{const f=await (await dirH.getFileHandle(base+'-profilo.jpg')).getFile();rec.prof=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.prof=null}
+        try{const f=await (await dirH.getFileHandle(base+'-battiti.jpg')).getFile();rec.hrc=new Blob([await f.arrayBuffer()],{type:'image/jpeg'})}catch(e){rec.hrc=null}
         rec.thumb=rec.jpg?await thumbFrom(rec.jpg):null;
         if(await dbPut(rec))imp++;else bad++;
       }catch(e){bad++}
@@ -1698,11 +1692,11 @@ async function srvFetch(path,opt){
   finally{clearTimeout(tm)}
 }
 async function srvUpload(r){
-  const body=JSON.stringify({id:String(r.id),start:r.start,name:r.name||'',bike:r.bike||null,stats:(({pr,...x})=>x)(rideMeta(r)),gpx:r.gpx||'',jpg:await b64(r.jpg),thumb:await b64(r.thumb),prof:await b64(r.prof),app:location.origin+location.pathname});
+  const body=JSON.stringify({id:String(r.id),start:r.start,name:r.name||'',bike:r.bike||null,stats:(({pr,hc,...x})=>x)(rideMeta(r)),gpx:r.gpx||'',jpg:await b64(r.jpg),thumb:await b64(r.thumb),prof:await b64(r.prof),hrc:await b64(r.hrc),app:location.origin+location.pathname});
   const x=await srvFetch('/api/rides',{method:'POST',body});
   if(!x.ok)throw new Error('HTTP '+x.status);
   let j=null;try{j=await x.json()}catch(e){}
-  r.srv={at:Date.now(),name:r.name||'',pm:r.pm||null,pr:!!(r.prof&&j&&j.pr)};await dbPut(r);
+  r.srv={at:Date.now(),name:r.name||'',pm:r.pm||null,pr:!!(r.prof&&j&&j.pr),hc:!!(r.hrc&&j&&j.hc)};await dbPut(r);
 }
 const srvPending=r=>!(r.srv&&r.srv.at&&r.srv.name===(r.name||''));
 async function srvSyncAll(){
@@ -1877,37 +1871,41 @@ async function buildProfile(pts,info){      // pts: [[lat,lon,quota]..]; info: {
     g.fillStyle='#F2F5F6';let fs=44;g.font='800 '+fs+'px system-ui,sans-serif';while(fs>26&&g.measureText(v).width>cw-50){fs-=2;g.font='800 '+fs+'px system-ui,sans-serif'}g.fillText(v,x,y+108)});
   return await new Promise(res=>{try{cv.toBlob(res,'image/jpeg',0.9)}catch(e){res(null)}});
 }
-async function srvProf(r){      // manda al server solo il profilo; segna «inviato» solo se il server conferma (campo pr)
-  const x=await srvFetch('/api/rides/'+r.id,{method:'PATCH',body:JSON.stringify({prof:await b64(r.prof)})});
+async function srvProf(r){      // manda al server profilo e grafico dei battiti mancanti; segna «inviato» solo se il server conferma (campi pr e hc)
+  const body={},sv=r.srv||{};
+  if(r.prof&&!sv.pr)body.prof=await b64(r.prof);
+  if(r.hrc&&!sv.hc)body.hrc=await b64(r.hrc);
+  if(!Object.keys(body).length)return;
+  const x=await srvFetch('/api/rides/'+r.id,{method:'PATCH',body:JSON.stringify(body)});
   if(!x.ok)throw new Error('HTTP '+x.status);
   let j=null;try{j=await x.json()}catch(e){}
-  if(!(j&&j.pr))throw new Error('server non aggiornato');
-  r.srv={...(r.srv||{}),pr:true};await dbPut(r);
+  if(!((!body.prof||(j&&j.pr))&&(!body.hrc||(j&&j.hc))))throw new Error('server non aggiornato');
+  r.srv={...sv,pr:!!(sv.pr||body.prof),hc:!!(sv.hc||body.hrc)};await dbPut(r);
 }
+const hasHrGpx=g=>(g.match(/<gpxtpx:hr>/g)||[]).length>=30;
 let profBusy=false;
 async function profAll(){
   if(profBusy||recording)return;profBusy=true;const m=$('hmsg');
   try{
-    m.textContent='Cerco i giri senza profilo…';
+    m.textContent='Cerco i giri da completare…';
     const L=(await dbAll())||[],onSrv=r=>srvOk()&&r.srv&&r.srv.at,
-      todo=L.filter(r=>(!r.prof&&r.gpx)||(r.prof&&onSrv(r)&&!r.srv.pr));
-    if(!todo.length){m.textContent='Tutti i giri hanno già il profilo altimetrico.';return}
-    let ok=0,none=0,srvBad=0,i=0;
+      todo=L.filter(r=>(!r.prof&&r.gpx)||(!r.hrc&&r.gpx&&hasHrGpx(r.gpx))||(onSrv(r)&&((r.prof&&!r.srv.pr)||(r.hrc&&!r.srv.hc))));
+    if(!todo.length){m.textContent='Tutti i giri hanno già profilo altimetrico e grafico dei battiti.';return}
+    let okP=0,okH=0,none=0,srvBad=0,i=0;
     for(const r of todo){
-      i++;m.textContent='Profilo '+i+' di '+todo.length+'…';
+      i++;m.textContent='Giro '+i+' di '+todo.length+'…';
       try{
-        if(!r.prof){
-          const p=await buildProfile(gpxEle(r.gpx),{t0:r.start,km:r.km,alt:r.alt});
-          if(!p){none++;continue}
-          r.prof=p;await dbPut(r);if(dirH)await folderPut(r);ok++;
-        }
-        if(onSrv(r)&&!r.srv.pr){try{await srvProf(r)}catch(e){srvBad++}}
+        let ch=false;
+        if(!r.prof&&r.gpx){const p=await buildProfile(gpxEle(r.gpx),{t0:r.start,km:r.km,alt:r.alt});if(p){r.prof=p;okP++;ch=true}else none++}
+        if(!r.hrc&&r.gpx&&hasHrGpx(r.gpx)){const h=await buildHrChart(r.gpx,{t0:r.start,dur:r.dur,km:r.km,hrAvg:r.hrAvg,hrMax:r.hrMax});if(h){r.hrc=h;okH++;ch=true}}
+        if(ch){await dbPut(r);if(dirH)await folderPut(r)}
+        if(onSrv(r)&&((r.prof&&!r.srv.pr)||(r.hrc&&!r.srv.hc))){try{await srvProf(r)}catch(e){srvBad++}}
       }catch(e){none++}
       await new Promise(res=>setTimeout(res,20));
     }
-    m.textContent='Fatto: '+ok+(ok===1?' profilo creato':' profili creati')+(none?', '+none+' giri senza quote nel GPX o troppo corti':'')+(srvBad?'; '+srvBad+' non inviati al server (se il server non è aggiornato o non risponde si riprova al prossimo tocco)':'')+'.';
+    m.textContent='Fatto: '+okP+(okP===1?' profilo':' profili')+' e '+okH+(okH===1?' grafico dei battiti creati':' grafici dei battiti creati')+(none?'; '+none+' giri senza quote nel GPX o troppo corti':'')+(srvBad?'; '+srvBad+' non inviati al server (server non aggiornato o non raggiungibile: si riprova al prossimo tocco)':'')+'.';
     const keep=m.textContent;await histOpen();$('hmsg').textContent=keep;
-  }catch(e){m.textContent='Non riesco a creare i profili: '+((e&&e.message)||e)}
+  }catch(e){m.textContent='Non riesco a completare i giri: '+((e&&e.message)||e)}
   finally{profBusy=false}
 }
 $('hprof').onclick=profAll;
@@ -2061,75 +2059,54 @@ $('rpsave').onclick=()=>{if(rpBlob){saveBlob(rpBlob,rpName);$('rpmsg').textConte
 $('rpclose').onclick=()=>{rpAbort=true;$('rpov').classList.remove('on');try{$('rpv').pause()}catch(e){}$('rpv').removeAttribute('src');if(rpUrl){URL.revokeObjectURL(rpUrl);rpUrl=null}rpBlob=null};
 
 
-// ================= percorso 3D a nastro (foto 1080x1350, creata a richiesta dal GPX) =================
-async function build3d(gpx,info){
-  const R=replayPrep(gpx);if(!R||!R.el)return null;
-  const n=R.n,P=R.P,lat0=P[0].la,lon0=P[0].lo,kx=Math.cos(lat0*Math.PI/180)*111320,ky=110540;
-  let X=P.map(p=>(p.lo-lon0)*kx),Y=P.map(p=>(p.la-lat0)*ky);
-  const mxm=X.reduce((a,b)=>a+b,0)/n,mym=Y.reduce((a,b)=>a+b,0)/n;X=X.map(x=>x-mxm);Y=Y.map(y=>y-mym);
-  const zlo=Math.min(...R.el),zhi=Math.max(...R.el),zr=Math.max(zhi-zlo,5),flo=zlo-zr*0.05;
-  const W=1080,H=1350,SC={x0:40,x1:W-40,y0:190,y1:985};
-  const ext=Math.max(Math.max(...X)-Math.min(...X),Math.max(...Y)-Math.min(...Y));
-  const E=Math.round(Math.min(12,Math.max(1,0.22*ext/zr))*10)/10;       // altezze ingrandite per renderle leggibili
-  const step=Math.max(1,Math.floor(n/450)),idx=[];for(let i=0;i<n;i+=step)idx.push(i);if(idx[idx.length-1]!==n-1)idx.push(n-1);
-  // provo molti angoli di vista e tengo quello che ingrandisce di più il disegno
-  const view=(az,phd)=>{
-    const al=az*Math.PI/180,ca=Math.cos(al),sa=Math.sin(al),ph=phd*Math.PI/180,sph=Math.sin(ph),cph=Math.cos(ph);
-    const U=X.map((x,i)=>x*ca+Y[i]*sa),V=X.map((x,i)=>-x*sa+Y[i]*ca);
-    const um=Math.min(...U),uM=Math.max(...U),vm=Math.min(...V),vM=Math.max(...V),mg=Math.max(ext*0.04,50);
-    const corners=[[um-mg,vm-mg],[uM+mg,vm-mg],[uM+mg,vM+mg],[um-mg,vM+mg]];
-    const pr=(u,v,z)=>[u,-(v*sph+(z-flo)*E*cph)];
-    let bx0=1e18,bx1=-1e18,by0=1e18,by1=-1e18;const eat=([x,y])=>{bx0=Math.min(bx0,x);bx1=Math.max(bx1,x);by0=Math.min(by0,y);by1=Math.max(by1,y)};
-    corners.forEach(([u,v])=>eat(pr(u,v,flo)));for(const i of idx)eat(pr(U[i],V[i],R.el[i]));
-    const sc=Math.min((SC.x1-SC.x0-30)/(bx1-bx0),(SC.y1-SC.y0-50)/(by1-by0)),cx=(bx0+bx1)/2,cy=(by0+by1)/2;
-    return {sc,U,V,um,uM,vm,vM,mg,corners,T:(u,v,z)=>{const q=pr(u,v,z);return [(SC.x0+SC.x1)/2+(q[0]-cx)*sc,(SC.y0+SC.y1)/2+(q[1]-cy)*sc]}};
-  };
-  let VW=null;for(let az=0;az<360;az+=10)for(const phd of [30,40,50]){const c=view(az,phd);if(!VW||c.sc>VW.sc)VW=c}
-  const {U,V,um,uM,vm,vM,mg,corners,T}=VW;
-  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
-  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0B1114');bg.addColorStop(1,'#000');g.fillStyle=bg;g.fillRect(0,0,W,H);
+// ================= grafico dei battiti cardiaci (foto 1080x1350) =================
+async function buildHrChart(gpx,info){
+  const R=replayPrep(gpx);if(!R||!R.hasHr)return null;
+  const I=[];for(let i=0;i<R.n;i++)if(R.P[i].hr!=null)I.push(i);
+  if(I.length<30)return null;
+  const T=I.map(i=>R.vt[i]),Hh=I.map(i=>R.P[i].hr),m=I.length,Sm=new Array(m);
+  let a=0,b=0,sm=0,c=0;for(let i=0;i<m;i++){while(b<m&&T[b]-T[i]<=8000){sm+=Hh[b];c++;b++}while(T[i]-T[a]>8000){sm-=Hh[a];c--;a++}Sm[i]=sm/c}      // media mobile su ~16 s
+  const tTot=R.vt[R.n-1],hrMax=info.hrMax||Math.max(...Hh),hrAvg=info.hrAvg||Hh.reduce((x,y)=>x+y,0)/m,hrMin=Math.min(...Sm);
+  const age=(typeof prof!=='undefined'&&prof&&prof.age>0)?prof.age:null,fmax=age?Math.round(208-0.7*age):hrMax;
+  const zn=h=>h<fmax*0.6?0:h<fmax*0.7?1:h<fmax*0.8?2:h<fmax*0.9?3:4,zc=['#8AB4C9','#2EE077','#FFD43B','#FF9F1C','#FF5448'];
+  const zt=[0,0,0,0,0];for(let i=0;i<m-1;i++)zt[zn(Sm[i])]+=Math.min(5000,T[i+1]-T[i]);
+  const zi=zt.indexOf(Math.max(...zt)),zsum=zt.reduce((x,y)=>x+y,0)||1;
+  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
   const f1=x=>x.toFixed(1).replace('.',','),dt=new Date(info.t0||R.t0);
-  g.textAlign='left';g.textBaseline='alphabetic';
+  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0B1114');bg.addColorStop(1,'#000');g.fillStyle=bg;g.fillRect(0,0,W,H);
   const tg=g.createLinearGradient(50,0,420,0);tg.addColorStop(0,'#5BC0EB');tg.addColorStop(1,'#2EE077');
+  g.textAlign='left';g.textBaseline='alphabetic';
   g.fillStyle=tg;g.font='900 62px system-ui,sans-serif';g.fillText('KUBOCYCLE',50,92);
   g.fillStyle='#F2F5F6';g.font='600 30px system-ui,sans-serif';
   g.fillText(dt.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),50,140);
-  g.fillStyle='#BCC9D0';g.font='800 34px system-ui,sans-serif';g.fillText('Percorso in 3D',50,208-4);
-  g.textAlign='right';g.fillStyle='#8A9BA3';g.font='600 24px system-ui,sans-serif';g.fillText('altezze ingrandite ×'+String(E).replace('.',','),W-50,204);g.textAlign='left';
-  // pavimento con griglia
-  const poly=pts=>{g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath()};
-  poly(corners.map(([u,v])=>T(u,v,flo)));g.fillStyle='rgba(255,255,255,.035)';g.fill();g.strokeStyle='rgba(255,255,255,.16)';g.lineWidth=2;g.stroke();
-  const gs=[200,500,1000,2000,5000,10000,20000].find(s=>Math.max(uM-um,vM-vm)/s<=8)||50000;
-  g.strokeStyle='rgba(255,255,255,.08)';g.lineWidth=2;
-  for(let u=Math.ceil((um-mg)/gs)*gs;u<=uM+mg;u+=gs){const a=T(u,vm-mg,flo),b=T(u,vM+mg,flo);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke()}
-  for(let v=Math.ceil((vm-mg)/gs)*gs;v<=vM+mg;v+=gs){const a=T(um-mg,v,flo),b=T(uM+mg,v,flo);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke()}
-  // ombra del percorso sul pavimento
-  g.lineJoin='round';g.lineCap='round';g.beginPath();for(let i=0;i<n;i+=Math.max(1,Math.floor(n/600))){const p=T(U[i],V[i],flo);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])}
-  g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=5;g.stroke();
-  // nastro: un tratto per volta, dal più lontano al più vicino
-  const col=p=>p<-2?'#5BC0EB':p<3?'#2EE077':p<6?'#FFD43B':p<9?'#FF9F1C':'#FF5448';
-  const segs=[];for(let q=1;q<idx.length;q++){const a=idx[q-1],b=idx[q];segs.push({a,b,d:(V[a]+V[b])/2,c:col((R.slope[a]+R.slope[b])/2)})}
-  segs.sort((p,q)=>q.d-p.d);
-  g.beginPath();idx.forEach((i,q)=>{const p=T(U[i],V[i],R.el[i]);q?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])});g.strokeStyle='rgba(0,0,0,.7)';g.lineWidth=19;g.stroke();      // contorno scuro continuo
-  for(const sg of segs){
-    const a=sg.a,b=sg.b,t1=T(U[a],V[a],R.el[a]),t2=T(U[b],V[b],R.el[b]),b1=T(U[a],V[a],flo),b2=T(U[b],V[b],flo);
-    g.beginPath();g.moveTo(b1[0],b1[1]);g.lineTo(t1[0],t1[1]);g.lineTo(t2[0],t2[1]);g.lineTo(b2[0],b2[1]);g.closePath();
-    const gq=g.createLinearGradient(0,Math.min(t1[1],t2[1]),0,Math.max(b1[1],b2[1]));gq.addColorStop(0,sg.c+'99');gq.addColorStop(1,sg.c+'12');g.fillStyle=gq;g.fill();
-    g.beginPath();g.moveTo(t1[0],t1[1]);g.lineTo(t2[0],t2[1]);g.strokeStyle=sg.c;g.lineWidth=12;g.stroke();
-  }
-  // partenza, arrivo e punto più alto
-  const pin=(i,colr,r)=>{const p=T(U[i],V[i],R.el[i]);g.beginPath();g.arc(p[0],p[1],r,0,7);g.fillStyle=colr;g.fill();g.lineWidth=6;g.strokeStyle='#fff';g.stroke();return p};
-  pin(0,'#2EE077',20);pin(n-1,'#FF5448',20);
-  const ip=R.el.indexOf(zhi),pk=pin(ip,'#fff',15),tx=Math.round(zhi)+' m';
-  g.font='800 32px system-ui,sans-serif';const tw=g.measureText(tx).width+30,bx=Math.max(SC.x0,Math.min(SC.x1-tw,pk[0]-tw/2)),by=pk[1]-70<SC.y0?pk[1]+30:pk[1]-70;
-  g.fillStyle='rgba(0,0,0,.85)';g.beginPath();g.roundRect(bx,by,tw,46,12);g.fill();g.fillStyle='#fff';g.textAlign='center';g.fillText(tx,bx+tw/2,by+34);
-  // legenda
-  const lg=[['discesa','#5BC0EB'],['piano','#2EE077'],['3-6%','#FFD43B'],['6-9%','#FF9F1C'],['oltre 9%','#FF5448']];
-  g.font='700 24px system-ui,sans-serif';g.textAlign='left';let lx=50;
-  lg.forEach(([t,c])=>{g.fillStyle=c;g.beginPath();g.roundRect(lx,1000,22,22,6);g.fill();g.fillStyle='#BCC9D0';g.fillText(t,lx+32,1020);lx+=32+g.measureText(t).width+30});
-  // riquadro in basso
-  const alt=info.alt||altFromArr(P.map(p=>p.z).filter(z=>z!=null)),kmTot=(info.km!=null?info.km:R.tot)/1000,smax=Math.min(30,Math.max(0,...R.slope));
-  const cells=[['Distanza',f1(kmTot)+' km'],['Salita',alt?alt.gain+' m':'n/d'],['Discesa',alt?alt.loss+' m':'n/d'],['Quota max',Math.round(zhi)+' m'],['Quota min',Math.round(zlo)+' m'],['Pend. max',f1(smax)+' %']];
+  g.fillStyle='#BCC9D0';g.font='800 34px system-ui,sans-serif';g.fillText('Battiti cardiaci',50,208);
+  const X0=150,X1=W-60,Y0=300,Y1=850;
+  let ylo=Math.floor((hrMin-8)/10)*10,yhi=Math.ceil((Math.max(...Sm)+8)/10)*10;if(yhi-ylo<40)yhi=ylo+40;
+  const ys=(yhi-ylo)<=60?10:(yhi-ylo)<=120?20:40,px=t=>X0+(X1-X0)*t/tTot,py=h=>Y1-(Y1-Y0)*(h-ylo)/(yhi-ylo);
+  g.font='600 26px system-ui,sans-serif';g.lineWidth=2;
+  for(let v=Math.ceil(ylo/ys)*ys;v<=yhi;v+=ys){const y=py(v);g.strokeStyle='rgba(255,255,255,.14)';g.beginPath();g.moveTo(X0,y);g.lineTo(X1,y);g.stroke();g.fillStyle='#BCC9D0';g.textAlign='right';g.fillText(String(v),X0-14,y+9)}
+  g.textAlign='left';g.fillStyle='#8A9BA3';g.fillText('bpm',X0-70,Y0-14);
+  const mt=[5,10,15,30,60,120,240].find(q=>(tTot/60000)/q<=7)||240;g.textAlign='center';
+  for(let v=0;v*60000<=tTot+1;v+=mt){const x=px(v*60000);g.strokeStyle='rgba(255,255,255,.14)';g.beginPath();g.moveTo(x,Y0);g.lineTo(x,Y1);g.stroke();g.fillStyle='#BCC9D0';g.fillText(String(v),x,Y1+40)}
+  g.textAlign='right';g.fillStyle='#8A9BA3';g.fillText('min',X1,Y1+78);
+  // soglie delle zone
+  g.setLineDash([14,10]);g.lineWidth=2;
+  [0.6,0.7,0.8,0.9].forEach((q,k)=>{const v=fmax*q;if(v>ylo&&v<yhi){const y=py(v);g.strokeStyle=zc[k+1]+'88';g.beginPath();g.moveTo(X0,y);g.lineTo(X1,y);g.stroke();g.fillStyle=zc[k+1];g.font='800 24px system-ui,sans-serif';g.textAlign='right';g.fillText('Z'+(k+2),X1-8,y-8)}});
+  g.setLineDash([]);
+  const st=Math.max(1,Math.ceil(m/700)),ix=[];for(let i=0;i<m;i+=st)ix.push(i);if(ix[ix.length-1]!==m-1)ix.push(m-1);
+  const ar=g.createLinearGradient(0,Y0,0,Y1);ar.addColorStop(0,'rgba(255,255,255,.16)');ar.addColorStop(1,'rgba(255,255,255,.02)');
+  g.beginPath();g.moveTo(px(T[ix[0]]),Y1);ix.forEach(i=>g.lineTo(px(T[i]),py(Sm[i])));g.lineTo(px(T[ix[ix.length-1]]),Y1);g.closePath();g.fillStyle=ar;g.fill();
+  g.lineJoin='round';g.lineCap='round';g.beginPath();ix.forEach((i,q)=>q?g.lineTo(px(T[i]),py(Sm[i])):g.moveTo(px(T[i]),py(Sm[i])));g.strokeStyle='rgba(0,0,0,.7)';g.lineWidth=14;g.stroke();
+  g.lineWidth=8;for(let q=1;q<ix.length;q++){const i0=ix[q-1],i1=ix[q];g.beginPath();g.moveTo(px(T[i0]),py(Sm[i0]));g.lineTo(px(T[i1]),py(Sm[i1]));g.strokeStyle=zc[zn((Sm[i0]+Sm[i1])/2)];g.stroke()}
+  {const ip=Sm.indexOf(Math.max(...Sm)),x=px(T[ip]),y=py(Sm[ip]),tx=Math.round(Sm[ip])+' bpm';g.beginPath();g.arc(x,y,15,0,7);g.fillStyle='#fff';g.fill();g.lineWidth=6;g.strokeStyle='#000';g.stroke();
+   g.font='800 30px system-ui,sans-serif';const tw=g.measureText(tx).width+28,bx=Math.max(X0,Math.min(X1-tw,x-tw/2)),by=y-62<Y0-20?y+26:y-62;
+   g.fillStyle='rgba(0,0,0,.85)';g.beginPath();g.roundRect(bx,by,tw,42,12);g.fill();g.fillStyle='#fff';g.textAlign='center';g.fillText(tx,bx+tw/2,by+31)}
+  const lg=['Z1 <60%','Z2 60-70%','Z3 70-80%','Z4 80-90%','Z5 >90%'];
+  g.font='700 24px system-ui,sans-serif';g.textAlign='left';let lx=X0-60;
+  lg.forEach((t,k)=>{g.fillStyle=zc[k];g.beginPath();g.roundRect(lx,946,22,22,6);g.fill();g.fillStyle='#BCC9D0';g.fillText(t,lx+32,966);lx+=32+g.measureText(t).width+22});
+  g.fillStyle='#8A9BA3';g.font='600 22px system-ui,sans-serif';g.fillText(age?'Zone sulla FC max stimata dall\'età: '+fmax+' bpm':'Zone sul massimo del giro: '+fmax+' bpm',X0-60,1004);
+  const dur=info.dur!=null?info.dur:R.P[R.n-1].t-R.t0,hh=Math.floor(dur/3600000),mm=Math.round(dur/60000)%60,durT=hh?hh+' h '+mm+' min':mm+' min',kmTot=(info.km!=null?info.km:R.tot)/1000;
+  const cells=[['FC media',Math.round(hrAvg)+' bpm'],['FC max',Math.round(hrMax)+' bpm'],['FC min',Math.round(hrMin)+' bpm'],['Durata',durT],['Distanza',f1(kmTot)+' km'],['Zona più usata','Z'+(zi+1)+' · '+Math.round(zt[zi]/zsum*100)+' %']];
   const bh=125*2+20,bt=H-50-bh,cw=(W-80)/3;
   g.fillStyle='rgba(255,255,255,.07)';g.beginPath();g.roundRect(40,bt,W-80,bh,32);g.fill();g.textAlign='left';
   cells.forEach(([l,v],i)=>{const x=40+cw*(i%3)+34,y=bt+Math.floor(i/3)*125;g.fillStyle='#BCC9D0';g.font='700 28px system-ui,sans-serif';g.fillText(l,x,y+58);g.fillStyle='#F2F5F6';let fs=44;g.font='800 '+fs+'px system-ui,sans-serif';while(fs>26&&g.measureText(v).width>cw-50){fs-=2;g.font='800 '+fs+'px system-ui,sans-serif'}g.fillText(v,x,y+108)});
