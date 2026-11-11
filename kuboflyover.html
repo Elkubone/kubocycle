@@ -157,6 +157,47 @@ const mercY=(lat,z)=>{const s=Math.sin(rad(lat));return (0.5-Math.log((1+s)/(1-s
 function loadImg(url,ms){return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';let done=false;const fin=v=>{if(!done){done=true;clearTimeout(tm);res(v)}};const tm=setTimeout(()=>{im.src='';fin(null)},ms||15000);im.onload=()=>fin(im);im.onerror=()=>fin(null);im.src=url})}
 async function pool(items,n,fn,isCancelled){let k=0;const w=async()=>{while(k<items.length&&!isCancelled()){const i=k++;await fn(items[i],i)}};await Promise.all(Array.from({length:n},w))}
 
+// Le quote sono nascoste nei colori di piccole immagini PNG. Alcuni browser (Brave, Firefox con protezioni) alterano di proposito i pixel
+// letti da un canvas: basta un bit per avere 256 m di errore. Per questo le immagini si decodificano a mano, senza passare dal canvas.
+async function inflate(u8){const ds=new DecompressionStream('deflate'),w=ds.writable.getWriter();w.write(u8);w.close();return new Uint8Array(await new Response(ds.readable).arrayBuffer())}
+async function decodePng(buf){
+  const u=new Uint8Array(buf),sg=[137,80,78,71,13,10,26,10];for(let i=0;i<8;i++)if(u[i]!==sg[i])return null;
+  const dv=new DataView(buf);let p=8,w=0,h=0,bd=0,ct=0,il=0;const parts=[];
+  while(p+8<=u.length){const len=dv.getUint32(p),ty=String.fromCharCode(u[p+4],u[p+5],u[p+6],u[p+7]),d=p+8;
+    if(ty==='IHDR'){w=dv.getUint32(d);h=dv.getUint32(d+4);bd=u[d+8];ct=u[d+9];il=u[d+12]}else if(ty==='IDAT')parts.push(u.subarray(d,d+len));else if(ty==='IEND')break;p=d+len+4}
+  if(bd!==8||il!==0||(ct!==2&&ct!==6)||!w||!h)return null;
+  const ch=ct===2?3:4,stride=w*ch;let tot=0;for(const a of parts)tot+=a.length;const z=new Uint8Array(tot);let o=0;for(const a of parts){z.set(a,o);o+=a.length}
+  const raw=await inflate(z);if(raw.length<h*(stride+1))return null;
+  const out=new Uint8Array(h*stride);
+  for(let y=0;y<h;y++){
+    const f=raw[y*(stride+1)],src=y*(stride+1)+1,dst=y*stride,prev=dst-stride;
+    for(let i=0;i<stride;i++){
+      const x=raw[src+i],a=i>=ch?out[dst+i-ch]:0,b=y?out[prev+i]:0,c=(y&&i>=ch)?out[prev+i-ch]:0;let v;
+      switch(f){case 0:v=x;break;case 1:v=x+a;break;case 2:v=x+b;break;case 3:v=x+((a+b)>>1);break;
+        case 4:{const pp=a+b-c,pa=Math.abs(pp-a),pb=Math.abs(pp-b),pc=Math.abs(pp-c);v=x+((pa<=pb&&pa<=pc)?a:(pb<=pc?b:c));break}
+        default:return null}
+      out[dst+i]=v&255;
+    }
+  }
+  return {w,h,ch,data:out};
+}
+async function loadDemTile(url,tg){
+  try{
+    const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),15000);
+    let buf;try{const r=await fetch(url,{mode:'cors',signal:ctl.signal});if(!r.ok)return null;buf=await r.arrayBuffer()}finally{clearTimeout(tm)}
+    const png=await decodePng(buf);
+    if(png&&png.w===256&&png.h===256){const o=new Float32Array(65536);for(let q=0;q<65536;q++){const i=q*png.ch;o[q]=png.data[i]*256+png.data[i+1]+png.data[i+2]/256-32768}return o}
+  }catch(e){}
+  // ripiego: lettura dal canvas (può essere alterata da alcuni browser; poi c'è il filtro anti-picco)
+  const im=await loadImg(url);if(!im)return null;
+  try{tg.clearRect(0,0,256,256);tg.drawImage(im,0,0);const d=tg.getImageData(0,0,256,256).data,o=new Float32Array(65536);for(let q=0;q<65536;q++)o[q]=d[q*4]*256+d[q*4+1]+d[q*4+2]/256-32768;return o}catch(e){return null}
+}
+function despike(H,w,h){      // toglie i picchi isolati (errori di lettura): un punto troppo lontano dalla media dei vicini
+  let fixed=0;
+  for(let pass=0;pass<2;pass++)for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const q=y*w+x,m=(H[q-1]+H[q+1]+H[q-w]+H[q+w])/4;if(Math.abs(H[q]-m)>45){H[q]=m;fixed++}}
+  return fixed;
+}
+
 let CANCEL=false,FLY=null;
 const setLoad=(t,p)=>{$('lmsg').textContent=t;if(p!=null)$('lfill').style.width=Math.round(p*100)+'%'};
 const fail=(t)=>{show('load');$('ltitle').textContent='Non riesco a fare il volo';setLoad(t);$('lnote').textContent='Puoi riprovare più tardi o chiudere la pagina: l\'app non è stata modificata.';$('lcancel').textContent='Indietro'};
@@ -194,14 +235,13 @@ async function startFly(item){
     const dw=dnx*256,dh=dny*256,H=new Float32Array(dw*dh);let demFail=0;
     const tc=document.createElement('canvas');tc.width=tc.height=256;const tg=tc.getContext('2d',{willReadFrequently:true});
     await pool(demJobs,8,async([x,y])=>{
-      const im=await loadImg(DEM(zd,x,y));done++;tick('Scarico le quote del terreno');
-      if(!im){demFail++;return}
-      try{tg.clearRect(0,0,256,256);tg.drawImage(im,0,0);const d=tg.getImageData(0,0,256,256).data;
-        for(let j=0;j<256;j++)for(let i=0;i<256;i++){const q=(j*256+i)*4;H[((y-dy0)*256+j)*dw+(x-dx0)*256+i]=d[q]*256+d[q+1]+d[q+2]/256-32768}}
-      catch(e){demFail++}
+      const t=await loadDemTile(DEM(zd,x,y),tg);done++;tick('Scarico le quote del terreno');
+      if(!t){demFail++;return}
+      for(let j=0;j<256;j++){const o=((y-dy0)*256+j)*dw+(x-dx0)*256;for(let i=0;i<256;i++)H[o+i]=t[j*256+i]}
     },cancelled);
     if(cancelled())return;
     const demOk=demFail<=demJobs.length*0.25;
+    const spikes=demOk?despike(H,dw,dh):0;
     // satellite di base
     const tex=document.createElement('canvas');tex.width=TW;tex.height=TH;const tx=tex.getContext('2d');tx.fillStyle='#4a5a45';tx.fillRect(0,0,TW,TH);let satFail=0;
     await pool(satJobs,8,async([x,y])=>{
@@ -254,7 +294,7 @@ async function startFly(item){
     for(let i=0;i<R.n;i++){if(R.cd[i]-lastS>=stp||i===R.n-1){lastS=R.cd[i];const X=wx(R.P[i].lo),Z=wz(R.P[i].la);pts.push({X,Z,s:R.cd[i],h:demAt(X,Z)})}}
     let acc=0;for(let i=1;i<pts.length;i++){acc+=Math.hypot(pts[i].X-pts[i-1].X,pts[i].Z-pts[i-1].Z);pts[i].m=acc}pts[0].m=0;
     {const hs=pts.map(p=>p.h),w=Math.max(2,Math.round(70/Math.max(4,acc/pts.length)));for(let i=0;i<pts.length;i++){let a=0,c=0;for(let q=Math.max(0,i-w);q<=Math.min(pts.length-1,i+w);q++){a+=hs[q];c++}pts[i].h=a/c}}      // quota del percorso addolcita: niente gradini
-    FLY={R,pts,Lm:acc,tex,pos,nor,idx,gx,gz,X0,X1,Z0,Z1,demAt,demOk,hmin,hmax,res,chunks,cidx,zc,zs,zd,title:item.title,sub:item.sub,start:item.start||R.P[0].t,satFail,demFail,corrFail,extent:Math.max(X1-X0,Z1-Z0)};
+    FLY={R,pts,Lm:acc,tex,pos,nor,idx,gx,gz,X0,X1,Z0,Z1,demAt,demOk,hmin,hmax,res,chunks,cidx,zc,zs,zd,title:item.title,sub:item.sub,start:item.start||R.P[0].t,satFail,demFail,corrFail,spikes,extent:Math.max(X1-X0,Z1-Z0)};
     if(cancelled())return;
     setLoad('Avvio il volo…',1);
     beginRender();
