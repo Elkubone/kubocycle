@@ -168,26 +168,32 @@ async function startFly(item){
   try{
     const gpx=await item.getGpx();if(cancelled())return;
     const R=parseRoute(gpx);if(!R){fail('Il giro ha troppo pochi punti o è più corto di 200 m.');return}
-    // riquadro del percorso con un margine
     let la0=90,la1=-90,lo0=180,lo1=-180;for(const p of R.P){la0=Math.min(la0,p.la);la1=Math.max(la1,p.la);lo0=Math.min(lo0,p.lo);lo1=Math.max(lo1,p.lo)}
-    const lat0=(la0+la1)/2,mpd=111320,wm=(lo1-lo0)*mpd*Math.cos(rad(lat0)),hm=(la1-la0)*mpd,span=Math.max(wm,hm,1500),mg=Math.max(span*0.22,900);
-    const dLat=mg/mpd,dLon=mg/(mpd*Math.cos(rad(lat0)));
-    const B={la0:la0-dLat,la1:la1+dLat,lo0:lo0-dLon,lo1:lo1+dLon};
-    // zoom del satellite: il più alto che resta entro 8x8 tessere
-    let zs=16,tx0,tx1,ty0,ty1;
-    for(;zs>6;zs--){tx0=Math.floor(mercX(B.lo0,zs)/256);tx1=Math.floor(mercX(B.lo1,zs)/256);ty0=Math.floor(mercY(B.la1,zs)/256);ty1=Math.floor(mercY(B.la0,zs)/256);if(tx1-tx0+1<=8&&ty1-ty0+1<=8)break}
-    const nx=tx1-tx0+1,ny=ty1-ty0+1,TW=nx*256,TH=ny*256;
-    const zd=Math.max(5,Math.min(14,zs-1)),k=2**(zd-zs),dx0=Math.floor(tx0*k),dx1=Math.floor((tx1+1)*k-1e-9),dy0=Math.floor(ty0*k),dy1=Math.floor((ty1+1)*k-1e-9),dnx=dx1-dx0+1,dny=dy1-dy0+1;
-    const satJobs=[],demJobs=[];
-    for(let y=ty0;y<=ty1;y++)for(let x=tx0;x<=tx1;x++)satJobs.push([x,y]);
-    for(let y=dy0;y<=dy1;y++)for(let x=dx0;x<=dx1;x++)demJobs.push([x,y]);
-    const total=satJobs.length+demJobs.length;let done=0,t0=performance.now(),slowNoted=false;
-    const tick=t=>{if(!slowNoted&&performance.now()-t0>45000){slowNoted=true;$('lnote').textContent='Sta impiegando più del solito: se vuoi puoi annullare.'}setLoad(t+' ('+done+' di '+total+')',0.05+0.8*done/total)};
+    const lat0=(la0+la1)/2,mpd=111320,cl=Math.cos(rad(lat0)),wm=(lo1-lo0)*mpd*cl,hm=(la1-la0)*mpd,span=Math.max(wm,hm,1500),mg=Math.max(span*0.22,900);
+    const dLat=mg/mpd,dLon=mg/(mpd*cl),B={la0:la0-dLat,la1:la1+dLat,lo0:lo0-dLon,lo1:lo1+dLon};
+    const cover=(z)=>({x0:Math.floor(mercX(B.lo0,z)/256),x1:Math.floor(mercX(B.lo1,z)/256),y0:Math.floor(mercY(B.la1,z)/256),y1:Math.floor(mercY(B.la0,z)/256)});
+    // 1) satellite di base (lontano): al massimo 6x6 tessere
+    let zs=15,C;for(;zs>6;zs--){C=cover(zs);if(C.x1-C.x0+1<=6&&C.y1-C.y0+1<=6)break}
+    const tx0=C.x0,tx1=C.x1,ty0=C.y0,ty1=C.y1,nx=tx1-tx0+1,ny=ty1-ty0+1,TW=nx*256,TH=ny*256;
+    // 2) quote: il zoom più alto (al massimo 14) che resta entro 100 tessere
+    let zd=14,D;for(;zd>5;zd--){D=cover(zd);if((D.x1-D.x0+1)*(D.y1-D.y0+1)<=100)break}
+    const dx0=D.x0,dy0=D.y0,dnx=D.x1-D.x0+1,dny=D.y1-D.y0+1,k=2**(zd-zs);
+    // 3) tessere ad alta risoluzione lungo il percorso: il zoom più alto che resta entro 220 tessere
+    let zc=0,corr=[];
+    for(let z=16;z>zs;z--){
+      const ts=40075016.686*cl/2**z,r=Math.max(1,Math.min(3,Math.ceil(1000/ts))),set=new Set();let last=-1e9;
+      for(let i=0;i<R.n;i++){if(R.cd[i]-last<ts/3&&i!==R.n-1)continue;last=R.cd[i];const x=Math.floor(mercX(R.P[i].lo,z)/256),y=Math.floor(mercY(R.P[i].la,z)/256);for(let a=-r;a<=r;a++)for(let b=-r;b<=r;b++)set.add((x+a)+','+(y+b))}
+      if(set.size<=220){zc=z;corr=[...set].map(q=>q.split(',').map(Number));break}
+    }
+    const demJobs=[];for(let y=D.y0;y<=D.y1;y++)for(let x=D.x0;x<=D.x1;x++)demJobs.push([x,y]);
+    const satJobs=[];for(let y=ty0;y<=ty1;y++)for(let x=tx0;x<=tx1;x++)satJobs.push([x,y]);
+    const total=demJobs.length+satJobs.length+corr.length;let done=0,t0=performance.now(),slowNoted=false;
+    const tick=t=>{if(!slowNoted&&performance.now()-t0>60000){slowNoted=true;$('lnote').textContent='Sta impiegando più del solito: se vuoi puoi annullare.'}setLoad(t+' ('+done+' di '+total+')',0.05+0.8*done/total)};
     // quote del terreno
     setLoad('Scarico le quote del terreno…',0.05);
     const dw=dnx*256,dh=dny*256,H=new Float32Array(dw*dh);let demFail=0;
     const tc=document.createElement('canvas');tc.width=tc.height=256;const tg=tc.getContext('2d',{willReadFrequently:true});
-    await pool(demJobs,6,async([x,y])=>{
+    await pool(demJobs,8,async([x,y])=>{
       const im=await loadImg(DEM(zd,x,y));done++;tick('Scarico le quote del terreno');
       if(!im){demFail++;return}
       try{tg.clearRect(0,0,256,256);tg.drawImage(im,0,0);const d=tg.getImageData(0,0,256,256).data;
@@ -196,40 +202,59 @@ async function startFly(item){
     },cancelled);
     if(cancelled())return;
     const demOk=demFail<=demJobs.length*0.25;
-    // texture satellitare
+    // satellite di base
     const tex=document.createElement('canvas');tex.width=TW;tex.height=TH;const tx=tex.getContext('2d');tx.fillStyle='#4a5a45';tx.fillRect(0,0,TW,TH);let satFail=0;
-    await pool(satJobs,6,async([x,y])=>{
+    await pool(satJobs,8,async([x,y])=>{
       const im=await loadImg(SAT(zs,x,y));done++;tick('Scarico la mappa satellitare');
       if(im)tx.drawImage(im,(x-tx0)*256,(y-ty0)*256,256,256);else satFail++;
     },cancelled);
     if(cancelled())return;
     if(satFail>satJobs.length*0.5){fail('Non riesco a scaricare la mappa satellitare ('+satFail+' tessere su '+satJobs.length+').');return}
+    // tessere di dettaglio lungo il percorso
+    const imgs=new Array(corr.length).fill(null);let corrFail=0;
+    await pool(corr,8,async([x,y],i)=>{
+      imgs[i]=await loadImg(SAT(zc,x,y));done++;tick('Scarico il dettaglio lungo il percorso');if(!imgs[i])corrFail++;
+    },cancelled);
+    if(cancelled())return;
     setLoad('Costruisco il rilievo…',0.9);await new Promise(r=>setTimeout(r,30));
     // coordinate del mondo in metri: X verso est, Z verso sud, Y in alto
-    const res=156543.03392804097*Math.cos(rad(lat0))/2**zs,pxc=(tx0+nx/2)*256,pyc=(ty0+ny/2)*256;
+    const res=156543.03392804097*cl/2**zs,pxc=(tx0+nx/2)*256,pyc=(ty0+ny/2)*256;
     const wx=lon=>(mercX(lon,zs)-pxc)*res,wz=lat=>(mercY(lat,zs)-pyc)*res;
     const X0=-TW/2*res,X1=TW/2*res,Z0=-TH/2*res,Z1=TH/2*res;
-    const demAt=(X,Z)=>{ // quota in metri in un punto del mondo (interpolazione bilineare)
+    const demAt=(X,Z)=>{
       if(!demOk)return 0;
       const fx=((X/res+pxc)*k)-dx0*256-0.5,fz=((Z/res+pyc)*k)-dy0*256-0.5,i=Math.max(0,Math.min(dw-2,Math.floor(fx))),j=Math.max(0,Math.min(dh-2,Math.floor(fz))),u=Math.max(0,Math.min(1,fx-i)),v=Math.max(0,Math.min(1,fz-j));
       const a=H[j*dw+i],b=H[j*dw+i+1],c=H[(j+1)*dw+i],d=H[(j+1)*dw+i+1];return (a*(1-u)+b*u)*(1-v)+(c*(1-u)+d*u)*v;
     };
-    // griglia del terreno
+    // tessere di dettaglio: ognuna ha la sua piccola griglia di terreno (stesse quote ai bordi: nessuna crepa)
+    const chunks=[],have=new Set(),cn=zc>=15?32:48,ks=2**(zs-(zc||zs)),tsM=256*ks*res;
+    corr.forEach(([x,y],i)=>{
+      if(!imgs[i])return;have.add(x+','+y);
+      const cx0=(x*256*ks-pxc)*res,cz0=(y*256*ks-pyc)*res,nv=(cn+1)*(cn+1),pos=new Float32Array(nv*3),nor=new Float32Array(nv*3),dd=tsM/cn;
+      for(let j=0;j<=cn;j++)for(let a=0;a<=cn;a++){const X=cx0+tsM*a/cn,Z=cz0+tsM*j/cn,q=j*(cn+1)+a;pos[q*3]=X;pos[q*3+1]=demAt(X,Z);pos[q*3+2]=Z;
+        const hl=demAt(X-dd,Z),hr=demAt(X+dd,Z),hu=demAt(X,Z-dd),hd=demAt(X,Z+dd),nxv=(hl-hr)/(2*dd),nzv=(hu-hd)/(2*dd),l=Math.hypot(nxv,1,nzv);nor[q*3]=nxv/l;nor[q*3+1]=1/l;nor[q*3+2]=nzv/l}
+      chunks.push({img:imgs[i],pos,nor,box:[cx0,cz0,tsM,tsM],cx:cx0+tsM/2,cz:cz0+tsM/2,ts:tsM});
+    });
+    const cidx=new Uint32Array(cn*cn*6);{let w=0;for(let j=0;j<cn;j++)for(let a=0;a<cn;a++){const p=j*(cn+1)+a,b2=p+1,c=p+cn+1,d=c+1;cidx[w++]=p;cidx[w++]=c;cidx[w++]=b2;cidx[w++]=b2;cidx[w++]=c;cidx[w++]=d}}
+    const covered=(X,Z)=>{if(!zc)return false;return have.has(Math.floor(((X/res+pxc)/ks)/256)+','+Math.floor(((Z/res+pyc)/ks)/256))};
+    // terreno di base (lontano): salto le caselle già coperte dal dettaglio
     const gx=Math.min(300,Math.max(40,Math.floor(TW/3))),gz=Math.min(300,Math.max(40,Math.floor(TH/3))),NV=(gx+1)*(gz+1);
     const pos=new Float32Array(NV*3),nor=new Float32Array(NV*3),hg=new Float32Array(NV);
     for(let j=0;j<=gz;j++)for(let i=0;i<=gx;i++){const X=X0+(X1-X0)*i/gx,Z=Z0+(Z1-Z0)*j/gz,h=demAt(X,Z),q=j*(gx+1)+i;pos[q*3]=X;pos[q*3+1]=h;pos[q*3+2]=Z;hg[q]=h}
     const dX=(X1-X0)/gx,dZ=(Z1-Z0)/gz;
     for(let j=0;j<=gz;j++)for(let i=0;i<=gx;i++){const q=j*(gx+1)+i,hl=hg[j*(gx+1)+Math.max(0,i-1)],hr=hg[j*(gx+1)+Math.min(gx,i+1)],hu=hg[Math.max(0,j-1)*(gx+1)+i],hd=hg[Math.min(gz,j+1)*(gx+1)+i];
       let nxv=(hl-hr)/(2*dX),nzv=(hu-hd)/(2*dZ);const l=Math.hypot(nxv,1,nzv);nor[q*3]=nxv/l;nor[q*3+1]=1/l;nor[q*3+2]=nzv/l}
-    const idx=new Uint32Array(gx*gz*6);let w=0;
-    for(let j=0;j<gz;j++)for(let i=0;i<gx;i++){const a=j*(gx+1)+i,b=a+1,c=a+gx+1,d=c+1;idx[w++]=a;idx[w++]=c;idx[w++]=b;idx[w++]=b;idx[w++]=c;idx[w++]=d}
+    const idxL=[];
+    for(let j=0;j<gz;j++)for(let i=0;i<gx;i++){
+      if(covered(X0+(X1-X0)*(i+0.5)/gx,Z0+(Z1-Z0)*(j+0.5)/gz))continue;
+      const a=j*(gx+1)+i,b2=a+1,c=a+gx+1,d=c+1;idxL.push(a,c,b2,b2,c,d)}
+    const idx=new Uint32Array(idxL);
     let hmin=1e9,hmax=-1e9;for(let q=0;q<NV;q++){hmin=Math.min(hmin,hg[q]);hmax=Math.max(hmax,hg[q])}
-    // percorso in coordinate del mondo (qualche migliaio di punti al massimo)
     const stp=Math.max(6,R.tot/3000),pts=[];let lastS=-1e9;
     for(let i=0;i<R.n;i++){if(R.cd[i]-lastS>=stp||i===R.n-1){lastS=R.cd[i];const X=wx(R.P[i].lo),Z=wz(R.P[i].la);pts.push({X,Z,s:R.cd[i],h:demAt(X,Z)})}}
-    // il tracciato è un po' più corto della somma dei segmenti: uso la distanza fra i punti scelti
     let acc=0;for(let i=1;i<pts.length;i++){acc+=Math.hypot(pts[i].X-pts[i-1].X,pts[i].Z-pts[i-1].Z);pts[i].m=acc}pts[0].m=0;
-    FLY={R,pts,Lm:acc,tex,pos,nor,idx,gx,gz,X0,X1,Z0,Z1,demAt,demOk,hmin,hmax,res,title:item.title,sub:item.sub,start:item.start||R.P[0].t,satFail,demFail,extent:Math.max(X1-X0,Z1-Z0)};
+    {const hs=pts.map(p=>p.h),w=Math.max(2,Math.round(70/Math.max(4,acc/pts.length)));for(let i=0;i<pts.length;i++){let a=0,c=0;for(let q=Math.max(0,i-w);q<=Math.min(pts.length-1,i+w);q++){a+=hs[q];c++}pts[i].h=a/c}}      // quota del percorso addolcita: niente gradini
+    FLY={R,pts,Lm:acc,tex,pos,nor,idx,gx,gz,X0,X1,Z0,Z1,demAt,demOk,hmin,hmax,res,chunks,cidx,zc,zs,zd,title:item.title,sub:item.sub,start:item.start||R.P[0].t,satFail,demFail,corrFail,extent:Math.max(X1-X0,Z1-Z0)};
     if(cancelled())return;
     setLoad('Avvio il volo…',1);
     beginRender();
@@ -245,10 +270,10 @@ const m4={
     return new Float32Array([xx,yx,zx,0,xy,yy,zy,0,xz,yz,zz,0,-(xx*e[0]+xy*e[1]+xz*e[2]),-(yx*e[0]+yy*e[1]+yz*e[2]),-(zx*e[0]+zy*e[1]+zz*e[2]),1])},
   mul(a,b){const o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s}return o}
 };
-const VS_T=`attribute vec3 aPos;attribute vec3 aNor;uniform mat4 uVP;uniform float uExag;uniform vec3 uCam;uniform vec4 uBox;varying vec2 vUV;varying vec3 vN;varying float vD;
-void main(){vec3 p=vec3(aPos.x,aPos.y*uExag,aPos.z);gl_Position=uVP*vec4(p,1.0);vUV=vec2((aPos.x-uBox.x)/uBox.z,(aPos.z-uBox.y)/uBox.w);vN=normalize(vec3(aNor.x,aNor.y/uExag,aNor.z));vD=length(uCam-p);}`;
+const VS_T=`attribute vec3 aPos;attribute vec3 aNor;uniform mat4 uVP;uniform float uExag;uniform float uDrop;uniform vec3 uCam;uniform vec4 uBox;varying vec2 vUV;varying vec3 vN;varying float vD;
+void main(){vec3 p=vec3(aPos.x,aPos.y*uExag-uDrop,aPos.z);gl_Position=uVP*vec4(p,1.0);vUV=vec2((aPos.x-uBox.x)/uBox.z,(aPos.z-uBox.y)/uBox.w);vN=normalize(vec3(aNor.x,aNor.y/uExag,aNor.z));vD=length(uCam-p);}`;
 const FS_T=`precision mediump float;uniform sampler2D uTex;uniform float uFog;uniform vec3 uFogC;varying vec2 vUV;varying vec3 vN;varying float vD;
-void main(){vec3 c=texture2D(uTex,vUV).rgb;float l=0.5+0.65*max(dot(normalize(vN),normalize(vec3(-0.45,0.8,-0.35))),0.0);c*=l;float f=1.0-exp(-vD*uFog);gl_FragColor=vec4(mix(c,uFogC,clamp(f,0.0,0.92)),1.0);}`;
+void main(){vec3 c=texture2D(uTex,vUV).rgb;float l=0.68+0.5*max(dot(normalize(vN),normalize(vec3(-0.45,0.8,-0.35))),0.0);c=pow(c,vec3(0.95))*l;float f=1.0-exp(-vD*uFog);gl_FragColor=vec4(mix(c,uFogC,clamp(f,0.0,0.92)),1.0);}`;
 const VS_L=`attribute vec3 aP0;attribute vec3 aP1;attribute vec2 aC;uniform mat4 uVP;uniform float uExag;uniform float uLift;uniform vec2 uRes;uniform float uHalf;
 void main(){vec3 a=vec3(aP0.x,aP0.y*uExag+uLift,aP0.z),b=vec3(aP1.x,aP1.y*uExag+uLift,aP1.z);vec4 ca=uVP*vec4(a,1.0),cb=uVP*vec4(b,1.0);
  if(ca.w<1.0||cb.w<1.0){gl_Position=vec4(2.0,2.0,2.0,1.0);return;}
@@ -274,20 +299,18 @@ function beginRender(){
   try{T=mk(VS_T,FS_T);L=mk(VS_L,FS_L);PT=mk(VS_P,FS_P)}catch(e){show('load');fail('Errore nel 3D: '+e.message);return}
   const F=FLY;
   const mkBuf=(data,type)=>{const b=gl.createBuffer();gl.bindBuffer(type||gl.ARRAY_BUFFER,b);gl.bufferData(type||gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return b};
-  const bPos=mkBuf(F.pos),bNor=mkBuf(F.nor),bIdx=mkBuf(F.idx,gl.ELEMENT_ARRAY_BUFFER);
-  const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);
-  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,F.tex);
-  const pow2=v=>(v&(v-1))===0;
-  gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-  const ex=gl.getExtension('EXT_texture_filter_anisotropic');if(ex)gl.texParameterf(gl.TEXTURE_2D,ex.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(ex.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+  const bPos=mkBuf(F.pos),bNor=mkBuf(F.nor),bIdx=mkBuf(F.idx,gl.ELEMENT_ARRAY_BUFFER),idxC=mkBuf(F.cidx,gl.ELEMENT_ARRAY_BUFFER);
+  const anis=gl.getExtension('EXT_texture_filter_anisotropic');
+  const mkTex=img=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);if(anis)gl.texParameterf(gl.TEXTURE_2D,anis.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(anis.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));return t};
+  const CH=F.chunks.map(c=>{const o={t:mkTex(c.img),bp:mkBuf(c.pos),bn:mkBuf(c.nor),box:c.box,cx:c.cx,cz:c.cz,ts:c.ts};c.img=null;return o});
+  const texture=mkTex(F.tex);
   // linea del percorso: 6 vertici per segmento
   const S=F.pts.length-1,LV=new Float32Array(S*6*8),cor=[[0,-1],[1,-1],[1,1],[0,-1],[1,1],[0,1]];let o=0;
   for(let i=0;i<S;i++){const a=F.pts[i],b=F.pts[i+1];for(const [t,sd] of cor){LV[o++]=a.X;LV[o++]=a.h;LV[o++]=a.Z;LV[o++]=b.X;LV[o++]=b.h;LV[o++]=b.Z;LV[o++]=t;LV[o++]=sd}}
   const bLine=mkBuf(LV),bDot=gl.createBuffer();
   GL={gl,cv,T,L,PT,bPos,bNor,bIdx,texture,bLine,bDot,S,idxCount:F.idx.length};
   // stato del volo
-  const exagList=[1,2,3,4],relief=F.hmax-F.hmin;let ei=relief>900?0:1;
+  const exagList=[1,1.5,2,3],relief=F.hmax-F.hmin;let ei=relief>250?0:1;
   const st={ei,paused:false,t:0,last:performance.now(),scale:Math.min(window.devicePixelRatio||1,1.5),slow:0,frames:0,acc:0,cam:null,look:null,raf:0,dur:Math.max(40,Math.min(75,F.Lm/1000*1.6+30)),nsl:false};
   GL.st=st;
   const exagTxt=()=>{$('bexag').textContent=F.demOk?'Rilievo ×'+exagList[st.ei]:'Senza rilievo'};
@@ -315,7 +338,7 @@ function beginRender(){
     let dt=Math.min(0.1,(now-st.last)/1000);st.last=now;
     if(!st.paused)st.t+=dt;
     const p=Math.min(1,st.t/st.dur),f=0.7*p+0.3*(p*p*(3-2*p)),m=f*F.Lm,ex=exagList[st.ei];
-    const back=Math.max(120,Math.min(700,F.Lm*0.012)),hgt=back*0.55+40;
+    const back=Math.max(140,Math.min(420,F.Lm*0.009)),hgt=back*0.62+45;
     const cp=smoothAt(m-back,back*0.25),lp=smoothAt(m+back*1.1,back*0.25),rp=pathAt(m);
     let cy=Math.max(F.demAt(cp[0],cp[2])*ex+hgt,cp[1]*ex+hgt*0.6);
     const lookT=[lp[0],F.demAt(lp[0],lp[2])*ex,lp[2]],hz=Math.hypot(lookT[0]-cp[0],lookT[2]-cp[2])||1;
@@ -336,14 +359,24 @@ function beginRender(){
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.uniform1i(gl.getUniformLocation(T,'uTex'),0);
     gl.uniformMatrix4fv(gl.getUniformLocation(T,'uVP'),false,VP);gl.uniform1f(gl.getUniformLocation(T,'uExag'),ex);gl.uniform3fv(gl.getUniformLocation(T,'uCam'),st.cam);
     gl.uniform4f(gl.getUniformLocation(T,'uBox'),F.X0,F.Z0,F.X1-F.X0,F.Z1-F.Z0);gl.uniform1f(gl.getUniformLocation(T,'uFog'),1.0/F.extent);gl.uniform3f(gl.getUniformLocation(T,'uFogC'),0.78,0.86,0.92);
-    gl.disable(gl.BLEND);gl.drawElements(gl.TRIANGLES,GL.idxCount,gl.UNSIGNED_INT,0);
+    gl.disable(gl.BLEND);gl.uniform1f(gl.getUniformLocation(T,'uDrop'),F.zc?12:0);gl.drawElements(gl.TRIANGLES,GL.idxCount,gl.UNSIGNED_INT,0);
+    if(CH.length){
+      const fx=st.look[0]-st.cam[0],fz=st.look[2]-st.cam[2],fl=Math.hypot(fx,fz)||1,uB=gl.getUniformLocation(T,'uBox');
+      gl.uniform1f(gl.getUniformLocation(T,'uDrop'),0);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxC);
+      for(const c of CH){
+        const dx=c.cx-st.cam[0],dz=c.cz-st.cam[2];if((dx*fx+dz*fz)/fl<-c.ts*1.2||Math.hypot(dx,dz)>F.extent*0.9)continue;
+        gl.bindTexture(gl.TEXTURE_2D,c.t);gl.uniform4f(uB,c.box[0],c.box[1],c.box[2],c.box[3]);
+        gl.bindBuffer(gl.ARRAY_BUFFER,c.bp);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,c.bn);gl.vertexAttribPointer(aN,3,gl.FLOAT,false,0,0);
+        gl.drawElements(gl.TRIANGLES,F.cidx.length,gl.UNSIGNED_INT,0);
+      }
+    }
     gl.disableVertexAttribArray(aN);
     // percorso: tutto in bianco, la parte già fatta in azzurro
     gl.useProgram(L);gl.depthMask(false);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
     gl.bindBuffer(gl.ARRAY_BUFFER,bLine);
     const l0=gl.getAttribLocation(L,'aP0'),l1=gl.getAttribLocation(L,'aP1'),l2=gl.getAttribLocation(L,'aC');
     gl.enableVertexAttribArray(l0);gl.vertexAttribPointer(l0,3,gl.FLOAT,false,32,0);gl.enableVertexAttribArray(l1);gl.vertexAttribPointer(l1,3,gl.FLOAT,false,32,12);gl.enableVertexAttribArray(l2);gl.vertexAttribPointer(l2,2,gl.FLOAT,false,32,24);
-    const lift=Math.max(4,F.extent*0.0007);
+    const lift=Math.max(6,F.extent*0.0009);
     gl.uniformMatrix4fv(gl.getUniformLocation(L,'uVP'),false,VP);gl.uniform1f(gl.getUniformLocation(L,'uExag'),ex);gl.uniform1f(gl.getUniformLocation(L,'uLift'),lift);gl.uniform2f(gl.getUniformLocation(L,'uRes'),W,Hh);
     const px=st.scale/ (Math.min(window.devicePixelRatio||1,1.5));
     gl.uniform1f(gl.getUniformLocation(L,'uHalf'),4.0*st.scale);gl.uniform4f(gl.getUniformLocation(L,'uCol'),1,1,1,0.6);gl.drawArrays(gl.TRIANGLES,0,GL.S*6);
