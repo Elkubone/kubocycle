@@ -19,6 +19,8 @@ h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margi
 #top{display:flex;justify-content:space-between;align-items:center;gap:6px;height:36px;flex:none}
 .hl{display:flex;gap:6px;flex:1;min-width:0}
 #start,#pause,#fine{flex:1 1 36px;width:auto;max-width:150px}
+#quit{flex:none}
+#quit svg{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
 .hb{display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
 .hb svg{width:21px;height:21px}
 #optbtn svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
@@ -244,7 +246,7 @@ body.p2 #p2{transform:translateX(0)}
 </style>
 </head>
 <body>
-<div id="pager"><div id="p1" class="page"><div id="top"><div class="hl"><button id="optbtn" class="hb" aria-label="Menu opzioni"><svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button><button id="start" class="hb" aria-label="Avvia o riprendi"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></button><button id="pause" class="hb" aria-label="Pausa"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg></button><button id="fine" class="hb" aria-label="Termina il giro e crea la mappa"><svg viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="2"/></svg></button></div><div id="batv" aria-label="Ora, GPS, dati e batteria"><span id="clock">--:--</span><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg id="net" class="on" viewBox="0 0 24 24" aria-label="Dati"><rect x="2" y="15" width="3.6" height="6" rx="1"/><rect x="7.6" y="11" width="3.6" height="10" rx="1"/><rect x="13.2" y="7" width="3.6" height="14" rx="1"/><rect x="18.8" y="2.5" width="3.6" height="18.5" rx="1"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
+<div id="pager"><div id="p1" class="page"><div id="top"><div class="hl"><button id="optbtn" class="hb" aria-label="Menu opzioni"><svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button><button id="start" class="hb" aria-label="Avvia o riprendi"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></button><button id="pause" class="hb" aria-label="Pausa"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg></button><button id="fine" class="hb" aria-label="Termina il giro e crea la mappa"><svg viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="2"/></svg></button><button id="quit" class="hb" aria-label="Chiudi l'app"><svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div><div id="batv" aria-label="Ora, GPS, dati e batteria"><span id="clock">--:--</span><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg id="net" class="on" viewBox="0 0 24 24" aria-label="Dati"><rect x="2" y="15" width="3.6" height="6" rx="1"/><rect x="7.6" y="11" width="3.6" height="10" rx="1"/><rect x="13.2" y="7" width="3.6" height="14" rx="1"/><rect x="18.8" y="2.5" width="3.6" height="18.5" rx="1"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
 <div id="err"></div>
 <div id="main">
   <div id="speed">
@@ -261,7 +263,7 @@ body.p2 #p2{transform:translateX(0)}
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF4D6D"><path d="M12 20.5s-7.3-4.5-9.3-9C1.3 8 3.200 4.500 6.700 4.500c2 0 3.600 1 5.300 3 1.700-2 3.300-3 5.300-3 3.500 0 5.400 3.500 4 7C19.300 16 12 20.500 12 20.500z"/></svg>Battiti</span><small>bpm</small></div><div class="temp"><span id="hrb">--</span></div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF9F43"><path d="M12 3c1 3.5 5.5 5.5 5.5 10.2A5.5 5.5 0 0 1 12 19a5.5 5.5 0 0 1-5.5-5.800c0-2 1-3.200 2-4.200.3 1.600 1.200 2.400 2 2.600C10.200 8.500 10.500 5.500 12 3z"/></svg>Calorie</span></div><div class="temp"><span id="kcal">--</span><small>kcal</small></div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#84CC16"><path d="M2.5 19.5l6.5-11 4 6.5 2.5-3.5 6 8z"/></svg>Altitudine</span></div><div class="temp"><span id="alt">--</span><small>m</small></div></div>
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF9F43"><path d="M3 19h18M6.5 19a5.5 5.5 0 0 1 11 0M12 5v4M4.8 9.8l2 2M19.2 9.8l-2 2"/></svg>Tramonto</span><small id="sunL"></small></div><div class="temp" id="sunT">--:--</div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF9F43"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg>Ora</span><small id="sunL"></small></div><div class="temp" id="sunT">--:--</div></div>
     <div class="tcard wind">
       <div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#38E0C8"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>Vento</span><small>da <span id="d">--</span></small></div>
       <div class="dialwrap">
@@ -569,16 +571,22 @@ function fitText(){
 addEventListener('resize',fitText);
 
 function tick(){
-  $('clock').textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  const hhmm=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});$('clock').textContent=hhmm;$('sunT').textContent=hhmm;
   if(recording&&startTime){const m=Math.floor(((paused?pausedAt:Date.now())-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0');const mm=Math.floor(moving/60000);$('mov').textContent=Math.floor(mm/60)+':'+String(mm%60).padStart(2,'0')}
   setGps();setNet();hrShow();updateSun();rainCheck();motionTick();fitText();
 }
 tick();setInterval(tick,1000);
 
+// schermo solo verticale finché l'app è aperta (il blocco funziona nell'app installata o a schermo intero); si toglie alla chiusura
+function lockPortrait(){try{const o=screen.orientation;if(o&&o.lock)o.lock('portrait').catch(()=>{})}catch(e){}}
+function unlockOrient(){try{const o=screen.orientation;if(o&&o.unlock)o.unlock()}catch(e){}}
+lockPortrait();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)lockPortrait()});
+window.addEventListener('pagehide',unlockOrient);
 function goFull(){
   const el=document.documentElement;
-  if(document.fullscreenElement||!el.requestFullscreen)return;
-  try{el.requestFullscreen({navigationUI:'hide'}).catch(()=>{})}catch(e){}
+  if(document.fullscreenElement||!el.requestFullscreen){lockPortrait();return}
+  try{el.requestFullscreen({navigationUI:'hide'}).then(lockPortrait,()=>{lockPortrait()})}catch(e){}
 }
 // toccando un punto qualsiasi dello schermo si rientra a schermo intero
 document.addEventListener('click',goFull);
@@ -634,12 +642,12 @@ function downloadGpx(){
 }
 
 function reloadApp(){location.reload()}
-// easter egg: 5 tocchi sul riquadro Altitudine
+// easter egg: 5 tocchi sul riquadro Ora
 let taps=0,tapT=null;
 let eggT=null;
 function hideEgg(){const e=$('egg');if(!e.classList.contains('on'))return;e.classList.add('out');setTimeout(()=>e.classList.remove('on','out','splash'),260)}
 function showEgg(){const e=$('egg');e.classList.remove('on','out','splash');void e.offsetWidth;e.classList.add('on');clearTimeout(eggT);eggT=setTimeout(hideEgg,2600)}
-const eggTap=$('alt').closest('.tcard');eggTap.style.userSelect='none';eggTap.style.webkitUserSelect='none';
+const eggTap=$('sunT').closest('.tcard');eggTap.style.userSelect='none';eggTap.style.webkitUserSelect='none';
 ['selectstart','contextmenu','dragstart'].forEach(ev=>eggTap.addEventListener(ev,e=>e.preventDefault()));
 eggTap.addEventListener('click',()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>{taps=0},1500);if(taps>=5){taps=0;showEgg()}});
 $('egg').addEventListener('click',e=>{e.stopPropagation();hideEgg()});
@@ -671,16 +679,19 @@ function sunsetDate(lat,lon,now){
   if(cw<-1||cw>1)return null;
   return new Date((Jt+Math.acos(cw)/R/360-2440587.5)*86400000);
 }
-function updateSun(){
+// tramonto: non è più in un riquadro, ma si annuncia a ogni partenza di un nuovo giro
+var sunPending=0;
+function announceSun(){
+  const now=Date.now(),sd=sunsetDate(curPos.lat,curPos.lon,now);if(!sd)return;
+  const t=sd.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),diff=sd.getTime()-now,mins=Math.floor(diff/60000);
+  const m=diff>0?'Tramonto alle '+t+' · tra '+(mins>=60?Math.floor(mins/60)+' h '+String(mins%60).padStart(2,'0')+' min':mins+' min'):'Il sole è già tramontato (alle '+t+')';
+  const e=$('mapov').classList.contains('on')?$('mapmsg'):$('err');if(e===$('err'))e.style.color='var(--ink)';e.textContent=m;setTimeout(()=>{if(e.textContent===m)e.textContent=''},9000);
+}
+function updateSun(){      // se alla partenza la posizione non c'era ancora, lo annuncia appena arriva (entro 2 minuti)
+  if(!sunPending)return;
+  if(Date.now()-sunPending>120000){sunPending=0;return}
   if(!curPos)return;
-  const now=Date.now(),sd=sunsetDate(curPos.lat,curPos.lon,now),L=$('sunL');
-  if(!sd){$('sunT').textContent='--:--';L.textContent='';return}
-  $('sunT').textContent=sd.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-  const diff=sd.getTime()-now,mins=Math.floor(diff/60000);
-  if(diff>=0&&mins<600){
-    L.textContent='tra '+(mins>=60?Math.floor(mins/60)+'h'+String(mins%60).padStart(2,'0'):mins+' min');
-    L.style.color=diff<=1800000?'var(--con)':diff<=3600000?'var(--lat)':'';
-  }else L.textContent='';
+  sunPending=0;announceSun();
 }
 
 // ---- fine giro: mappa satellitare con il percorso, salvata come JPG ----
@@ -880,10 +891,12 @@ $('mclose').onclick=()=>{
 
 // ---- battiti: sensore Bluetooth standard (fascia, o orologio che trasmette come fascia). Solo Chrome (Web Bluetooth) ----
 function curHr(){return hrBpm!=null&&Date.now()-hrTs<10000?hrBpm:null}
+// verde = battiti bassi (sotto il 70% del massimo), arancione = sostenuti (70-85%), rosso = alti o sotto sforzo (da 85%). Massimo stimato dall'età del profilo (208 - 0,7 x età); senza età si usa 190.
+function hrColor(h){if(h==null)return '';const fm=(prof&&prof.age>=10)?Math.round(208-0.7*prof.age):190,p=h/fm;return p<0.70?'#2EE077':p<0.85?'#FF9F1C':'#FF5448'}
 function hrShow(state){
   if(state!==undefined)hrNote=[state,Date.now()];
   const note=hrNote&&Date.now()-hrNote[1]<12000?hrNote[0]:null,h=curHr(),nm=(hrDev&&hrDev.name)||'sensore';
-  $('hrb').textContent=h!=null?h:'--';
+  $('hrb').textContent=h!=null?h:'--';$('hrb').style.color=hrColor(h);
   let t;
   if(!hrWanted)t=note||'Non collegato';
   else if(h==null)t=note||('Collegato a '+nm+': aspetto i battiti…');
@@ -945,7 +958,7 @@ $('psave').onclick=()=>{
   if(!(w>=30&&w<=250)){$('pmsg').textContent='Inserisci un peso tra 30 e 250 kg.';return}
   prof={w,age:age>=10&&age<=100?age:null,sex:(sex==='m'||sex==='f')?sex:''};
   try{localStorage.setItem('kubocycle-profile',JSON.stringify(prof))}catch(e){}
-  showKcal();$('pmsg').textContent='Salvato.';
+  showKcal();hrShow();$('pmsg').textContent='Salvato.';
 };
 
 // ---- rinomina il giro ----
@@ -2167,12 +2180,20 @@ function startRide(resume,bk){
   $('vmax').textContent=Math.round(maxSpd*3.6);
   $('km').textContent=(km/1000).toFixed(1).replace('.',',');
   $('avg').textContent=moving>=10000?((km/1000)/(moving/3600000)).toFixed(1).replace('.',','):'--';
+  if(!resume)sunPending=Date.now();
   hrShow();tick();
 }
 function pauseRide(){if(!recording||paused)return;paused=true;pausedAt=Date.now();document.body.classList.add('pau');saveTrack()}
 function resumeRide(){if(!recording||!paused)return;goFull();keepAwake();vhist=[];vOver=0;startTime+=Date.now()-pausedAt;paused=false;pausedAt=0;newSeg=true;document.body.classList.remove('pau')}
 $('start').onclick=()=>{fallAudio();if(startBusy)return;if(!recording)bikeOpen();else resumeRide()};
 $('pause').onclick=pauseRide;
+let quitT=0;
+$('quit').onclick=()=>{
+  if(recording&&Date.now()-quitT>4000){quitT=Date.now();toast('Giro in corso: tocca ancora la X per chiudere l\'app');return}
+  unlockOrient();
+  try{window.close()}catch(e){}
+  setTimeout(()=>{toast('Il browser non mi lascia chiudere l\'app da qui: usa il tasto Indietro o Home del telefono.');lockPortrait()},400);
+};
 
 // percorso rimasto salvato (blocco, chiusura): riprendere, concludere o scartare
 if(track.length>=2){
@@ -2184,6 +2205,8 @@ if(track.length>=2){
   $('rdel').onclick=()=>{if(confirm('Cancellare il percorso salvato?')){clearSaved();$('resume').classList.remove('on')}};
 }
 startWatch();
+// prima installazione: chiede peso, età e sesso (servono per calorie e zone dei battiti); si può saltare con la freccia
+try{if(track.length<2&&!localStorage.getItem('kubocycle-profile')&&!localStorage.getItem('kubocycle-primo-avvio')){localStorage.setItem('kubocycle-primo-avvio','1');profOpen();$('pmsg').textContent='Benvenuto! Peso, età e sesso servono per le calorie e per i colori dei battiti. Restano solo nel telefono. Puoi saltare con la freccia e inserirli poi dalle Opzioni.'}}catch(e){}
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});   // app installabile e apribile anche senza connessione
 </script>
 </body>
