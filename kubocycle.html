@@ -637,7 +637,7 @@ function gpxData(){
 }
 function saveBlob(blob,fn){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;
-  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600000);      // l'indirizzo deve restare valido finché il download non è finito (file grandi)
 }
 function downloadGpx(){
   if(!cur||!cur.gpx){toast('GPX non disponibile');return}
@@ -1980,11 +1980,22 @@ async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {
   g.fillStyle='rgba(0,0,0,.28)';g.fillRect(MB.x,MB.y,MB.w,MB.h);g.restore();
   {const att=okT?(sat?'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community':'© OpenStreetMap contributors'):'Mappa non disponibile';
    g.font='19px system-ui,sans-serif';const tw=g.measureText(att).width;g.fillStyle='rgba(0,0,0,.6)';g.beginPath();g.roundRect(MB.x+MB.w-tw-34,MB.y+MB.h-40,tw+22,30,10);g.fill();g.textAlign='right';g.fillStyle='rgba(255,255,255,.92)';g.fillText(att,MB.x+MB.w-23,MB.y+MB.h-18);g.textAlign='left'}
+  if(R.el){const lg=[['salita ripida','#FF5448'],['salita media','#FF9F1C'],['piano','#5BC0EB'],['discesa','#2EE077']];
+    g.font='700 20px system-ui,sans-serif';let w0=0;lg.forEach(([t])=>{w0+=g.measureText(t).width+42});
+    const lx0=MB.x+14,ly=MB.y+MB.h-40;g.fillStyle='rgba(0,0,0,.6)';g.beginPath();g.roundRect(lx0,ly,w0+10,30,10);g.fill();
+    let lx=lx0+12;g.textAlign='left';lg.forEach(([t,c])=>{g.fillStyle=c;g.beginPath();g.arc(lx+7,ly+15,7,0,7);g.fill();g.fillStyle='rgba(255,255,255,.95)';g.fillText(t,lx+20,ly+22);lx+=g.measureText(t).width+42})}
   // punti sullo schermo (ne tengo uno ogni ~2 px per non appesantire il disegno)
   const sx=R.P.map(p=>mx(p.lo,z)-ox),sy=R.P.map(p=>my(p.la,z)-oy),K=[0];
   for(let i=1;i<R.n;i++){const k=K[K.length-1];if(Math.hypot(sx[i]-sx[k],sy[i]-sy[k])>=2)K.push(i)}
   if(K[K.length-1]!==R.n-1)K.push(R.n-1);
+  // il percorso viene spostato di qualche pixel a destra rispetto al senso di marcia (come due corsie): andata e ritorno sulla stessa strada restano distinti
+  {const OFF=6,nx=new Array(R.n),ny=new Array(R.n);let q=0;
+   for(let i=0;i<R.n;i++){while(q<K.length-1&&K[q+1]<=i)q++;const a=K[Math.max(0,q-2)],b=K[Math.min(K.length-1,q+2)],dx=sx[b]-sx[a],dy=sy[b]-sy[a],l=Math.hypot(dx,dy)||1;nx[i]=-dy/l*OFF;ny[i]=dx/l*OFF}
+   for(let i=0;i<R.n;i++){sx[i]+=nx[i];sy[i]+=ny[i]}}
   const full=new Path2D();K.forEach((i,q)=>q?full.lineTo(sx[i],sy[i]):full.moveTo(sx[i],sy[i]));
+  // colore di ogni tratto secondo la pendenza NEL SENSO DI MARCIA: salita ripida rosso, salita media arancione, piano azzurro, discesa verde
+  const colSl=v=>v<-2?'#2EE077':v<2?'#5BC0EB':v<6?'#FF9F1C':'#FF5448';
+  const kc=K.map(k=>R.slope?colSl(R.slope[k]):'#5BC0EB');
   // profilo
   const hasEl=!!R.el;let lo=0,hi=1,ylo=0,yhi=1;
   const pyf=e=>PB.y+PB.h-PB.h*(e-ylo)/(yhi-ylo),pxf=dd=>PB.x+PB.w*dd/R.tot;
@@ -2010,12 +2021,16 @@ async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {
     gx.lineJoin='round';gx.lineCap='round';
     gx.save();gx.beginPath();gx.roundRect(MB.x,MB.y,MB.w,MB.h,28);gx.clip();
     gx.strokeStyle='rgba(255,255,255,.4)';gx.lineWidth=8;gx.stroke(full);
-    gx.beginPath();let q=0;K.forEach(k=>{if(k<=i){q?gx.lineTo(sx[k],sy[k]):gx.moveTo(sx[k],sy[k]);q++}});if(!q)gx.moveTo(sx[0],sy[0]);gx.lineTo(X,Y);
-    gx.strokeStyle='rgba(0,0,0,.65)';gx.lineWidth=17;gx.stroke();gx.strokeStyle='#5BC0EB';gx.lineWidth=9;gx.stroke();
+    const dn=[];for(const k of K){if(k<=i)dn.push(k);else break}
+    const pp=dn.map(k=>[sx[k],sy[k]]);pp.push([X,Y]);
+    gx.beginPath();pp.forEach((c,q)=>q?gx.lineTo(c[0],c[1]):gx.moveTo(c[0],c[1]));gx.strokeStyle='rgba(0,0,0,.65)';gx.lineWidth=17;gx.stroke();
+    let q0=0;for(let q=1;q<pp.length;q++){const c=kc[Math.min(q-1,kc.length-1)],nc=q<pp.length-1?kc[Math.min(q,kc.length-1)]:null;
+      if(nc!==c){gx.beginPath();gx.moveTo(pp[q0][0],pp[q0][1]);for(let r=q0+1;r<=q;r++)gx.lineTo(pp[r][0],pp[r][1]);gx.strokeStyle=c;gx.lineWidth=9;gx.stroke();q0=q}}
+    const curC=kc[Math.min(dn.length-1,kc.length-1)];
     const pin=(x,y,col)=>{gx.beginPath();gx.arc(x,y,20,0,7);gx.fillStyle=col;gx.fill();gx.lineWidth=6;gx.strokeStyle='#fff';gx.stroke()};
     pin(sx[0],sy[0],'#2EE077');if(p>=1)pin(sx[R.n-1],sy[R.n-1],'#FF5448');
-    gx.beginPath();gx.arc(X,Y,26,0,7);gx.fillStyle='rgba(91,192,235,.35)';gx.fill();
-    gx.beginPath();gx.arc(X,Y,15,0,7);gx.fillStyle='#fff';gx.fill();gx.lineWidth=6;gx.strokeStyle='#5BC0EB';gx.stroke();
+    gx.beginPath();gx.arc(X,Y,26,0,7);gx.globalAlpha=0.35;gx.fillStyle=curC;gx.fill();gx.globalAlpha=1;
+    gx.beginPath();gx.arc(X,Y,15,0,7);gx.fillStyle='#fff';gx.fill();gx.lineWidth=6;gx.strokeStyle=curC;gx.stroke();
     gx.restore();
     if(hasEl){
       const ex=pxf(dd),ey=pyf(L(R.el[i],R.el[j]));
@@ -2075,7 +2090,7 @@ async function replayShare(){
 }
 $('mreplay').onclick=replayStart;
 $('rpshare').onclick=e=>{e.stopPropagation();replayShare()};
-$('rpsave').onclick=()=>{if(rpBlob){saveBlob(rpBlob,rpName);$('rpmsg').textContent='Salvato '+rpName}};
+$('rpsave').onclick=()=>{if(!rpBlob||!rpUrl)return;const a=document.createElement('a');a.href=rpUrl;a.download=rpName;document.body.appendChild(a);a.click();a.remove();$('rpmsg').textContent='Salvataggio avviato: '+rpName+' ('+(rpBlob.size/1048576).toFixed(1)+' MB). Controlla che il file salvato abbia la stessa dimensione.'};
 $('rpclose').onclick=()=>{rpAbort=true;$('rpov').classList.remove('on');try{$('rpv').pause()}catch(e){}$('rpv').removeAttribute('src');if(rpUrl){URL.revokeObjectURL(rpUrl);rpUrl=null}rpBlob=null};
 
 
