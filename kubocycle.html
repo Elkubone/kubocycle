@@ -33,12 +33,15 @@ body.rec:not(.pau) #pause{display:flex}
 body.rec #fine{display:flex}
 body.rec:not(.pau) #start{display:none}
 body.pau #start{animation:blink 1.2s steps(1) infinite}
-#gps{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;color:var(--con)}
-#batv #gps,#batv #net{width:calc(22px*var(--hs,1));height:calc(22px*var(--hs,1))}
+#gps,#btic{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;color:var(--con)}
+#batv #gps,#batv #btic,#batv #net{width:calc(22px*var(--hs,1));height:calc(22px*var(--hs,1))}
 #batv #net{fill:currentColor;stroke:none}
 #batv #net.on{color:#5BC0EB}
 #batv #net.off{color:var(--con);animation:blink 1s steps(1) infinite}
-#batv #gps.on{color:#FFD60A}
+#batv #gps.on{color:#2EE077}
+#batv #gps.off{color:#FF5448}
+#batv #btic.on{color:#2EE077}
+#batv #btic.off{color:#FF5448}
 #batv #gps.off{animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:.15}}
 #resume{position:fixed;inset:0;z-index:45;display:none;background:rgba(0,0,0,.94);align-items:center;justify-content:center;padding:20px}
@@ -246,7 +249,7 @@ body.p2 #p2{transform:translateX(0)}
 </style>
 </head>
 <body>
-<div id="pager"><div id="p1" class="page"><div id="top"><div class="hl"><button id="optbtn" class="hb" aria-label="Menu opzioni"><svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button><button id="start" class="hb" aria-label="Avvia o riprendi"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></button><button id="pause" class="hb" aria-label="Pausa"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg></button><button id="fine" class="hb" aria-label="Termina il giro e crea la mappa"><svg viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="2"/></svg></button><button id="quit" class="hb" aria-label="Chiudi l'app"><svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div><div id="batv" aria-label="Ora, GPS, dati e batteria"><span id="clock">--:--</span><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg id="net" class="on" viewBox="0 0 24 24" aria-label="Dati"><rect x="2" y="15" width="3.6" height="6" rx="1"/><rect x="7.6" y="11" width="3.6" height="10" rx="1"/><rect x="13.2" y="7" width="3.6" height="14" rx="1"/><rect x="18.8" y="2.5" width="3.6" height="18.5" rx="1"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
+<div id="pager"><div id="p1" class="page"><div id="top"><div class="hl"><button id="optbtn" class="hb" aria-label="Menu opzioni"><svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button><button id="start" class="hb" aria-label="Avvia o riprendi"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></button><button id="pause" class="hb" aria-label="Pausa"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg></button><button id="fine" class="hb" aria-label="Termina il giro e crea la mappa"><svg viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="2"/></svg></button><button id="quit" class="hb" aria-label="Chiudi l'app"><svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div><div id="batv" aria-label="GPS, Bluetooth, dati e batteria"><svg id="gps" class="off" viewBox="0 0 24 24" aria-label="GPS"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg><svg id="btic" class="off" viewBox="0 0 24 24" aria-label="Bluetooth cuore"><path d="M7 7.5l10 9-5 4.5v-18l5 4.5-10 9"/></svg><svg id="net" class="on" viewBox="0 0 24 24" aria-label="Dati"><rect x="2" y="15" width="3.6" height="6" rx="1"/><rect x="7.6" y="11" width="3.6" height="10" rx="1"/><rect x="13.2" y="7" width="3.6" height="14" rx="1"/><rect x="18.8" y="2.5" width="3.6" height="18.5" rx="1"/></svg><svg viewBox="0 0 26 14"><rect x="1" y="1" width="21" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="23" y="4.5" width="2.5" height="5" rx="1" fill="currentColor"/><rect id="batfill" x="3" y="3" width="0" height="8" rx="1.5" fill="currentColor"/></svg><span id="bat">--</span><small>%</small><span id="bolt"></span></div></div>
 <div id="err"></div>
 <div id="main">
   <div id="speed">
@@ -547,6 +550,7 @@ function kcalRate(v,hr){            // kcal al secondo
 function showKcal(){$('kcal').textContent=(prof&&prof.w>0&&recording)?Math.round(kcal):'--'}
 function setNet(){const ok=navigator.onLine!==false&&!wxFail,n=$('net');n.classList.toggle('on',ok);n.classList.toggle('off',!ok)}
 addEventListener('online',()=>{lastFetch=0;setNet()});addEventListener('offline',setNet);
+function setBt(){const ok=!!(hrDev&&hrDev.gatt&&hrDev.gatt.connected),b=$('btic');b.classList.toggle('on',ok);b.classList.toggle('off',!ok)}
 function setGps(){const ok=lastFixWall&&Date.now()-lastFixWall<15000,g=$('gps');g.classList.toggle('on',!!ok);g.classList.toggle('off',!ok)}
 
 function fitText(){
@@ -571,7 +575,7 @@ function fitText(){
 addEventListener('resize',fitText);
 
 function tick(){
-  const hhmm=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});$('clock').textContent=hhmm;$('sunT').textContent=hhmm;
+  const hhmm=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});$('sunT').textContent=hhmm;
   if(recording&&startTime){const m=Math.floor(((paused?pausedAt:Date.now())-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0');const mm=Math.floor(moving/60000);$('mov').textContent=Math.floor(mm/60)+':'+String(mm%60).padStart(2,'0')}
   setGps();setNet();hrShow();updateSun();rainCheck();motionTick();fitText();
 }
@@ -896,7 +900,7 @@ function hrColor(h){if(h==null)return '';const fm=(prof&&prof.age>=10)?Math.roun
 function hrShow(state){
   if(state!==undefined)hrNote=[state,Date.now()];
   const note=hrNote&&Date.now()-hrNote[1]<12000?hrNote[0]:null,h=curHr(),nm=(hrDev&&hrDev.name)||'sensore';
-  $('hrb').textContent=h!=null?h:'--';$('hrb').style.color=hrColor(h);
+  $('hrb').textContent=h!=null?h:'--';$('hrb').style.color=hrColor(h);setBt();
   let t;
   if(!hrWanted)t=note||'Non collegato';
   else if(h==null)t=note||('Collegato a '+nm+': aspetto i battiti…');
@@ -2051,8 +2055,9 @@ async function replayStart(){
     const blob=await done;
     if(rpAbort)return;
     if(!blob){msg.textContent=rec?'Non sono riuscito a registrare il video.':'Questo browser non registra il video del replay: qui puoi solo guardarlo.';return}
-    const mp4=/mp4/.test(blob.type);rpBlob=blob;rpName=cur.base+'-replay.'+(mp4?'mp4':'webm');
-    if(rpUrl)URL.revokeObjectURL(rpUrl);rpUrl=URL.createObjectURL(blob);
+    const mp4=/mp4/.test(blob.type),clean=new Blob([blob],{type:mp4?'video/mp4':'video/webm'});      // il tipo «video/mp4;codecs=...» non viene accettato dalla condivisione di Android
+    rpBlob=clean;rpName=cur.base+'-replay.'+(mp4?'mp4':'webm');
+    if(rpUrl)URL.revokeObjectURL(rpUrl);rpUrl=URL.createObjectURL(clean);
     vd.onloadedmetadata=()=>{if(vd.duration===Infinity){vd.currentTime=1e7;vd.ontimeupdate=()=>{vd.ontimeupdate=null;vd.currentTime=0}}};      // il WebM registrato non ha la durata: la si ricava così
     vd.src=rpUrl;cv.style.display='none';vd.style.display='block';$('rpshare').style.display='';$('rpsave').style.display='';
     msg.textContent='Video pronto ('+(blob.size/1048576).toFixed(1)+' MB, '+(mp4?'MP4':'WebM')+')'+(mp4?'':'. Se un\'app non accetta il WebM, salvalo e mandalo dalla galleria.');
@@ -2062,13 +2067,14 @@ async function replayStart(){
 async function replayShare(){
   const msg=t=>{$('rpmsg').textContent=t};
   if(!rpBlob)return;
-  if(!navigator.share||!navigator.canShare){msg('Questo browser non supporta la condivisione: usa Salva video.');return}
-  const f=new File([rpBlob],rpName,{type:rpBlob.type});
-  if(!navigator.canShare({files:[f]})){msg('Il browser non permette di condividere questo video: usa Salva video.');return}
-  try{await navigator.share({files:[f],title:'Kubocycle'});msg('')}catch(e){msg(e&&e.name!=='AbortError'?'Condivisione non riuscita: '+(e.message||e.name):'')}
+  if(!navigator.share){msg('Questo browser non supporta la condivisione: usa Salva video.');return}
+  const f=new File([rpBlob],rpName,{type:/mp4/.test(rpBlob.type)?'video/mp4':'video/webm'});
+  if(navigator.canShare&&!navigator.canShare({files:[f]})){msg('Il browser non permette di condividere questo video ('+f.type+'): usa Salva video.');return}
+  try{await navigator.share({files:[f]});msg('')}
+  catch(e){msg(e&&e.name==='AbortError'?'':'Condivisione non riuscita ('+((e&&e.name)||'errore')+(e&&e.message?': '+e.message:'')+'). Usa Salva video.')}
 }
 $('mreplay').onclick=replayStart;
-$('rpshare').onclick=replayShare;
+$('rpshare').onclick=e=>{e.stopPropagation();replayShare()};
 $('rpsave').onclick=()=>{if(rpBlob){saveBlob(rpBlob,rpName);$('rpmsg').textContent='Salvato '+rpName}};
 $('rpclose').onclick=()=>{rpAbort=true;$('rpov').classList.remove('on');try{$('rpv').pause()}catch(e){}$('rpv').removeAttribute('src');if(rpUrl){URL.revokeObjectURL(rpUrl);rpUrl=null}rpBlob=null};
 
