@@ -635,9 +635,30 @@ function gpxData(){
   x+='</trkseg></trk>\n</gpx>\n';
   return {x,fn:'kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())+'.gpx'};
 }
+
+// download robusto dei file grandi (video, ZIP): il file passa dal service worker come una normale risposta di internet, con dimensione e nome;
+// con l'indirizzo temporaneo del browser (blob:) alcuni telefoni interrompono i download dopo pochi MB
+async function saveBig(blob,fn){
+  try{
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller&&window.caches){
+      const url=new URL('kubo-dl/'+Date.now()+'/'+encodeURIComponent(fn),location.href).href,c=await caches.open('kubo-save');
+      await c.put(url,new Response(blob,{headers:{'Content-Type':blob.type||'application/octet-stream','Content-Length':String(blob.size),'Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(fn)}}));
+      const t=await fetch(url);      // controllo che il service worker lo serva davvero (dimensione giusta) prima di far partire il download
+      if(!t.ok||t.headers.get('content-length')!==String(blob.size)){try{t.body&&t.body.cancel()}catch(e){}throw new Error('sw')}
+      try{t.body&&t.body.cancel()}catch(e){}
+      const f=document.createElement('iframe');f.style.display='none';f.src=url;document.body.appendChild(f);      // un iframe nascosto: la pagina dell'app non cambia
+      setTimeout(()=>f.remove(),120000);setTimeout(()=>{c.delete(url).catch(()=>{})},900000);
+      return 'sw';
+    }
+  }catch(e){}
+  const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),900000);
+  return 'blob';
+}
 function saveBlob(blob,fn){
+  if(blob.size>1048576){saveBig(blob,fn);return}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;
-  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600000);      // l'indirizzo deve restare valido finché il download non è finito (file grandi)
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600000);
 }
 function downloadGpx(){
   if(!cur||!cur.gpx){toast('GPX non disponibile');return}
@@ -2047,7 +2068,7 @@ async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {
   };
   return {draw,dur:18000,tiles:okT?(sat?'sat':'osm'):'none'};
 }
-let rpBusy=false,rpAbort=false,rpUrl=null,rpBlob=null,rpName='';
+let rpBusy=false,rpAbort=false,rpUrl=null,rpBlob=null,rpName='',rpDur=0;
 const rpMime=()=>window.MediaRecorder?['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'':'';
 async function replayStart(){
   if(rpBusy||!cur||!cur.gpx)return;rpBusy=true;rpAbort=false;
@@ -2073,7 +2094,7 @@ async function replayStart(){
     const mp4=/mp4/.test(blob.type),clean=new Blob([blob],{type:mp4?'video/mp4':'video/webm'});      // il tipo «video/mp4;codecs=...» non viene accettato dalla condivisione di Android
     rpBlob=clean;rpName=cur.base+'-replay.'+(mp4?'mp4':'webm');
     if(rpUrl)URL.revokeObjectURL(rpUrl);rpUrl=URL.createObjectURL(clean);
-    vd.onloadedmetadata=()=>{if(vd.duration===Infinity){vd.currentTime=1e7;vd.ontimeupdate=()=>{vd.ontimeupdate=null;vd.currentTime=0}}};      // il WebM registrato non ha la durata: la si ricava così
+    rpDur=0;vd.onloadedmetadata=()=>{if(vd.duration===Infinity){vd.currentTime=1e7;vd.ontimeupdate=()=>{vd.ontimeupdate=null;vd.currentTime=0;rpDur=vd.duration||0}}else rpDur=vd.duration||0};      // il WebM registrato non ha la durata: la si ricava così
     vd.src=rpUrl;cv.style.display='none';vd.style.display='block';$('rpshare').style.display='';$('rpsave').style.display='';
     msg.textContent='Video pronto ('+(blob.size/1048576).toFixed(1)+' MB, '+(mp4?'MP4':'WebM')+')'+(mp4?'':'. Se un\'app non accetta il WebM, salvalo e mandalo dalla galleria.');
   }catch(e){msg.textContent='Replay non riuscito: '+((e&&e.message)||e)}
@@ -2090,7 +2111,7 @@ async function replayShare(){
 }
 $('mreplay').onclick=replayStart;
 $('rpshare').onclick=e=>{e.stopPropagation();replayShare()};
-$('rpsave').onclick=()=>{if(!rpBlob||!rpUrl)return;const a=document.createElement('a');a.href=rpUrl;a.download=rpName;document.body.appendChild(a);a.click();a.remove();$('rpmsg').textContent='Salvataggio avviato: '+rpName+' ('+(rpBlob.size/1048576).toFixed(1)+' MB). Controlla che il file salvato abbia la stessa dimensione.'};
+$('rpsave').onclick=async()=>{if(!rpBlob)return;const how=await saveBig(rpBlob,rpName);$('rpmsg').textContent='Salvataggio avviato: '+rpName+' ('+(rpBlob.size/1048576).toFixed(1)+' MB, '+(rpDur?Math.round(rpDur)+' s, ':'')+(how==='sw'?'modo A':'modo B')+'). Controlla che il file salvato abbia la stessa dimensione.'};
 $('rpclose').onclick=()=>{rpAbort=true;$('rpov').classList.remove('on');try{$('rpv').pause()}catch(e){}$('rpv').removeAttribute('src');if(rpUrl){URL.revokeObjectURL(rpUrl);rpUrl=null}rpBlob=null};
 
 
