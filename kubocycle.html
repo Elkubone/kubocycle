@@ -636,21 +636,8 @@ function gpxData(){
   return {x,fn:'kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())+'.gpx'};
 }
 
-// download robusto dei file grandi (video, ZIP): il file passa dal service worker come una normale risposta di internet, con dimensione e nome;
-// con l'indirizzo temporaneo del browser (blob:) alcuni telefoni interrompono i download dopo pochi MB
+// download dei file grandi: l'indirizzo temporaneo resta valido 15 minuti, così il browser fa in tempo a finire
 async function saveBig(blob,fn){
-  try{
-    if(navigator.serviceWorker&&navigator.serviceWorker.controller&&window.caches){
-      const url=new URL('kubo-dl/'+Date.now()+'/'+encodeURIComponent(fn),location.href).href,c=await caches.open('kubo-save');
-      await c.put(url,new Response(blob,{headers:{'Content-Type':blob.type||'application/octet-stream','Content-Length':String(blob.size),'Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(fn)}}));
-      const t=await fetch(url);      // controllo che il service worker lo serva davvero (dimensione giusta) prima di far partire il download
-      if(!t.ok||t.headers.get('content-length')!==String(blob.size)){try{t.body&&t.body.cancel()}catch(e){}throw new Error('sw')}
-      try{t.body&&t.body.cancel()}catch(e){}
-      const f=document.createElement('iframe');f.style.display='none';f.src=url;document.body.appendChild(f);      // un iframe nascosto: la pagina dell'app non cambia
-      setTimeout(()=>f.remove(),120000);setTimeout(()=>{c.delete(url).catch(()=>{})},900000);
-      return 'sw';
-    }
-  }catch(e){}
   const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(u),900000);
   return 'blob';
@@ -2070,6 +2057,86 @@ async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {
 }
 let rpBusy=false,rpAbort=false,rpUrl=null,rpBlob=null,rpName='',rpDur=0;
 const rpMime=()=>window.MediaRecorder?['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'':'';
+// ---- video MP4 per la condivisione ----
+// Rimette un MP4 «a frammenti» (quello che registra il browser) in un MP4 normale con un unico indice (moov) in testa:
+// stessi dati video, niente ricodifica. Se qualcosa non torna restituisce null e si usa il file originale.
+function remuxMp4(u8){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength),n=u8.length;
+  const rd=(o)=>dv.getUint32(o),tag=(o)=>String.fromCharCode(u8[o],u8[o+1],u8[o+2],u8[o+3]);
+  const kids=(o,e)=>{const r=[];while(o+8<=e){let sz=rd(o),hd=8;if(sz===1){sz=Number(dv.getBigUint64(o+8));hd=16}else if(sz===0)sz=e-o;if(sz<hd||o+sz>e)break;r.push({t:tag(o+4),o,hd,e:o+sz});o+=sz}return r};
+  const top=kids(0,n),ftyp=top.find(b=>b.t==='ftyp'),moov=top.find(b=>b.t==='moov');
+  if(!moov||!top.some(b=>b.t==='moof'))return null;
+  const find=(b,t)=>kids(b.o+b.hd,b.e).find(x=>x.t===t),all=(b,t)=>kids(b.o+b.hd,b.e).filter(x=>x.t===t);
+  const traks=all(moov,'trak');if(traks.length!==1)return null;
+  const trak=traks[0],tkhd=find(trak,'tkhd'),mdia=find(trak,'mdia'),mdhd=find(mdia,'mdhd'),hdlr=find(mdia,'hdlr'),minf=find(mdia,'minf'),stbl=find(minf,'stbl'),stsd=find(stbl,'stsd'),mvhd=find(moov,'mvhd');
+  if(!tkhd||!mdhd||!hdlr||!stsd||!mvhd)return null;
+  const mdhdV=u8[mdhd.o+8],timescale=rd(mdhd.o+(mdhdV===1?28:20)),tkV=u8[tkhd.o+8],trackId=rd(tkhd.o+(tkV===1?28:20));
+  const wOff=tkhd.e-8,width=rd(wOff),height=rd(wOff+4);      // 16.16 fissi
+  let defDur=0,defSize=0,defFlags=0;
+  const mvex=find(moov,'mvex');if(mvex){const trex=find(mvex,'trex');if(trex){defDur=rd(trex.o+20);defSize=rd(trex.o+24);defFlags=rd(trex.o+28)}}
+  // campioni di tutti i frammenti
+  const S=[];let dts=0,haveDts=false;
+  for(const b of top){
+    if(b.t!=='moof')continue;
+    for(const traf of all(b,'traf')){
+      const tfhd=find(traf,'tfhd'),tfdt=find(traf,'tfdt');if(!tfhd)return null;
+      const tf=rd(tfhd.o+8)&0xffffff;let p=tfhd.o+16,base=b.o,dD=defDur,dS=defSize,dF=defFlags;
+      if(tf&1){base=Number(dv.getBigUint64(p));p+=8}
+      if(tf&2)p+=4;if(tf&8){dD=rd(p);p+=4}if(tf&0x10){dS=rd(p);p+=4}if(tf&0x20){dF=rd(p);p+=4}
+      if(tfdt){const v=u8[tfdt.o+8];dts=v===1?Number(dv.getBigUint64(tfdt.o+12)):rd(tfdt.o+12);haveDts=true}
+      let next=null;
+      for(const trun of all(traf,'trun')){
+        const fl=rd(trun.o+8)&0xffffff,cnt=rd(trun.o+12);let q=trun.o+16,off;
+        if(fl&1){off=base+dv.getInt32(q);q+=4}else off=next!==null?next:base;
+        let first=null;if(fl&4){first=rd(q);q+=4}
+        for(let i=0;i<cnt;i++){
+          let d=dD,sz=dS,f=dF,c=0;
+          if(fl&0x100){d=rd(q);q+=4}if(fl&0x200){sz=rd(q);q+=4}if(fl&0x400){f=rd(q);q+=4}else if(i===0&&first!==null)f=first;if(fl&0x800){c=dv.getInt32(q);q+=4}
+          S.push({off,sz,dts,d,c,sync:(f&0x10000)===0});off+=sz;dts+=d;
+        }
+        next=off;
+      }
+    }
+  }
+  if(S.length<2||!haveDts)return null;
+  for(const s of S)if(s.off+s.sz>n||s.sz<=0)return null;
+  // se l'ultimo campione non ha durata, gli do quella media
+  if(!S[S.length-1].d)S[S.length-1].d=Math.max(1,Math.round(S[S.length-1].dts/(S.length-1)-0)||1);
+  const total=S.reduce((a,s)=>a+s.d,0),mvTs=1000,mvDur=Math.round(total/timescale*mvTs);
+  // costruzione delle scatole
+  const u32=v=>[(v>>>24)&255,(v>>>16)&255,(v>>>8)&255,v&255],str=s=>[...s].map(c=>c.charCodeAt(0));
+  const box=(t,...parts)=>{const body=[].concat(...parts.map(p=>Array.from(p)));return Uint8Array.from([...u32(8+body.length),...str(t),...body])};
+  const copy=b=>u8.subarray(b.o,b.e);
+  const zeros=k=>new Array(k).fill(0);
+  const full=(v,f)=>[v,(f>>16)&255,(f>>8)&255,f&255];
+  // stts a gruppi
+  const sttsE=[];for(const s of S){const l=sttsE[sttsE.length-1];if(l&&l[1]===s.d)l[0]++;else sttsE.push([1,s.d])}
+  const stts=box('stts',full(0,0),u32(sttsE.length),...sttsE.map(e=>[...u32(e[0]),...u32(e[1])]));
+  const hasC=S.some(s=>s.c!==0),cttsE=[];if(hasC)for(const s of S){const l=cttsE[cttsE.length-1];if(l&&l[1]===s.c)l[0]++;else cttsE.push([1,s.c])}
+  const ctts=hasC?box('ctts',full(1,0),u32(cttsE.length),...cttsE.map(e=>[...u32(e[0]),...u32(e[1]>>>0)])):new Uint8Array(0);
+  const syncIdx=[];S.forEach((s,i)=>{if(s.sync)syncIdx.push(i+1)});
+  const stss=syncIdx.length&&syncIdx.length<S.length?box('stss',full(0,0),u32(syncIdx.length),...syncIdx.map(u32)):new Uint8Array(0);
+  const stsz=box('stsz',full(0,0),u32(0),u32(S.length),...S.map(s=>u32(s.sz)));
+  const stsc=box('stsc',full(0,0),u32(1),u32(1),u32(S.length),u32(1));      // un solo blocco con tutti i campioni
+  const mk=(co)=>{
+    const stco=box('stco',full(0,0),u32(1),u32(co));
+    const stblN=box('stbl',copy(stsd),stts,ctts,stss,stsc,stsz,stco);
+    const dref=box('dref',full(0,0),u32(1),box('url ',full(0,1)));
+    const minfN=box('minf',box('vmhd',full(0,1),zeros(8)),box('dinf',dref),stblN);
+    const mdhdN=box('mdhd',full(0,0),u32(0),u32(0),u32(timescale),u32(total),[0x55,0xc4,0,0]);
+    const mdiaN=box('mdia',mdhdN,copy(hdlr),minfN);
+    const tkhdN=box('tkhd',full(0,3),u32(0),u32(0),u32(trackId),u32(0),u32(mvDur),zeros(8),[0,0,0,0],[0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0x40,0,0,0],u32(width),u32(height));
+    const mvhdN=box('mvhd',full(0,0),u32(0),u32(0),u32(mvTs),u32(mvDur),u32(0x00010000),[1,0],zeros(10),[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0x40,0,0,0],zeros(24),u32(trackId+1));
+    return box('moov',mvhdN,box('trak',tkhdN,mdiaN));
+  };
+  const ft=ftyp?copy(ftyp):box('ftyp',str('isom'),u32(512),str('isomiso2avc1mp41'));
+  const moov1=mk(0),dataStart=ft.length+moov1.length+8,moovF=mk(dataStart);
+  const sizeData=S.reduce((a,s)=>a+s.sz,0),out=new Uint8Array(ft.length+moovF.length+8+sizeData);
+  out.set(ft,0);out.set(moovF,ft.length);let p=ft.length+moovF.length;
+  out.set(Uint8Array.from([...u32(8+sizeData),...str('mdat')]),p);p+=8;
+  for(const s of S){out.set(u8.subarray(s.off,s.off+s.sz),p);p+=s.sz}
+  return out;
+}
 async function replayStart(){
   if(rpBusy||!cur||!cur.gpx)return;rpBusy=true;rpAbort=false;
   const msg=$('rpmsg'),cv=$('rpc'),vd=$('rpv');
@@ -2091,12 +2158,13 @@ async function replayStart(){
     const blob=await done;
     if(rpAbort)return;
     if(!blob){msg.textContent=rec?'Non sono riuscito a registrare il video.':'Questo browser non registra il video del replay: qui puoi solo guardarlo.';return}
-    const mp4=/mp4/.test(blob.type),clean=new Blob([blob],{type:mp4?'video/mp4':'video/webm'});      // il tipo «video/mp4;codecs=...» non viene accettato dalla condivisione di Android
+    const mp4=/mp4/.test(blob.type);let clean=new Blob([blob],{type:mp4?'video/mp4':'video/webm'}),fixed=!mp4;
+    if(mp4){try{const o=remuxMp4(new Uint8Array(await blob.arrayBuffer()));if(o){clean=new Blob([o],{type:'video/mp4'});fixed=true}}catch(e){}}      // il browser registra un MP4 «a frammenti»: alcune app (WhatsApp) ne mostrano solo i primi 3 secondi; lo rimetto in un MP4 normale
     rpBlob=clean;rpName=cur.base+'-replay.'+(mp4?'mp4':'webm');
     if(rpUrl)URL.revokeObjectURL(rpUrl);rpUrl=URL.createObjectURL(clean);
     rpDur=0;vd.onloadedmetadata=()=>{if(vd.duration===Infinity){vd.currentTime=1e7;vd.ontimeupdate=()=>{vd.ontimeupdate=null;vd.currentTime=0;rpDur=vd.duration||0}}else rpDur=vd.duration||0};      // il WebM registrato non ha la durata: la si ricava così
     vd.src=rpUrl;cv.style.display='none';vd.style.display='block';$('rpshare').style.display='';$('rpsave').style.display='';
-    msg.textContent='Video pronto ('+(blob.size/1048576).toFixed(1)+' MB, '+(mp4?'MP4':'WebM')+')'+(mp4?'':'. Se un\'app non accetta il WebM, salvalo e mandalo dalla galleria.');
+    msg.textContent='Video pronto ('+(blob.size/1048576).toFixed(1)+' MB, '+(mp4?'MP4':'WebM')+')'+(mp4?(fixed?'':'. Attenzione: non sono riuscito a ottimizzare il file, alcune app potrebbero mostrarne solo l\'inizio.'):'. Se un\'app non accetta il WebM, salvalo e mandalo dalla galleria.');
   }catch(e){msg.textContent='Replay non riuscito: '+((e&&e.message)||e)}
   finally{rpBusy=false;try{wl&&wl.release()}catch(e){}}
 }
@@ -2111,7 +2179,7 @@ async function replayShare(){
 }
 $('mreplay').onclick=replayStart;
 $('rpshare').onclick=e=>{e.stopPropagation();replayShare()};
-$('rpsave').onclick=async()=>{if(!rpBlob)return;const how=await saveBig(rpBlob,rpName);$('rpmsg').textContent='Salvataggio avviato: '+rpName+' ('+(rpBlob.size/1048576).toFixed(1)+' MB, '+(rpDur?Math.round(rpDur)+' s, ':'')+(how==='sw'?'modo A':'modo B')+'). Controlla che il file salvato abbia la stessa dimensione.'};
+$('rpsave').onclick=async()=>{if(!rpBlob)return;await saveBig(rpBlob,rpName);$('rpmsg').textContent='Salvataggio avviato: '+rpName+' ('+(rpBlob.size/1048576).toFixed(1)+' MB'+(rpDur?', '+Math.round(rpDur)+' s':'')+'). Controlla che il file salvato abbia la stessa dimensione.'};
 $('rpclose').onclick=()=>{rpAbort=true;$('rpov').classList.remove('on');try{$('rpv').pause()}catch(e){}$('rpv').removeAttribute('src');if(rpUrl){URL.revokeObjectURL(rpUrl);rpUrl=null}rpBlob=null};
 
 
