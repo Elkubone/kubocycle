@@ -20,6 +20,7 @@ h1::after{content:"";display:block;width:56px;height:3px;border-radius:2px;margi
 .hl{display:flex;gap:6px;flex:1;min-width:0}
 #start,#pause,#fine{flex:1 1 36px;width:auto;max-width:150px}
 #quit{flex:none}
+#ver{margin:16px 12px 26px;text-align:center;color:var(--mut);font-size:.85rem;font-weight:700}
 #quit svg{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
 .hb{display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
 .hb svg{width:21px;height:21px}
@@ -327,7 +328,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="alrt"><div class="rbox"><h2 id="atitle"></h2><p id="atext"></p><button id="aok" class="go">OK</button></div></div>
 <div id="fall"><div class="rbox"><h2>Caduta rilevata</h2><div id="falln"></div><p id="falltxt"></p><a id="fallcall" href="#">Chiama</a><button id="fallok" class="go">Sto bene</button></div></div>
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
-<div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div></div>
+<div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div><p id="ver"></p></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
 <div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
@@ -786,6 +787,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
+const APP_VER='2026-11-15 (2)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
@@ -846,6 +848,7 @@ async function openRide(rec){
 }
 const show=id=>$(id).classList.add('on'),hide=id=>$(id).classList.remove('on');
 $('optbtn').onclick=()=>show('opts');$('oback').onclick=()=>hide('opts');
+$('ver').textContent='Versione '+APP_VER;
 $('ohist').onclick=histOpen;$('hback').onclick=()=>hide('hist');
 $('obt').onclick=()=>{hrShow();show('bt')};$('btback').onclick=()=>hide('bt');
 $('oprof').onclick=profOpen;$('pback').onclick=()=>hide('prof');
@@ -1097,12 +1100,27 @@ function parseGpx(txt,fname){
   const doc=new DOMParser().parseFromString(txt,'application/xml');
   if(doc.getElementsByTagName('parsererror').length)throw new Error('il file non è un GPX valido');
   let nodes=[...doc.getElementsByTagName('trkpt')];if(nodes.length<2)nodes=[...doc.getElementsByTagName('rtept')];
-  const pts=nodes.map(n=>[parseFloat(n.getAttribute('lat')),parseFloat(n.getAttribute('lon'))]).filter(p=>isFinite(p[0])&&isFinite(p[1]));
+  const pts=nodes.map(n=>{const e=n.getElementsByTagName('ele')[0],z=e?parseFloat(e.textContent):NaN;return [parseFloat(n.getAttribute('lat')),parseFloat(n.getAttribute('lon')),isFinite(z)?z:null]}).filter(p=>isFinite(p[0])&&isFinite(p[1]));
   if(pts.length<2)throw new Error('nel file non ci sono punti di un percorso');
   const nm=doc.querySelector('trk > name')||doc.querySelector('rte > name')||doc.querySelector('metadata > name');
   const wpts=[...doc.getElementsByTagName('wpt')].map(n=>({lat:parseFloat(n.getAttribute('lat')),lon:parseFloat(n.getAttribute('lon')),name:((n.getElementsByTagName('name')[0]||{}).textContent||'').trim()})).filter(w=>isFinite(w.lat)&&isFinite(w.lon));
   return {name:((nm&&nm.textContent.trim())||fname.replace(/\.[^.]+$/,'')||'Percorso'),pts,wpts};
 }
+
+// ---- pendenza nel senso di marcia (usata per colorare i percorsi) ----
+// quota smussata su ~200 m, pendenza su ~100 m; null se mancano le quote. Colori: salita ripida rosso, media arancione, piano azzurro, discesa verde
+function slopeSeries(la,lo,z){
+  const n=la.length;if(n<3)return null;let k=0;for(const v of z)if(v!=null&&isFinite(v))k++;if(k<n*0.8)return null;
+  const el0=[];let last=z.find(v=>v!=null&&isFinite(v));for(const v of z){if(v!=null&&isFinite(v))last=v;el0.push(last)}
+  const cd=[0];for(let i=1;i<n;i++)cd.push(cd[i-1]+dist({lat:la[i-1],lon:lo[i-1]},{lat:la[i],lon:lo[i]}));
+  if(!(cd[n-1]>=100))return null;
+  const el=new Array(n);let a=0,b=0,s=0,c=0;
+  for(let i=0;i<n;i++){while(b<n&&cd[b]-cd[i]<=100){s+=el0[b];c++;b++}while(cd[i]-cd[a]>100){s-=el0[a];c--;a++}el[i]=s/c}
+  const sl=new Array(n);let j0=0,j1=0;
+  for(let i=0;i<n;i++){while(cd[i]-cd[j0]>50)j0++;while(j1<n-1&&cd[j1+1]-cd[i]<=50)j1++;const dd=cd[j1]-cd[j0];sl[i]=dd>=20?Math.max(-30,Math.min(30,(el[j1]-el[j0])/dd*100)):0}
+  return sl;
+}
+const slopeCol=v=>v<-2?'#2EE077':v<2?'#5BC0EB':v<6?'#FF9F1C':'#FF5448';
 function dpKeep(xy,tol){
   const n=xy.length,keep=new Uint8Array(n);keep[0]=keep[n-1]=1;const st=[[0,n-1]];
   while(st.length){
@@ -1117,12 +1135,14 @@ function buildRoute(g){
   let xy=[],ll=[],last=null;
   g.pts.forEach((p,i)=>{const x=p[1]*kx,y=p[0]*ky;if(!last||Math.hypot(x-last[0],y-last[1])>=2||i===g.pts.length-1){xy.push([x,y]);ll.push(p);last=[x,y]}});
   if(xy.length<2)throw new Error('il percorso è troppo corto');
-  const keep=dpKeep(xy,3),X=[],LL=[];
-  keep.forEach((k,i)=>{if(k){X.push(xy[i]);LL.push(ll[i])}});
+  const keep=dpKeep(xy,3),X=[],LL=[],KI=[];
+  const SLall=slopeSeries(ll.map(p=>p[0]),ll.map(p=>p[1]),ll.map(p=>p[2]));
+  if(SLall)for(let i=1;i<ll.length;i++)if(slopeCol(SLall[i])!==slopeCol(SLall[i-1])){keep[i-1]=1;keep[i]=1}      // dove cambia il colore tengo il punto, così il tratto non sfuma
+  keep.forEach((k,i)=>{if(k){X.push(xy[i]);LL.push(ll[i]);KI.push(i)}});
   const cum=[0];for(let i=1;i<LL.length;i++)cum.push(cum[i-1]+dist({lat:LL[i-1][0],lon:LL[i-1][1]},{lat:LL[i][0],lon:LL[i][1]}));
   const total=cum[cum.length-1];
   if(!(total>=50))throw new Error('il percorso è più corto di 50 metri');
-  const rt={name:g.name,kx,ky,xy:X,ll:LL,cum,total,wpts:g.wpts,turns:[]};
+  const rt={name:g.name,kx,ky,xy:X,ll:LL,cum,total,wpts:g.wpts,turns:[],sl:SLall?KI.map(i=>SLall[i]):null};
   rt.turns=findTurns(rt);
   return rt;
 }
@@ -1288,15 +1308,28 @@ function navDraw(){
   const toS=(la,lo)=>{const dx=(mx(lo,tz)-cx)*sc,dy=(my(la,tz)-cy)*sc;return [ax+dx*co-dy*si,ay+dx*si+dy*co]};
   // percorso
   if(route){
-    const rt=route,pathTo=(a,b,col,w)=>{g.beginPath();for(let i=a;i<=b;i++){const q=toS(rt.ll[i][0],rt.ll[i][1]);i===a?g.moveTo(q[0],q[1]):g.lineTo(q[0],q[1])}g.strokeStyle=col;g.lineWidth=w;g.stroke()};
+    // il percorso è spostato di qualche pixel a destra rispetto al senso di marcia (come due corsie): andata e ritorno sulla stessa strada restano distinguibili
+    const rt=route,OFF=4.5,P0=rt.ll.map(p=>toS(p[0],p[1])),PQ=P0.map((q,i)=>{const a=P0[Math.max(0,i-1)],b=P0[Math.min(P0.length-1,i+1)],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;return [q[0]-dy/l*OFF,q[1]+dx/l*OFF]});
+    const pathTo=(a,b,col,w)=>{g.beginPath();for(let i=a;i<=b;i++){const q=PQ[i];i===a?g.moveTo(q[0],q[1]):g.lineTo(q[0],q[1])}g.strokeStyle=col;g.lineWidth=w;g.stroke()};
     g.lineCap='round';g.lineJoin='round';
     const k=navStarted&&!navOff?Math.min(rt.ll.length-1,Math.max(0,(navSnap?navSnap.i:0))):0;
     const sp=(navStarted&&navSnap&&!navOff)?llAt(rt,navS):null;
     pathTo(0,rt.ll.length-1,'#fff',11);
-    if(sp){                              // parte già fatta (grigia) e parte da fare (blu)
-      g.beginPath();for(let i=0;i<=k;i++){const q=toS(rt.ll[i][0],rt.ll[i][1]);i===0?g.moveTo(q[0],q[1]):g.lineTo(q[0],q[1])}const sq=toS(sp[0],sp[1]);g.lineTo(sq[0],sq[1]);g.strokeStyle='#8FA0A8';g.lineWidth=7;g.stroke();
-      g.beginPath();g.moveTo(sq[0],sq[1]);for(let i=k+1;i<rt.ll.length;i++){const q=toS(rt.ll[i][0],rt.ll[i][1]);g.lineTo(q[0],q[1])}g.strokeStyle='#1A73E8';g.lineWidth=7;g.stroke();
-    }else pathTo(0,rt.ll.length-1,'#1A73E8',7);
+    // tratti uniti per colore: salita ripida rosso, salita media arancione, piano azzurro, discesa verde (senza quote nel file: blu come prima)
+    const segCol=i=>rt.sl?slopeCol(rt.sl[i]):'#1A73E8';
+    const runs=(a,b,start)=>{
+      let prev=start||PQ[a],cc=null;g.beginPath();g.moveTo(prev[0],prev[1]);
+      for(let i=a+1;i<=b;i++){
+        const c=segCol(i-1),q=PQ[i];
+        if(cc!==null&&c!==cc){g.strokeStyle=cc;g.lineWidth=7;g.stroke();g.beginPath();g.moveTo(prev[0],prev[1])}
+        g.lineTo(q[0],q[1]);cc=c;prev=q;
+      }
+      if(cc!==null){g.strokeStyle=cc;g.lineWidth=7;g.stroke()}
+    };
+    if(sp){                              // parte già fatta (grigia) e parte da fare (colorata per pendenza)
+      g.beginPath();for(let i=0;i<=k;i++){const q=PQ[i];i===0?g.moveTo(q[0],q[1]):g.lineTo(q[0],q[1])}const sq0=toS(sp[0],sp[1]),sq=[sq0[0]+PQ[k][0]-P0[k][0],sq0[1]+PQ[k][1]-P0[k][1]];g.lineTo(sq[0],sq[1]);g.strokeStyle='#8FA0A8';g.lineWidth=7;g.stroke();
+      runs(k,rt.ll.length-1,sq);
+    }else runs(0,rt.ll.length-1);
     const dot=(la,lo,col,r)=>{const q=toS(la,lo);g.beginPath();g.arc(q[0],q[1],r,0,7);g.fillStyle=col;g.fill();g.lineWidth=3;g.strokeStyle='#fff';g.stroke();return q};
     // prossima svolta
     if(navOn&&navStarted&&!navOff&&rt.turns[navT]){const tt=llAt(rt,rt.turns[navT].s);dot(tt[0],tt[1],'#FF9F43',8)}
