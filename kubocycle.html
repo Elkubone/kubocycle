@@ -330,7 +330,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div><p id="ver"></p></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
-<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
+<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hfix">Correggi le quote dei giri</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
@@ -353,7 +353,7 @@ let km=0,lastDistPt=null,lastDistTs=0,moving=0,maxSpd=0;
 let track=[];
 let prevSpd=0,moveRun=0;
 let curPos=null,curSpd=0,ended=false,watchId=null,mapBlob=null,cur=null,lastPhotoSat=false;
-let gAlt=null,altOff=null;
+let gAlt=null,altOff=null,demOffTs=0;
 let paused=false,pausedAt=0,newSeg=false,endAt=null,kcal=0,wxFail=false,hrNote=null,hrDev=null,hrChar=null,hrWanted=false,hrBpm=null,hrTs=0,hrSum=0,hrN=0,hrMax=0,hrBusy=false,recording=false,lastFixWall=0,geoErr=false,exported=false,savedStats=null,startTime=null;
 let wx=null,lastFetch=0,lastFetchPos=null,lastPt=null,heading=null;
 // limite di velocità: una bici non supera i 94 km/h, quello che arriva oltre è un errore del GPS (o un altro mezzo)
@@ -387,7 +387,7 @@ async function getWx(p){
     const j=await r.json(),c=j.current;
     wx={t:c.temperature_2m,h:c.relative_humidity_2m,v:c.wind_speed_10m,d:c.wind_direction_10m,g:c.wind_gusts_10m,elev:typeof j.elevation==='number'?j.elevation:null,time:new Date()};
     // altitudine: la quota GPS è liscia ma sfalsata; la allineo a quella del modello del terreno di Open-Meteo
-    if(wx.elev!=null&&gAlt!=null){const off=wx.elev-gAlt;altOff=altOff==null?off:altOff*0.6+off*0.4}
+    if(wx.elev!=null&&gAlt!=null&&Date.now()-demOffTs>900000){const off=wx.elev-gAlt;altOff=altOff==null?off:altOff*0.6+off*0.4}
     wxFail=false;setNet();
     if(recording&&!paused){const fl=feelsLike();envS.push({t:Date.now(),tp:wx.t,h:wx.h,v:wx.v,d:wx.d,g:wx.g,f:fl==null?null:Math.round(fl*10)/10});if(envS.length>300)envS.shift()}
     getRain(p);
@@ -398,6 +398,8 @@ async function getWx(p){
   updateAlt();render();
 }
 function curAlt(){
+  const dm=curPos?demAt(curPos.lat,curPos.lon):null;      // prima scelta: la quota del modello del terreno
+  if(dm!=null)return dm;
   if(gAlt!=null&&altOff!=null)return gAlt+altOff;
   if(wx&&wx.elev!=null)return wx.elev;
   return gAlt;
@@ -460,6 +462,7 @@ function onPos(pos){
   curSpd=spd==null?0:spd;curPos=p;
   $('sp').textContent=spd==null?'--':(spd<0.5?'0':Math.round(spd*3.6));
   if(c.altitude!=null&&!isNaN(c.altitude)&&c.accuracy<=40&&(c.altitudeAccuracy==null||c.altitudeAccuracy<=40))gAlt=gAlt==null?c.altitude:gAlt+0.25*(c.altitude-gAlt);
+  {demWarm(p.lat,p.lon);const dh=demAt(p.lat,p.lon);if(dh!=null&&gAlt!=null){const off=dh-gAlt;altOff=altOff==null?off:altOff*0.8+off*0.2;demOffTs=Date.now()}}      // quota del terreno: è la quota mostrata; la quota GPS resta come ripiego senza connessione
   updateAlt();
   const sus=spd==null?0:Math.min(spd,prevSpd);            // velocità sostenuta per due fix di fila
   if(recording&&!paused&&sus>maxSpd&&sus<=VMAX){maxSpd=sus;$('vmax').textContent=Math.round(maxSpd*3.6)}
@@ -787,7 +790,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
-const APP_VER='2026-11-15 (2)';      // aumenta il numero a ogni versione: si legge in Opzioni
+const APP_VER='2026-11-15 (3)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
@@ -871,6 +874,7 @@ async function doFine(skip){
   $('mapov').classList.remove('hm');$('mapttl').style.display='none';$('mapov').classList.add('on');$('mapmsg').textContent='Creo la mappa…';$('mapc').style.display='none';$('mbtns').style.display='none';
   let ok=0;
   try{ok=await buildMap()}catch(e){ok=0;mapBlob=null}
+  try{$('mapmsg').textContent='Correggo le quote del giro…';await demFixTrack(track)}catch(e){}
   const S=rideStats(),gx=gpxData();
   let hrc=null;try{hrc=await buildHrChart(gx.x,{t0:S.t0,dur:S.tot,km:S.kmm,hrAvg:S.hrAvg,hrMax:S.hrMax})}catch(e){hrc=null}
   let prof=null;try{prof=await buildProfile(track.map(q=>[q[0],q[1],q[3]]),{t0:S.t0,km:S.kmm,alt:altSummary()})}catch(e){prof=null}
@@ -1858,6 +1862,112 @@ srvUi();
 
 
 
+// ================= quota dal modello del terreno =================
+// La quota GPS del telefono sbaglia spesso di decine di metri e ha uno sfalsamento: la quota affidabile viene da un modello digitale del terreno
+// (tessere «Terrarium», circa 30 m di risoluzione). Serve la connessione dati; senza, si usa la quota GPS come prima.
+const DEMZ=12,demC=new Map();      // 'x,y' -> Float32Array(65536) | Promise | {fail:ora}
+async function inflate(u8){const ds=new DecompressionStream('deflate'),w=ds.writable.getWriter();w.write(u8);w.close();return new Uint8Array(await new Response(ds.readable).arrayBuffer())}
+async function decodePng(buf){      // lettura del PNG senza passare dal canvas: alcuni browser (Brave) alterano i pixel letti da un canvas
+  const u=new Uint8Array(buf),sg=[137,80,78,71,13,10,26,10];for(let i=0;i<8;i++)if(u[i]!==sg[i])return null;
+  const dv=new DataView(buf);let p=8,w=0,h=0,bd=0,ct=0,il=0;const parts=[];
+  while(p+8<=u.length){const len=dv.getUint32(p),ty=String.fromCharCode(u[p+4],u[p+5],u[p+6],u[p+7]),d=p+8;
+    if(ty==='IHDR'){w=dv.getUint32(d);h=dv.getUint32(d+4);bd=u[d+8];ct=u[d+9];il=u[d+12]}else if(ty==='IDAT')parts.push(u.subarray(d,d+len));else if(ty==='IEND')break;p=d+len+4}
+  if(bd!==8||il!==0||(ct!==2&&ct!==6)||!w||!h)return null;
+  const ch=ct===2?3:4,stride=w*ch;let tot=0;for(const a of parts)tot+=a.length;const z=new Uint8Array(tot);let o=0;for(const a of parts){z.set(a,o);o+=a.length}
+  const raw=await inflate(z);if(raw.length<h*(stride+1))return null;
+  const out=new Uint8Array(h*stride);
+  for(let y=0;y<h;y++){
+    const f=raw[y*(stride+1)],src=y*(stride+1)+1,dst=y*stride,prev=dst-stride;
+    for(let i=0;i<stride;i++){
+      const x=raw[src+i],a=i>=ch?out[dst+i-ch]:0,b=y?out[prev+i]:0,c=(y&&i>=ch)?out[prev+i-ch]:0;let v;
+      switch(f){case 0:v=x;break;case 1:v=x+a;break;case 2:v=x+b;break;case 3:v=x+((a+b)>>1);break;
+        case 4:{const pp=a+b-c,pa=Math.abs(pp-a),pb=Math.abs(pp-b),pc=Math.abs(pp-c);v=x+((pa<=pb&&pa<=pc)?a:(pb<=pc?b:c));break}
+        default:return null}
+      out[dst+i]=v&255;
+    }
+  }
+  return {w,h,ch,data:out};
+}
+function demTile(x,y){
+  const k=x+','+y,c=demC.get(k);
+  if(c instanceof Float32Array)return Promise.resolve(c);
+  if(c&&c.then)return c;
+  if(c&&c.fail&&Date.now()-c.fail<60000)return Promise.resolve(null);
+  if(navigator.onLine===false)return Promise.resolve(null);
+  const pr=(async()=>{
+    const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),15000);
+    try{
+      const r=await fetch('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/'+DEMZ+'/'+x+'/'+y+'.png',{mode:'cors',signal:ctl.signal});
+      if(!r.ok)return null;
+      const png=await decodePng(await r.arrayBuffer());
+      if(!png||png.w!==256||png.h!==256)return null;
+      const o=new Float32Array(65536);let bad=0;
+      for(let q=0;q<65536;q++){const i=q*png.ch,v=png.data[i]*256+png.data[i+1]+png.data[i+2]/256-32768;if(!(v>-500&&v<9000))bad++;o[q]=v}
+      return bad>3000?null:o;      // quote impossibili: tessera non valida
+    }catch(e){return null}finally{clearTimeout(tm)}
+  })().then(t=>{if(t)demC.set(k,t);else demC.set(k,{fail:Date.now()});if(demC.size>60){for(const [kk,vv] of demC){if(vv instanceof Float32Array){demC.delete(kk);break}}}return t});
+  demC.set(k,pr);return pr;
+}
+function demPx(ix,iy){const c=demC.get(Math.floor(ix/256)+','+Math.floor(iy/256));return c instanceof Float32Array?c[(iy&255)*256+(ix&255)]:null}
+function demAt(lat,lon){      // quota in metri sul modello del terreno, oppure null se la tessera non è ancora scaricata
+  const px=mx(lon,DEMZ)-0.5,py=my(lat,DEMZ)-0.5,ix=Math.floor(px),iy=Math.floor(py),u=px-ix,v=py-iy;
+  const a=demPx(ix,iy),b=demPx(ix+1,iy),c=demPx(ix,iy+1),d=demPx(ix+1,iy+1);
+  if(a==null&&b==null&&c==null&&d==null)return null;
+  const f=(q,r)=>q==null?r:q;const A=f(a,f(b,f(c,d))),B=f(b,A),C=f(c,A),D=f(d,B);
+  return (A*(1-u)+B*u)*(1-v)+(C*(1-u)+D*u)*v;
+}
+function demWarm(lat,lon){const tx=Math.floor(mx(lon,DEMZ)/256),ty=Math.floor(my(lat,DEMZ)/256);demTile(tx,ty)}
+async function demFixPoints(P){      // P: [[lat,lon],...]; restituisce le quote del terreno (smussate su ~120 m) o null se mancano troppe tessere
+  const keys=new Map();for(const p of P){const tx=Math.floor(mx(p[1],DEMZ)/256),ty=Math.floor(my(p[0],DEMZ)/256);keys.set(tx+','+ty,[tx,ty])}
+  if(keys.size>150)return null;
+  const list=[...keys.values()];let k=0;
+  await Promise.race([Promise.all(Array.from({length:6},async()=>{while(k<list.length){const t=list[k++];await demTile(t[0],t[1])}})),new Promise(r=>setTimeout(r,40000))]);
+  const H=P.map(p=>demAt(p[0],p[1])),n=H.length;let ok=0;for(const v of H)if(v!=null)ok++;
+  if(ok<n*0.8)return null;
+  let last=H.find(v=>v!=null);for(let i=0;i<n;i++){if(H[i]==null)H[i]=last;else last=H[i]}
+  const cd=[0];for(let i=1;i<n;i++)cd.push(cd[i-1]+dist({lat:P[i-1][0],lon:P[i-1][1]},{lat:P[i][0],lon:P[i][1]}));
+  const S=new Array(n);let a=0,b=0,s=0,c=0;
+  for(let i=0;i<n;i++){while(b<n&&cd[b]-cd[i]<=60){s+=H[b];c++;b++}while(cd[i]-cd[a]>60){s-=H[a];c--;a++}S[i]=s/c}
+  return S;
+}
+async function demFixTrack(T){      // a fine giro: sostituisce la quota GPS di ogni punto con quella del terreno
+  const S=await demFixPoints(T.map(q=>[q[0],q[1]]));if(!S)return false;
+  for(let i=0;i<T.length;i++)T[i][3]=Math.round(S[i]*10)/10;return true;
+}
+function gpxSetEle(gpx,vals){      // riscrive (o aggiunge) la quota di ogni punto del GPX
+  const doc=new DOMParser().parseFromString(gpx,'application/xml'),nodes=doc.getElementsByTagName('trkpt');
+  if(!nodes.length||nodes.length!==vals.length||doc.getElementsByTagName('parsererror').length)return null;
+  for(let i=0;i<nodes.length;i++){const nd=nodes[i];let e=nd.getElementsByTagName('ele')[0];if(!e){e=doc.createElementNS(nd.namespaceURI,'ele');nd.insertBefore(e,nd.firstChild)}e.textContent=vals[i].toFixed(1)}
+  return '<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(doc).replace(/^<\?xml[^>]*\?>\s*/,'');      // la dichiarazione XML una volta sola
+}
+let fixBusy=false;
+async function fixAll(){      // cronologia: rifà le quote dei giri già salvati
+  if(fixBusy||recording)return;fixBusy=true;const m=$('hmsg');
+  try{
+    const L=((await dbAll())||[]).filter(r=>r.gpx&&!r.altfix);
+    if(!L.length){m.textContent='Le quote di tutti i giri sono già corrette.';return}
+    let ok=0,bad=0,i=0;
+    for(const r of L){
+      i++;m.textContent='Quote: giro '+i+' di '+L.length+'…';
+      try{
+        const P=gpxEle(r.gpx);if(P.length<10){bad++;continue}
+        const S=await demFixPoints(P.map(p=>[p[0],p[1]]));if(!S){bad++;continue}
+        const g2=gpxSetEle(r.gpx,S);if(!g2){bad++;continue}
+        r.gpx=g2;r.alt=altFromArr(S);
+        try{const pf=await buildProfile(S.map((v,j)=>[P[j][0],P[j][1],v]),{t0:r.start,km:r.km,alt:r.alt});if(pf)r.prof=pf}catch(e){}
+        r.altfix=true;r.srv=null;      // il GPX è cambiato: va rimandato al server
+        await dbPut(r);if(dirH)await folderPut(r);ok++;
+        if(srvOk()){try{await srvUpload(r)}catch(e){}}
+      }catch(e){bad++}
+      await new Promise(res=>setTimeout(res,20));
+    }
+    m.textContent='Fatto: quote corrette in '+ok+(ok===1?' giro':' giri')+(bad?', '+bad+' non riusciti (serve la connessione dati e il GPX deve avere i punti)':'')+'.';
+    const keep=m.textContent;await histOpen();$('hmsg').textContent=keep;
+  }catch(e){m.textContent='Non riesco a correggere le quote: '+((e&&e.message)||e)}
+  finally{fixBusy=false}
+}
+$('hfix').onclick=fixAll;
+
 // ================= profilo altimetrico (foto 1080x1350 con quota/distanza) =================
 function gpxEle(txt){
   const doc=new DOMParser().parseFromString(txt,'application/xml'),out=[];
@@ -2001,10 +2111,13 @@ function replayPrep(gpx){
 const rpIdx=(R,v)=>{let a=0,b=R.n-1;while(a<b){const m=(a+b+1)>>1;if(R.vt[m]<=v)a=m;else b=m-1}return a};
 async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {draw(g,p),dur,tiles}
   const R=replayPrep(gpx);if(!R)return null;
-  const W=1080,H=1350,MB={x:60,y:170,w:960,h:640},PB={x:150,y:850,w:850,h:120};
+  const W=1080,H=1350,MB={x:36,y:160,w:1008,h:700},PB={x:150,y:880,w:850,h:100};
   let a=90,b=-90,c=180,d=-180;for(const p of R.P){a=Math.min(a,p.la);b=Math.max(b,p.la);c=Math.min(c,p.lo);d=Math.max(d,p.lo)}
-  let z=17;for(;z>3;z--){if(mx(d,z)-mx(c,z)<=MB.w-90&&my(a,z)-my(b,z)<=MB.h-90)break}
-  const ox=(mx(c,z)+mx(d,z))/2-(MB.x+MB.w/2),oy=(my(a,z)+my(b,z))/2-(MB.y+MB.h/2);
+  // zoom non intero: il percorso riempie la mappa (le tessere si usano allo zoom intero più vicino, un po' ingrandite o ridotte)
+  const ex0=Math.max(mx(d,0)-mx(c,0),1e-9),ey0=Math.max(my(a,0)-my(b,0),1e-9);
+  let zf=Math.min(Math.log2((MB.w-90)/ex0),Math.log2((MB.h-120)/ey0));zf=Math.max(3,Math.min(18,zf));
+  const z=Math.max(3,Math.min(17,Math.round(zf))),sz=256*2**(zf-z),pf=2**zf,MXf=lon=>mx(lon,0)*pf,MYf=lat=>my(lat,0)*pf;
+  const ox=(MXf(c)+MXf(d))/2-(MB.x+MB.w/2),oy=(MYf(a)+MYf(b))/2-(MB.y+MB.h/2-18);
   const bg=document.createElement('canvas');bg.width=W;bg.height=H;const g=bg.getContext('2d');
   const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#0B1114');gr.addColorStop(1,'#000');g.fillStyle=gr;g.fillRect(0,0,W,H);
   const f1=x=>x.toFixed(1).replace('.',','),dt0=new Date(R.t0);
@@ -2015,8 +2128,8 @@ async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {
   g.fillText(dt0.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+dt0.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),50,140);
   // mappa
   g.save();g.beginPath();g.roundRect(MB.x,MB.y,MB.w,MB.h,28);g.clip();g.fillStyle='#0B1114';g.fillRect(MB.x,MB.y,MB.w,MB.h);
-  const n2=2**z,tx0=Math.floor((ox+MB.x)/256),tx1=Math.floor((ox+MB.x+MB.w)/256),ty0=Math.max(0,Math.floor((oy+MB.y)/256)),ty1=Math.min(n2-1,Math.floor((oy+MB.y+MB.h)/256));
-  const grab=u=>{const jobs=[];for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++)jobs.push(loadTile(z,((tx%n2)+n2)%n2,ty,u).then(im=>{if(im)g.drawImage(im,tx*256-ox,ty*256-oy,256,256);return !!im}));return Promise.all(jobs)};
+  const n2=2**z,tx0=Math.floor((ox+MB.x)/sz),tx1=Math.floor((ox+MB.x+MB.w)/sz),ty0=Math.max(0,Math.floor((oy+MB.y)/sz)),ty1=Math.min(n2-1,Math.floor((oy+MB.y+MB.h)/sz));
+  const grab=u=>{const jobs=[];for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++)jobs.push(loadTile(z,((tx%n2)+n2)%n2,ty,u).then(im=>{if(im)g.drawImage(im,tx*sz-ox,ty*sz-oy,sz+0.6,sz+0.6);return !!im}));return Promise.all(jobs)};
   let okT=(await grab(OSMT)).filter(Boolean).length,sat=false;if(!okT){okT=(await grab(null)).filter(Boolean).length;sat=okT>0}
   g.fillStyle='rgba(0,0,0,.28)';g.fillRect(MB.x,MB.y,MB.w,MB.h);g.restore();
   {const att=okT?(sat?'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community':'© OpenStreetMap contributors'):'Mappa non disponibile';
@@ -2026,7 +2139,7 @@ async function replayBuild(gpx){      // prepara sfondo e disegno; restituisce {
     const lx0=MB.x+14,ly=MB.y+MB.h-40;g.fillStyle='rgba(0,0,0,.6)';g.beginPath();g.roundRect(lx0,ly,w0+10,30,10);g.fill();
     let lx=lx0+12;g.textAlign='left';lg.forEach(([t,c])=>{g.fillStyle=c;g.beginPath();g.arc(lx+7,ly+15,7,0,7);g.fill();g.fillStyle='rgba(255,255,255,.95)';g.fillText(t,lx+20,ly+22);lx+=g.measureText(t).width+42})}
   // punti sullo schermo (ne tengo uno ogni ~2 px per non appesantire il disegno)
-  const sx=R.P.map(p=>mx(p.lo,z)-ox),sy=R.P.map(p=>my(p.la,z)-oy),K=[0];
+  const sx=R.P.map(p=>MXf(p.lo)-ox),sy=R.P.map(p=>MYf(p.la)-oy),K=[0];
   for(let i=1;i<R.n;i++){const k=K[K.length-1];if(Math.hypot(sx[i]-sx[k],sy[i]-sy[k])>=2)K.push(i)}
   if(K[K.length-1]!==R.n-1)K.push(R.n-1);
   // il percorso viene spostato di qualche pixel a destra rispetto al senso di marcia (come due corsie): andata e ritorno sulla stessa strada restano distinti
