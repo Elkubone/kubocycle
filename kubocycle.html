@@ -262,8 +262,8 @@ body.p2 #p2{transform:translateX(0)}
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FFB830"><path d="M4 20V11M10 20V5M16 20v-6M3 20.5h18"/></svg>Vel. media</span><small>km/h</small></div><div class="temp" id="avg">--</div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#B794F6"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.6 1.6M9.5 3h5"/></svg>In sella</span></div><div class="temp" id="elapsed">--</div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#2DD4BF"><circle cx="5.5" cy="16.5" r="3.5"/><circle cx="18.5" cy="16.5" r="3.5"/><path d="M5.5 16.5l4-7.5h5.5l3.5 7.5M9.5 9l3.2 7.5M8 6h3"/></svg>Pedalando</span></div><div class="temp" id="mov">--</div></div>
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF6B4A"><path d="M14 14.8V5.5a2 2 0 0 0-4 0v9.3a4 4 0 1 0 4 0z"/><path d="M12 9v7"/></svg>Temperatura</span></div><div class="temp"><span id="t">--</span><small>°C</small></div></div>
-    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#7CC7FF"><path d="M8.5 14V5.5a2 2 0 0 0-4 0V14a3.6 3.6 0 1 0 4 0z"/><path d="M12.5 7.5h5a2 2 0 1 0-2-2M12.5 11.5h7a2 2 0 1 1-2 2"/></svg>Temp. percepita</span></div><div class="temp"><span id="feel">--</span><small>°C</small></div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF6B4A"><path d="M14 14.8V5.5a2 2 0 0 0-4 0v9.3a4 4 0 1 0 4 0z"/><path d="M12 9v7"/></svg>Temp/Perc.</span></div><div class="temp"><span id="t">--</span>/<span id="feel">--</span><small>°C</small></div></div>
+    <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FFD166"><path d="M3 11.5L12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>E.T.A. Casa</span><small id="etaK"></small></div><div class="temp" id="eta">--</div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF4D6D"><path d="M12 20.5s-7.3-4.5-9.3-9C1.3 8 3.200 4.500 6.700 4.500c2 0 3.600 1 5.300 3 1.700-2 3.300-3 5.300-3 3.500 0 5.400 3.500 4 7C19.300 16 12 20.500 12 20.500z"/></svg>Battiti</span><small>bpm</small></div><div class="temp"><span id="hrb">--</span></div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#FF9F43"><path d="M12 3c1 3.5 5.5 5.5 5.5 10.2A5.5 5.5 0 0 1 12 19a5.5 5.5 0 0 1-5.5-5.800c0-2 1-3.200 2-4.200.3 1.600 1.200 2.400 2 2.600C10.200 8.500 10.500 5.500 12 3z"/></svg>Calorie</span></div><div class="temp"><span id="kcal">--</span><small>kcal</small></div></div>
     <div class="tcard"><div class="thead"><span class="ti"><svg class="ic" viewBox="0 0 24 24" style="--ic:#84CC16"><path d="M2.5 19.5l6.5-11 4 6.5 2.5-3.5 6 8z"/></svg>Altitudine</span></div><div class="temp"><span id="alt">--</span><small>m</small></div></div>
@@ -332,7 +332,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
 <div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hfix">Correggi le quote dei giri</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Per leggere i battiti dal TicWatch serve sull'orologio un'app che li trasmetta come fascia cardio Bluetooth, per esempio «Heart for Bluetooth», «BLE Heartrate Transmitter» o «Bluetooth Heart Rate Monitor» (si installano dal Play Store dell'orologio). Aprila sul watch e lasciala attiva, poi tocca «Cerca». Se il watch non compare, usa «Mostra tutti i dispositivi». In Chrome devono essere attivi la Posizione e il permesso «Dispositivi nelle vicinanze». Funziona solo con Chrome, non con Firefox né Brave. Non ho potuto verificare queste app sul TicWatch.</p></div>
-<div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa.</p></div>
+<div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><label class="pf">Indirizzo di casa<input id="pho" type="text" autocomplete="off" placeholder="Via, numero, città"></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa. L'indirizzo di casa serve per «E.T.A. Casa»: quando lo salvi viene inviato una volta a OpenStreetMap (Nominatim) solo per trovarne le coordinate; si può lasciare vuoto.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
 <div id="sos"><div class="hh"><button id="sosback" aria-label="Indietro">←</button><span>Soccorso</span></div><label class="pf">Numero da chiamare<input id="sosnum" type="tel" inputmode="tel" placeholder="es. +39 3XX XXXXXXX"></label><div class="omenu"><button id="sossave">Salva</button><button id="sostest">Prova la schermata<small>Fa partire il conto alla rovescia senza chiamare davvero</small></button></div><p id="sosmsg" class="pnote"></p><p class="pnote">Se durante un giro registrato l'app sente un urto forte e poi resti fermo, compare un avviso rosso con 30 secondi di tempo: tocca «Sto bene» per annullare. Se non tocchi nulla si apre la chiamata al numero scelto: su Android il telefono mostra la tastiera con il numero già scritto e devi toccare il tasto verde per chiamare (un sito web non può chiamare da solo). Il numero resta solo su questo telefono e si cancella se cancelli i dati del browser. È una stima fatta con i sensori del telefono: può sbagliare, e non sostituisce un dispositivo di emergenza.</p></div>
 <div id="srv"><div class="hh"><button id="srvback" aria-label="Indietro">←</button><span>Server giri</span></div><label class="pf">Indirizzo del server<input id="srvurl" type="url" inputmode="url" placeholder="https://giri.tuodominio.it" autocapitalize="off" autocomplete="off"></label><label class="pf">Chiave personale<input id="srvkey" type="password" autocomplete="off" autocapitalize="off"></label><div class="omenu"><button id="srvsave">Salva e prova la connessione</button><button id="srvsync">Carica ora i giri mancanti<small id="srvpend"></small></button><button id="srvoff">Scollega il server</button></div><p id="srvmsg" class="pnote"></p><p class="pnote">Se il server è collegato, ogni giro viene inviato da solo appena premi Stop (con foto, GPX, vento, temperatura e quota). Se sei offline resta in coda e parte alla prossima apertura dell'app. Indirizzo e chiave restano solo su questo telefono. Eliminare un giro qui non lo cancella dal server.</p></div>
@@ -483,6 +483,7 @@ function onPos(pos){
     else if(rep!=null&&dist(lastPt,p)>15){heading=bearing(lastPt,p);lastPt=p}
   }
   try{navUpdate(p,c.accuracy)}catch(e){}
+  try{etaFeed(p,spd,c.accuracy)}catch(e){}
   // registro il punto per il GPX: se la posizione è poco precisa uso quella filtrata; da fermo salvo un punto ogni 30 s
   if(recording&&!paused&&c.accuracy<=100){
     let la=p.lat,lo=p.lon;
@@ -581,7 +582,7 @@ addEventListener('resize',fitText);
 function tick(){
   const hhmm=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});$('sunT').textContent=hhmm;
   if(recording&&startTime){const m=Math.floor(((paused?pausedAt:Date.now())-startTime)/60000);$('elapsed').textContent=Math.floor(m/60)+':'+String(m%60).padStart(2,'0');const mm=Math.floor(moving/60000);$('mov').textContent=Math.floor(mm/60)+':'+String(mm%60).padStart(2,'0')}
-  setGps();setNet();hrShow();updateSun();rainCheck();motionTick();fitText();
+  setGps();setNet();hrShow();updateSun();rainCheck();motionTick();try{etaTick()}catch(e){}fitText();
 }
 tick();setInterval(tick,1000);
 
@@ -680,6 +681,104 @@ function feelsLike(){
   }else ws=Math.hypot(V,s);
   const h=wx.h==null?50:wx.h,e=h/100*6.105*Math.exp(17.27*T/(237.7+T));
   return T+0.33*e-0.70*ws-4.00;
+}
+
+// ---- E.T.A. Casa: tempo di massima per tornare a casa, solo se stai andando verso casa ----
+// L'indirizzo di casa sta solo nel profilo del telefono. Strada: preferisco un tuo giro (cronologia o server) che passa da dove sei e arriva a casa;
+// se non c'e', uso la linea d'aria x 1,3 (nella cella il numero dei km e' preceduto da ~). Il tempo = strada / tua velocita' media. Ricalcolo ogni 30 s.
+const ETA_NEAR=200,ETA_DEF=5;
+let etaTr=[],etaToward=null,etaLast=0,etaVal=null,etaIdx=[],etaState=0,etaKey=0,etaForce=false;   // etaState: 0 da costruire, 1 in costruzione, 2 pronto
+function etaHome(){const h=prof&&prof.home;return h&&isFinite(h.lat)&&isFinite(h.lon)?{lat:+h.lat,lon:+h.lon}:null}
+function etaReset(){etaKey++;etaIdx=[];etaState=0;etaVal=null;etaLast=0;etaToward=null;etaTr=[];etaForce=false}
+function etaThin(seg,home){      // [[lat,lon],...] -> punti ogni 25 m con distanza progressiva; null se il tratto non arriva a casa
+  const la=[],lo=[],cum=[];let last=null,acc=0,near=false;
+  for(let i=0;i<seg.length;i++){
+    const q={lat:seg[i][0],lon:seg[i][1]};
+    if(last){const d=dist(last,q);if(d<25&&i!==seg.length-1)continue;acc+=d}
+    la.push(q.lat);lo.push(q.lon);cum.push(acc);last=q;
+    if(!near&&dist(q,home)<=ETA_NEAR)near=true;
+  }
+  return near&&la.length>1?{la,lo,cum}:null;
+}
+async function etaBuild(){        // indice dei tratti dei tuoi giri che arrivano a casa: prima la cronologia del telefono, poi il server
+  if(etaState)return;const home=etaHome();if(!home)return;
+  etaState=1;const key=etaKey,idx=etaIdx,seen=new Set();
+  try{
+    let d=null;try{d=await dbOpen()}catch(e){}
+    if(d){
+      await new Promise(res=>{try{
+        const t=d.transaction(ST,'readonly'),rq=t.objectStore(ST).openCursor();
+        rq.onsuccess=()=>{const c=rq.result;if(!c||key!==etaKey){res();return}
+          try{const r=c.value;if(r&&r.gpx){seen.add(String(r.id));for(const sg of gpxSegs(r.gpx)){const x=etaThin(sg,home);if(x)idx.push(x)}}}catch(e){}
+          c.continue()};
+        rq.onerror=()=>res();t.onabort=()=>res();
+      }catch(e){res()}});
+      try{d.close()}catch(e){}
+    }
+    if(key===etaKey&&srvOk()&&navigator.onLine!==false){
+      try{
+        const x=await srvFetch('/api/heat',{method:'GET'});
+        if(x.ok){const L=await x.json();for(const r of L){if(key!==etaKey)break;if(seen.has(String(r.id)))continue;for(const sg of (r.segs||[])){const t=etaThin(sg,home);if(t)idx.push(t)}}}
+      }catch(e){}
+    }
+  }catch(e){}
+  if(key===etaKey){etaState=2;etaForce=true}
+}
+function etaFeed(p,spd,acc){      // da onPos: tengo le ultime posizioni in movimento e vedo se la distanza da casa sta calando
+  const h=etaHome();if(!h||spd==null||spd<1.2||!(acc<=60))return;
+  const t=Date.now(),l=etaTr[etaTr.length-1];if(l&&dist(l,p)<10)return;
+  etaTr.push({lat:p.lat,lon:p.lon,t});
+  while(etaTr.length>240||(etaTr.length>1&&t-etaTr[0].t>600000))etaTr.shift();
+  let pl=0,i=etaTr.length-1;
+  while(i>0&&pl<250){pl+=dist(etaTr[i-1],etaTr[i]);i--}
+  if(pl>=250){const r=(dist(etaTr[i],h)-dist(p,h))/pl;if(r>0.35)etaToward=true;else if(r<0.1)etaToward=false}     // verso casa: in 250 m di strada la distanza cala di oltre un terzo; si smette sotto un decimo
+}
+function etaSpeed(){      // m/s: media del giro in movimento e ultimi minuti; senza dati 18 km/h
+  let a=null,b=null;
+  if(recording&&moving>=300000&&km>500)a=km/(moving/1000);
+  let L=0,T=0;for(let i=1;i<etaTr.length;i++){const dt=(etaTr[i].t-etaTr[i-1].t)/1000;if(dt>0&&dt<=20){L+=dist(etaTr[i-1],etaTr[i]);T+=dt}}
+  if(T>=120&&L>=500)b=L/T;
+  const v=a!=null&&b!=null?(a+b)/2:(a!=null?a:(b!=null?b:ETA_DEF));
+  return Math.min(11,Math.max(2.5,v));
+}
+function etaHist(p,hd,home,straight){      // strada piu corta (m) da qui a casa lungo un tuo giro, oppure null
+  const kx=Math.cos(p.lat*Math.PI/180)*111320,ky=110540;let best=null;
+  for(const t of etaIdx){
+    const n=t.la.length,cand=[];let cb=-1,cd=1e18;
+    for(let i=0;i<n;i++){const dx=(t.lo[i]-p.lon)*kx,dy=(t.la[i]-p.lat)*ky,d=dx*dx+dy*dy;
+      if(d<=14400){if(d<cd){cd=d;cb=i}}else if(cb>=0){cand.push([cb,cd]);cb=-1;cd=1e18}}      // passaggi del giro entro 120 m da te
+    if(cb>=0)cand.push([cb,cd]);
+    for(const [bi,bd] of cand){
+      const a=Math.max(0,bi-2),b=Math.min(n-1,bi+2);
+      const rb=bearing({lat:t.la[a],lon:t.lo[a]},{lat:t.la[b],lon:t.lo[b]});
+      const dirs=hd==null?[1,-1]:[Math.abs(((hd-rb+540)%360)-180)<=90?1:-1];      // stesso verso del giro o contrario
+      for(const sg of dirs){
+        let j=bi;while(j>=0&&j<n&&dist({lat:t.la[j],lon:t.lo[j]},home)>ETA_NEAR)j+=sg;
+        if(j<0||j>=n)continue;
+        const rem=Math.abs(t.cum[j]-t.cum[bi])+dist({lat:t.la[j],lon:t.lo[j]},home)+Math.sqrt(bd);
+        if(rem<=2.5*straight+1500&&(best==null||rem<best))best=rem;      // scarto i giri che arrivano a casa dopo un lungo giro largo
+      }
+    }
+  }
+  return best;
+}
+function etaCalc(home){
+  const p=curPos;if(!p)return;
+  const st=dist(p,home);let d=null,est=false;
+  if(st>=150){d=etaHist(p,heading,home,st);if(d==null){d=st*1.3;est=true}}
+  etaVal=st<150?{near:true}:{m:d/etaSpeed()/60,d,est};
+}
+function etaFmt(min){const m=min<10?Math.max(1,Math.round(min)):Math.round(min/5)*5;return m<60?'~'+m+' min':'~'+Math.floor(m/60)+'h'+String(m%60).padStart(2,'0')}
+function etaTick(){      // ogni secondo: mostra o nasconde; il calcolo si rifa ogni 30 s
+  const el=$('eta'),k=$('etaK'),h=etaHome();
+  const off=()=>{if(el.textContent!=='--')el.textContent='--';if(k.textContent)k.textContent='';etaLast=0};
+  if(!h||!curPos||etaToward!==true||Date.now()-lastFixWall>60000){off();return}
+  if(etaState===0)etaBuild();
+  const now=Date.now();
+  if(etaForce||now-etaLast>=30000||!etaVal){etaLast=now;etaForce=false;etaCalc(h)}
+  if(!etaVal){off();return}
+  const tx=etaVal.near?'<1 min':etaFmt(etaVal.m),kx=etaVal.near?'':(etaVal.est?'~':'')+(etaVal.d/1000).toFixed(1).replace('.',',')+' km';
+  if(el.textContent!==tx)el.textContent=tx;if(k.textContent!==kx)k.textContent=kx;
 }
 
 // ---- tramonto (calcolo astronomico locale, nessuna connessione) ----
@@ -790,7 +889,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
-const APP_VER='2026-11-16 (4)';      // aumenta il numero a ogni versione: si legge in Opzioni
+const APP_VER='2026-11-17 (1)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
@@ -971,13 +1070,36 @@ function hrDisconnect(){hrWanted=false;hrBpm=null;try{hrDev&&hrDev.gatt.connecte
 $('btfind').onclick=()=>hrConnect(false);$('btall').onclick=()=>hrConnect(true);$('btoff').onclick=hrDisconnect;
 
 // ---- profilo (per le calorie): resta nel telefono ----
-function profOpen(){$('pw').value=prof&&prof.w||'';$('pa').value=prof&&prof.age||'';$('ps').value=prof&&prof.sex||'';$('pmsg').textContent='';$('prof').classList.add('on')}
-$('psave').onclick=()=>{
+function profOpen(){$('pw').value=prof&&prof.w||'';$('pa').value=prof&&prof.age||'';$('ps').value=prof&&prof.sex||'';$('pho').value=prof&&prof.home&&prof.home.addr||'';$('pmsg').textContent='';$('prof').classList.add('on')}
+async function geocodeHome(q){      // trova le coordinate di un indirizzo (OpenStreetMap Nominatim); null se non lo trova
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),15000);
+  try{
+    const r=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=it&q='+encodeURIComponent(q),{signal:ctl.signal});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const a=await r.json();if(!Array.isArray(a)||!a.length)return null;
+    const la=parseFloat(a[0].lat),lo=parseFloat(a[0].lon);if(!isFinite(la)||!isFinite(lo))return null;
+    return {addr:q,lat:la,lon:lo,name:String(a[0].display_name||'').slice(0,120)};
+  }finally{clearTimeout(tm)}
+}
+$('psave').onclick=async()=>{
   const w=parseFloat($('pw').value),age=parseInt($('pa').value,10),sex=$('ps').value;
   if(!(w>=30&&w<=250)){$('pmsg').textContent='Inserisci un peso tra 30 e 250 kg.';return}
+  const addr=$('pho').value.trim().slice(0,160),old=prof&&prof.home||null;
+  let home=null,hm='',found=false;
+  if(addr){
+    if(old&&old.addr===addr&&isFinite(old.lat)&&isFinite(old.lon))home=old;
+    else{
+      $('pmsg').textContent='Cerco l\'indirizzo di casa…';
+      try{home=await geocodeHome(addr);if(home)found=true;else hm=' Indirizzo di casa non trovato: controlla via, numero e città.'}
+      catch(e){home=null;hm=' Indirizzo di casa non trovato (serve la connessione dati): riprova più tardi.'}
+    }
+  }
   prof={w,age:age>=10&&age<=100?age:null,sex:(sex==='m'||sex==='f')?sex:''};
+  if(home)prof.home=home;
   try{localStorage.setItem('kubocycle-profile',JSON.stringify(prof))}catch(e){}
-  showKcal();hrShow();$('pmsg').textContent='Salvato.';
+  if(!old!==!home||(old&&home&&(old.lat!==home.lat||old.lon!==home.lon)))etaReset();
+  showKcal();hrShow();
+  $('pmsg').textContent='Salvato.'+(found?' Casa: '+(home.name||addr)+'.':'')+hm;
 };
 
 // ---- rinomina il giro ----
