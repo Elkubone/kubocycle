@@ -216,12 +216,9 @@ body.p2 #p2{transform:translateX(0)}
 #nempty p{margin:0;color:var(--mut);font-size:.95rem;line-height:1.4}
 #nempty button{font:inherit;font-size:1.1rem;font-weight:800;border-radius:14px;padding:14px;border:0;background:var(--acc);color:#001018}
 #nempty.hide{display:none}
-#routes,#srvnav{position:fixed;inset:0;z-index:38;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom));overflow-y:auto}
+#routes{position:fixed;inset:0;z-index:38;display:none;flex-direction:column;gap:10px;background:#000;padding:max(10px,env(safe-area-inset-top)) 14px max(10px,env(safe-area-inset-bottom));overflow-y:auto}
 #routes.on{display:flex}
-#srvnav.on{display:flex}
-#srvnav{z-index:39}
-#snq,#hq{width:100%;font:inherit;font-size:1.1rem;font-weight:700;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;flex:none}
-#snlist{display:flex;flex-direction:column;gap:10px}
+#hq{width:100%;font:inherit;font-size:1.1rem;font-weight:700;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;flex:none}
 .rit{display:flex;align-items:center;gap:10px}
 .rit .hit{flex:1;min-width:0}
 .rit .rdel{flex:none;width:44px;height:44px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:#FF5448;font:inherit;font-weight:800;font-size:1.1rem}
@@ -303,7 +300,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="nbtns"><button id="nzin" class="nb" aria-label="Ingrandisci"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="nzout" class="nb" aria-label="Riduci"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><button id="nctr" class="nb" aria-label="Segui la posizione"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5"/></svg></button><button id="nori" class="nb" aria-label="Orientamento della mappa"><svg viewBox="0 0 24 24"><path d="M12 3l5 14-5-3-5 3z"/></svg></button><button id="nlay" class="nb" aria-label="Tipo di mappa"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12.5l9 5 9-5"/></svg></button><button id="nvoice" class="nb" aria-label="Voce"><svg viewBox="0 0 24 24"><path d="M4 9.5v5h4l5 4v-13l-5 4z"/><path d="M16.5 9a4 4 0 0 1 0 6"/></svg></button></div>
 <div id="nattr">© OpenStreetMap</div>
 <div id="nbot" class="none"><button id="nstart" class="nb">Avvia navigazione</button><div id="nstats"><div><b id="nrem">--</b><span>mancano</span></div><div><b id="neta">--:--</b><span>arrivo</span></div><div><b id="ntime">--</b><span>tempo</span></div><div><b id="nspd">--</b><span>km/h</span></div></div><button id="nstop" class="nb" aria-label="Termina la navigazione">✕</button></div>
-<div id="nempty"><h3>Segui un percorso</h3><p>Carica un file GPX: la mappa ti guiderà passo passo, con indicazioni e voce. Funziona senza connessione dati per la guida, ma la mappa di sfondo ha bisogno dei dati.</p><button id="nload">Carica file GPX</button><button id="nsrv" style="display:none">Cerca un giro sul server</button></div>
+<div id="nempty"><h3>Segui un percorso</h3><p>Carica un file GPX: la mappa ti guiderà passo passo, con indicazioni e voce. Funziona senza connessione dati per la guida, ma la mappa di sfondo ha bisogno dei dati. Per seguire un giro già fatto, aprilo dalla Cronologia e tocca «Segui questo giro».</p><button id="nload">Carica file GPX</button></div>
 <input id="gpxin" type="file" accept=".gpx,.xml,application/gpx+xml,text/xml,application/xml" hidden>
 </div></div>
 <div id="egg" aria-hidden="true"><h1 id="eggt">KUBOCYCLE</h1><svg viewBox="0 -12 200 142" aria-hidden="true">
@@ -335,7 +332,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="fall"><div class="rbox"><h2>Caduta rilevata</h2><div id="falln"></div><p id="falltxt"></p><a id="fallcall" href="#">Chiama</a><button id="fallok" class="go">Sto bene</button></div></div>
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="olive">Condivisione live<small id="olivest">Link con la mappa per chi scegli</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div><p id="ver"></p></div>
-<div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
+<div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
 <div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><input id="hq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hfix">Correggi le quote dei giri</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Accendi la fascia o il sensore cardio (o l'app del watch che trasmette i battiti) e tocca «Cerca». Se non compare, usa «Mostra tutti i dispositivi». Servono Chrome, la Posizione e il permesso «Dispositivi nelle vicinanze»; con Brave e Firefox non funziona.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><label class="pf">Indirizzo di casa<input id="pho" type="text" autocomplete="off" placeholder="Via, numero, città"></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa. L'indirizzo di casa serve per «E.T.A. Casa»: quando lo salvi viene inviato una volta a OpenStreetMap (Nominatim) solo per trovarne le coordinate; si può lasciare vuoto.</p></div>
@@ -343,7 +340,6 @@ body.p2 #p2{transform:translateX(0)}
 <div id="sos"><div class="hh"><button id="sosback" aria-label="Indietro">←</button><span>Soccorso</span></div><label class="pf">Numero da chiamare<input id="sosnum" type="tel" inputmode="tel" placeholder="es. +39 3XX XXXXXXX"></label><div class="omenu"><button id="sossave">Salva</button><button id="sostest">Prova la schermata<small>Fa partire il conto alla rovescia senza chiamare davvero</small></button></div><p id="sosmsg" class="pnote"></p><p class="pnote">Se durante un giro registrato l'app sente un urto forte e poi resti fermo, compare un avviso rosso con 30 secondi di tempo: tocca «Sto bene» per annullare. Se non tocchi nulla si apre la chiamata al numero scelto: su Android il telefono mostra la tastiera con il numero già scritto e devi toccare il tasto verde per chiamare (un sito web non può chiamare da solo). Il numero resta solo su questo telefono e si cancella se cancelli i dati del browser. È una stima fatta con i sensori del telefono: può sbagliare, e non sostituisce un dispositivo di emergenza.</p></div>
 <div id="srv"><div class="hh"><button id="srvback" aria-label="Indietro">←</button><span>Server giri</span></div><label class="pf">Indirizzo del server<input id="srvurl" type="url" inputmode="url" placeholder="https://giri.tuodominio.it" autocapitalize="off" autocomplete="off"></label><label class="pf">Chiave personale<input id="srvkey" type="password" autocomplete="off" autocapitalize="off"></label><div class="omenu"><button id="srvsave">Salva e prova la connessione</button><button id="srvsync">Carica ora i giri mancanti<small id="srvpend"></small></button><button id="srvoff">Scollega il server</button></div><p id="srvmsg" class="pnote"></p><p class="pnote">Se il server è collegato, ogni giro viene inviato da solo appena premi Stop (con foto, GPX, vento, temperatura e quota). Se sei offline resta in coda e parte alla prossima apertura dell'app. Indirizzo e chiave restano solo su questo telefono. Eliminare un giro qui non lo cancella dal server.</p></div>
 <div id="live"><div class="hh"><button id="liveback" aria-label="Indietro">←</button><span>Condivisione live</span></div><div class="omenu"><button id="livetog">Condivisione all'avvio del giro<small id="livetogst"></small></button></div><div id="livelist"></div><label class="pf">Nome (facoltativo)<input id="livenm" type="text" autocomplete="off" maxlength="60"></label><label class="pf">Email<input id="liveem" type="email" inputmode="email" autocomplete="off" autocapitalize="off"></label><div class="omenu"><button id="liveadd">Aggiungi destinatario</button></div><p id="livemsg" class="pnote"></p><p class="pnote">Quando premi Avvia, l'app crea un link nuovo e lo manda per email ai destinatari con la spunta. Chi lo riceve vede la tua posizione su una mappa nel browser, senza installare nulla. Il link smette di funzionare quando premi Stop; se il telefono resta senza aggiornamenti per 10 minuti la mappa non mostra più la posizione. La posizione parte solo con Kubocycle aperto e lo schermo acceso, e serve il server giri collegato. Gli indirizzi restano solo su questo telefono.</p></div>
-<div id="srvnav"><div class="hh"><button id="snback" aria-label="Indietro">←</button><span>Giri sul server</span></div><input id="snq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><p id="snmsg" class="pnote"></p><div id="snlist"></div></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
 <div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Altimetria</button><button id="mhr" class="sec" style="display:none">Battiti</button><button id="mreplay" class="sec" style="display:none">Replay</button><button id="mfollow" class="sec" style="display:none">Segui questo giro</button><p class="mcap">Condividi</p>
@@ -896,7 +892,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
-const APP_VER='2026-11-26 (2)';      // aumenta il numero a ogni versione: si legge in Opzioni
+const APP_VER='2026-11-26 (3)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
@@ -1999,7 +1995,7 @@ function srvShow(){
   let h='';try{h=srvCfg?new URL(srvCfg.url).host:''}catch(e){}
   $('srvurl').value=srvCfg?srvCfg.url:'';$('srvkey').value=srvCfg?srvCfg.key:'';
   $('osrvst').textContent=srvOk()?'Collegato: '+h:'Archivio dei giri sul tuo server';
-  $('srvoff').style.display=srvCfg?'':'none';srvUi();
+  $('srvoff').style.display=srvCfg?'':'none';
   dbAll().then(L=>{$('srvpend').textContent=srvOk()?'Giri in attesa: '+((L||[]).filter(srvPending).length):''});
 }
 $('osrv').onclick=()=>{$('srvmsg').textContent='';srvShow();show('srv')};
@@ -2117,36 +2113,12 @@ liveShow();
 
 // ================= giri sul server: cerca e segui il tracciato =================
 const MESI_L=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'],MESI_S=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'],GIORNI_L=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'],GIORNI_S=['dom','lun','mar','mer','gio','ven','sab'];
-let snList=[];
 const snNorm=t=>String(t==null?'':t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
 const snDate=t=>{const d=new Date(t);return GIORNI_S[d.getDay()]+' '+d.getDate()+' '+MESI_S[d.getMonth()]+' '+d.getFullYear()+' · '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})};
 function snHay(r){
   const d=new Date(r.start),s=r.stats||{},p2=n=>String(n).padStart(2,'0'),km=(s.km||0)/1000,c=x=>x.toFixed(1).replace('.',',');
   return snNorm([r.name,d.getDate(),MESI_L[d.getMonth()],MESI_S[d.getMonth()],d.getFullYear(),GIORNI_L[d.getDay()],GIORNI_S[d.getDay()],p2(d.getHours())+':'+p2(d.getMinutes()),d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()),p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear(),
     r.bike&&BIKES[r.bike]?BIKES[r.bike]+' '+r.bike+(r.bike==='road'?' corsa':''):'',s.src||'',c(km)+' km',km.toFixed(1)+' km',Math.round(km)+' km'].join(' '));
-}
-function srvUi(){['nsrv','rtsrv'].forEach(i=>{const e=$(i);if(e)e.style.display=srvOk()?'':'none'})}
-function snRender(){
-  const box=$('snlist'),toks=snNorm($('snq').value).split(' ').filter(Boolean);box.replaceChildren();let n=0;
-  for(const r of snList){
-    if(!toks.every(t=>r._h.includes(t)))continue;n++;
-    const s=r.stats||{},b=document.createElement('button');b.className='hit';
-    const t=document.createElement('div'),b1=document.createElement('b'),b2=document.createElement('strong'),b3=document.createElement('i');
-    b1.textContent=snDate(r.start);b2.textContent=r.name||'Giro senza nome';
-    b3.textContent=[((s.km||0)/1000).toFixed(1).replace('.',',')+' km',fmtDur(s.dur||0),r.bike&&BIKES[r.bike]?BIKES[r.bike]:'',s.src?'da '+s.src:''].filter(Boolean).join(' · ');
-    t.append(b1,b2,b3);b.append(t);b.onclick=()=>srvNavLoad(r.id);box.append(b);
-  }
-  $('snmsg').textContent=!snList.length?'Nessun giro sul server.':toks.length?(n?n+' di '+snList.length+' giri':'Nessun giro corrisponde alla ricerca.'):snList.length+(snList.length===1?' giro sul server':' giri sul server');
-}
-async function snOpen(){
-  show('srvnav');$('snq').value='';$('snlist').replaceChildren();
-  if(!srvOk()){$('snmsg').textContent='Collega prima il server: Opzioni → Server giri.';return}
-  $('snmsg').textContent='Carico l\'elenco…';
-  try{
-    const x=await srvFetch('/api/rides',{method:'GET'});
-    if(x.status===401)throw new Error('chiave non accettata');if(!x.ok)throw new Error('HTTP '+x.status);
-    snList=await x.json();snList.forEach(r=>{r._h=snHay(r)});snRender();
-  }catch(e){$('snmsg').textContent='Server non raggiungibile ('+((e&&e.message)||e)+'): controlla la connessione.'}
 }
 async function srvNavLoad(id){
   goPage(2);
@@ -2157,7 +2129,7 @@ async function srvNavLoad(id){
     if(!x.ok)throw new Error(x.status===404?'giro non trovato sul server':'HTTP '+x.status);
     let txt=await x.text();if(!txt)throw new Error('il giro non ha un tracciato');
     try{const j=m.ok?await m.json():null;if(j){const nm=(j.name||snDate(j.start)).replace(/[<>&]/g,'');txt=txt.replace(/<name>[\s\S]*?<\/name>/g,'<name>'+nm+'</name>')}}catch(e){}      // nella navigazione il giro ha il nome che gli hai dato sul server
-    await loadGpxFile(new File([txt],'percorso.gpx',{type:'application/gpx+xml'}));hide('srvnav');
+    await loadGpxFile(new File([txt],'percorso.gpx',{type:'application/gpx+xml'}));
   }catch(e){navToast('Percorso non scaricato: '+((e&&e.message)||e))}
 }
 function navFromHash(){      // collegamento dalla pagina del server: kubocycle.html#nav=<id>
@@ -2165,9 +2137,7 @@ function navFromHash(){      // collegamento dalla pagina del server: kubocycle.
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
   hide('opts');srvNavLoad(m[1]);
 }
-$('nsrv').onclick=snOpen;$('rtsrv').onclick=snOpen;$('snback').onclick=()=>hide('srvnav');$('snq').oninput=snRender;
 addEventListener('hashchange',navFromHash);setTimeout(navFromHash,900);
-srvUi();
 
 
 
