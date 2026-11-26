@@ -220,7 +220,7 @@ body.p2 #p2{transform:translateX(0)}
 #routes.on{display:flex}
 #srvnav.on{display:flex}
 #srvnav{z-index:39}
-#snq{width:100%;font:inherit;font-size:1.1rem;font-weight:700;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;flex:none}
+#snq,#hq{width:100%;font:inherit;font-size:1.1rem;font-weight:700;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;flex:none}
 #snlist{display:flex;flex-direction:column;gap:10px}
 .rit{display:flex;align-items:center;gap:10px}
 .rit .hit{flex:1;min-width:0}
@@ -336,7 +336,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="resume"><div class="rbox"><h2>Giro interrotto</h2><p id="rinfo"></p><button id="rres" class="go">Riprendi</button><button id="rend">Concludi e salva</button><button id="rdel">Scarta</button></div></div>
 <div id="opts"><div class="hh"><button id="oback" aria-label="Chiudi">←</button><span>Opzioni</span></div><div class="omenu"><button id="onav">Navigazione GPX<small>Segui un percorso con la guida passo passo (anche: scorri a sinistra)</small></button><button id="ohist">Cronologia giri<small>Foto, GPX, mappa di calore, esportazione</small></button><button id="ofolder">Cartella sul telefono<small id="ofst">Copia dei giri che resta se cancelli i dati del browser</small></button><button id="obt">Cuore · Bluetooth<small>Smartwatch o fascia cardio: <span id="obtst">non collegato</span></small></button><button id="osos">Soccorso in caso di caduta<small id="ososst">Chiamata a un numero se cadi</small></button><button id="osrv">Server giri<small id="osrvst">Archivio dei giri sul tuo server</small></button><button id="olive">Condivisione live<small id="olivest">Link con la mappa per chi scegli</small></button><button id="oprof">Profilo<small>Peso, età e sesso per stimare le calorie</small></button></div><p id="ver"></p></div>
 <div id="routes"><div class="hh"><button id="rtback" aria-label="Indietro">←</button><span>Percorsi</span></div><div class="omenu"><button id="rtnew">Carica un nuovo file GPX</button><button id="rtsrv" style="display:none">Cerca un giro sul server</button></div><p id="rtmsg" class="pnote"></p><div id="rtlist" style="display:flex;flex-direction:column;gap:10px"></div></div>
-<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hfix">Correggi le quote dei giri</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
+<div id="hist"><div class="hh"><button id="hback" aria-label="Indietro">←</button><span>Cronologia</span></div><div id="hsum"></div><input id="hq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><div class="hrow"><button id="hheat">Mappa di calore</button><button id="hexp">Esporta tutto (ZIP)</button></div><div class="hrow"><button id="hfix">Correggi le quote dei giri</button></div><div class="hrow"><button id="hprof">Crea altimetrie e grafici dei battiti</button></div><div class="hrow"><button id="hregen">Rifai le foto con la mappa stradale</button></div><p id="hmsg"></p><div id="hlist"></div></div>
 <div id="bt"><div class="hh"><button id="btback" aria-label="Indietro">←</button><span>Cuore · Bluetooth</span></div><div id="btst">Non collegato</div><div class="omenu"><button id="btfind">Cerca fascia o sensore cardio</button><button id="btall">Mostra tutti i dispositivi Bluetooth</button><button id="btoff">Scollega</button></div><p id="bthelp">Accendi la fascia o il sensore cardio (o l'app del watch che trasmette i battiti) e tocca «Cerca». Se non compare, usa «Mostra tutti i dispositivi». Servono Chrome, la Posizione e il permesso «Dispositivi nelle vicinanze»; con Brave e Firefox non funziona.</p></div>
 <div id="prof"><div class="hh"><button id="pback" aria-label="Indietro">←</button><span>Profilo</span></div><label class="pf">Peso (kg)<input id="pw" type="number" inputmode="decimal" min="30" max="250" step="0.1"></label><label class="pf">Età (anni)<input id="pa" type="number" inputmode="numeric" min="10" max="100"></label><label class="pf">Sesso<select id="ps"><option value="">—</option><option value="m">Uomo</option><option value="f">Donna</option></select></label><label class="pf">Indirizzo di casa<input id="pho" type="text" autocomplete="off" placeholder="Via, numero, città"></label><div class="omenu"><button id="psave">Salva</button></div><p id="pmsg" class="pnote"></p><p class="pnote">Servono solo per stimare le calorie (con la fascia cardio anche età e sesso, altrimenti si usa la velocità). I dati restano su questo telefono e non vengono scritti nel file della pagina. La stima è indicativa. L'indirizzo di casa serve per «E.T.A. Casa»: quando lo salvi viene inviato una volta a OpenStreetMap (Nominatim) solo per trovarne le coordinate; si può lasciare vuoto.</p></div>
 <div id="fold"><div class="hh"><button id="fback" aria-label="Indietro">←</button><span>Cartella</span></div><div id="fst">Nessuna cartella scelta</div><div class="omenu"><button id="fpick">Scegli la cartella</button><button id="fsync">Sincronizza ora<small>Copia nella cartella i giri mancanti e recupera quelli che nell'app non ci sono più</small></button><button id="foff">Smetti di usare la cartella<small>I file nella cartella non vengono cancellati</small></button></div><p id="fmsg" class="pnote"></p><p class="pnote">Ogni giro viene copiato nella cartella come tre file (dati, GPX e foto) appena premi Stop. Se cancelli i dati di navigazione, riapri questa pagina, scegli di nuovo la stessa cartella e i giri tornano nell'app. Se «Smetti» o il permesso scade, la cronologia dell'app resta com'è.</p></div>
@@ -896,7 +896,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
-const APP_VER='2026-11-24 (1)';      // aumenta il numero a ogni versione: si legge in Opzioni
+const APP_VER='2026-11-26 (1)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
@@ -908,30 +908,100 @@ async function makeThumb(){
     return await new Promise(r=>c.toBlob(r,'image/jpeg',0.7))}catch(e){return null}
 }
 let histUrls=[];
+let histL=[],histS=[],histTok=0,histBusy=false;
+const histHay=r=>snHay({name:r.name,start:r.start,bike:r.bike,stats:{km:r.km}});
+const histDs=d=>d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+function histRowLocal(r){
+  const b=document.createElement('button');b.className='hit';
+  const d=new Date(r.start),f1=x=>x.toFixed(1).replace('.',',');
+  let th;
+  if(r.thumb){th=document.createElement('img');const u=URL.createObjectURL(r.thumb);histUrls.push(u);th.src=u;th.alt=''}
+  else{th=document.createElement('div');th.className='nophoto';th.textContent='GPX'}
+  const t=document.createElement('div');
+  const ds=histDs(d);
+  const det=[r.bike&&BIKES[r.bike]?BIKES[r.bike]:'',r.avg!=null?'media '+f1(r.avg)+' km/h':'',r.vmax!=null?'max '+Math.round(r.vmax*3.6)+' km/h':'',r.hrAvg!=null?'cuore '+Math.round(r.hrAvg)+'/'+r.hrMax:'',r.kcal>0?Math.round(r.kcal)+' kcal':'',srvOk()?(r.srv&&r.srv.at&&r.srv.name===(r.name||'')?'sul server':'da caricare'):''].filter(Boolean).join(' · ');
+  t.innerHTML='<b></b><strong></strong><i></i>';
+  t.children[0].textContent=r.name||ds;
+  t.children[1].textContent=f1((r.km||0)/1000)+' km · '+fmtDur(r.dur||0);
+  t.children[2].textContent=(r.name?ds+' · ':'')+det;
+  b.append(th,t);b.onclick=()=>openRide(r);return b;
+}
+function histRowSrv(s){      // giro presente solo sul server: un tocco lo scarica sul telefono
+  const st=s.stats||{},b=document.createElement('button');b.className='hit';
+  const d=new Date(s.start),f1=x=>x.toFixed(1).replace('.',',');
+  const th=document.createElement('div');th.className='nophoto';th.textContent='Server';th.style.color='var(--acc)';
+  const t=document.createElement('div'),ds=histDs(d);
+  const det=[s.bike&&BIKES[s.bike]?BIKES[s.bike]:'',st.avg!=null?'media '+f1(st.avg)+' km/h':'',st.vmax!=null?'max '+Math.round(st.vmax*3.6)+' km/h':'',st.hrAvg!=null?'cuore '+Math.round(st.hrAvg)+'/'+st.hrMax:'',st.kcal>0?Math.round(st.kcal)+' kcal':'',st.src?'da '+st.src:'','solo sul server: tocca per scaricarlo'].filter(Boolean).join(' · ');
+  t.innerHTML='<b></b><strong></strong><i></i>';
+  t.children[0].textContent=s.name||ds;
+  t.children[1].textContent=f1((st.km||0)/1000)+' km · '+fmtDur(st.dur||0);
+  t.children[2].textContent=(s.name?ds+' · ':'')+det;
+  b.append(th,t);b.onclick=()=>histGet(s);return b;
+}
+function histRender(){
+  const box=$('hlist'),q=$('hq'),toks=snNorm(q.value).split(' ').filter(Boolean);
+  histUrls.forEach(u=>URL.revokeObjectURL(u));histUrls=[];box.innerHTML='';
+  const all=[...histL.map(r=>({l:1,r})),...histS.map(r=>({l:0,r}))].sort((a,b)=>b.r.start-a.r.start);
+  q.style.display=all.length?'':'none';
+  if(!all.length){$('hsum').textContent='';box.innerHTML='<div id="hempty">Ancora nessun giro.<br>Quando premi FINE, il giro viene salvato qui con foto e GPX.</div>';return}
+  let n=0;
+  for(const {l,r} of all){
+    if(toks.length&&!toks.every(k=>(l?histHay(r):snHay(r)).includes(k)))continue;
+    n++;box.appendChild(l?histRowLocal(r):histRowSrv(r));
+  }
+  let sm='';
+  if(toks.length)sm=n+' di '+all.length+(all.length===1?' giro':' giri');
+  else{
+    if(histL.length){
+      const kmT=histL.reduce((a,r)=>a+(r.km||0),0)/1000,msT=histL.reduce((a,r)=>a+(r.dur||0),0),kcT=histL.reduce((a,r)=>a+(r.kcal||0),0);
+      sm=histL.length+(histL.length===1?' giro':' giri')+' · '+kmT.toFixed(1).replace('.',',')+' km · '+fmtDur(msT)+(kcT>0?' · '+Math.round(kcT)+' kcal':'');
+    }
+    if(histS.length)sm+=(sm?' · ':'')+histS.length+(histS.length===1?' giro solo sul server':' giri solo sul server');
+  }
+  $('hsum').textContent=sm;
+  if(toks.length&&!n)box.innerHTML='<div id="hempty">Nessun giro corrisponde alla ricerca.</div>';
+}
 async function histOpen(){
+  const tok=++histTok;
   $('hist').classList.add('on');$('hmsg').textContent='';
   const L=await dbAll(),box=$('hlist');
-  histUrls.forEach(u=>URL.revokeObjectURL(u));histUrls=[];box.innerHTML='';
-  if(L==null){$('hsum').textContent='';box.innerHTML='<div id="hempty">La cronologia non è disponibile su questo browser.</div>';return}
-  if(!L.length){$('hsum').textContent='';box.innerHTML='<div id="hempty">Ancora nessun giro.<br>Quando premi FINE, il giro viene salvato qui con foto e GPX.</div>';return}
-  const kmT=L.reduce((a,r)=>a+(r.km||0),0)/1000,msT=L.reduce((a,r)=>a+(r.dur||0),0),kcT=L.reduce((a,r)=>a+(r.kcal||0),0);
-  $('hsum').textContent=L.length+(L.length===1?' giro':' giri')+' · '+kmT.toFixed(1).replace('.',',')+' km · '+fmtDur(msT)+(kcT>0?' · '+Math.round(kcT)+' kcal':'');
-  for(const r of L){
-    const b=document.createElement('button');b.className='hit';
-    const d=new Date(r.start),f1=x=>x.toFixed(1).replace('.',',');
-    let th;
-    if(r.thumb){th=document.createElement('img');const u=URL.createObjectURL(r.thumb);histUrls.push(u);th.src=u;th.alt=''}
-    else{th=document.createElement('div');th.className='nophoto';th.textContent='GPX'}
-    const t=document.createElement('div');
-    const ds=d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-    const det=[r.bike&&BIKES[r.bike]?BIKES[r.bike]:'',r.avg!=null?'media '+f1(r.avg)+' km/h':'',r.vmax!=null?'max '+Math.round(r.vmax*3.6)+' km/h':'',r.hrAvg!=null?'cuore '+Math.round(r.hrAvg)+'/'+r.hrMax:'',r.kcal>0?Math.round(r.kcal)+' kcal':'',srvOk()?(r.srv&&r.srv.at&&r.srv.name===(r.name||'')?'sul server':'da caricare'):''].filter(Boolean).join(' · ');
-    t.innerHTML='<b></b><strong></strong><i></i>';
-    t.children[0].textContent=r.name||ds;
-    t.children[1].textContent=f1((r.km||0)/1000)+' km · '+fmtDur(r.dur||0);
-    t.children[2].textContent=(r.name?ds+' · ':'')+det;
-    b.append(th,t);b.onclick=()=>openRide(r);box.appendChild(b);
-  }
+  if(L==null){histUrls.forEach(u=>URL.revokeObjectURL(u));histUrls=[];$('hsum').textContent='';$('hq').style.display='none';box.innerHTML='<div id="hempty">La cronologia non è disponibile su questo browser.</div>';return}
+  histL=L;histS=[];histRender();                      // prima si vede subito quello che è sul telefono
+  if(!srvOk()||navigator.onLine===false)return;
+  try{                                                 // poi si aggiungono i giri che ci sono solo sul server
+    const x=await srvFetch('/api/rides',{method:'GET'});
+    if(!x.ok)throw new Error(x.status===401?'chiave non accettata':'HTTP '+x.status);
+    const S=await x.json();
+    if(tok!==histTok||!$('hist').classList.contains('on'))return;
+    const have=new Set(histL.map(r=>String(r.id)));
+    histS=(Array.isArray(S)?S:[]).filter(r=>r&&!have.has(String(r.id)));
+    histRender();
+  }catch(e){if(tok===histTok&&$('hist').classList.contains('on'))$('hmsg').textContent='Elenco del server non disponibile ('+((e&&e.message)||e)+'): vedi solo i giri del telefono.'}
 }
+async function histGet(s){      // scarica dal server un giro che sul telefono non c'è e lo apre
+  if(histBusy)return;histBusy=true;
+  const m=$('hmsg');m.textContent='Scarico il giro dal server…';
+  try{
+    const id=String(s.id),g=p=>srvFetch('/api/rides/'+id+(p?'/'+p:''),{method:'GET'});
+    const [xm,xg,xp,xt,xf,xh]=await Promise.all([g(''),g('gpx'),g('photo'),g('thumb'),g('profile'),g('hrchart')]);
+    if(!xm.ok||!xg.ok)throw new Error(xm.status===404||xg.status===404?'giro non trovato sul server':'HTTP '+(xm.ok?xg.status:xm.status));
+    const mt=((await xm.json())||{}).stats||{},gpx=await xg.text();
+    const bl=async x=>x.ok?new Blob([await x.arrayBuffer()],{type:'image/jpeg'}):null;
+    const jpg=await bl(xp),prof=await bl(xf),hrc=await bl(xh);let thumb=await bl(xt);
+    if(!thumb&&jpg)thumb=await thumbFrom(jpg);
+    const nid=Number(id),pad=n=>String(n).padStart(2,'0'),d0=new Date(s.start);
+    const rec={id:Number.isSafeInteger(nid)?nid:id,start:s.start,dur:mt.dur,km:mt.km,mov:mt.mov,avg:mt.avg,vmax:mt.vmax,hrAvg:mt.hrAvg,hrMax:mt.hrMax,kcal:mt.kcal,pts:mt.pts,name:s.name||'',bike:s.bike||mt.bike||null,env:mt.env||null,alt:mt.alt||null,pm:mt.pm||null,
+      base:mt.base||('kubocycle-'+d0.getFullYear()+pad(d0.getMonth()+1)+pad(d0.getDate())+'-'+pad(d0.getHours())+pad(d0.getMinutes())),gpx:gpx,jpg:jpg,thumb:thumb,prof:prof,hrc:hrc};
+    if(mt.src)rec.src=mt.src;
+    rec.srv={at:Date.now(),name:rec.name,pm:rec.pm||null,pr:!!prof,hc:!!hrc};      // già sul server: non va ricaricato
+    if(!(await dbPut(rec)))throw new Error('non riesco a salvarlo su questo telefono');
+    if(dirH){try{await folderPut(rec)}catch(e){}}
+    histBusy=false;m.textContent='';
+    await histOpen();openRide(rec);
+  }catch(e){m.textContent='Giro non scaricato: '+((e&&e.message)||e)}
+  finally{histBusy=false}
+}
+$('hq').oninput=histRender;
 let curView='map';
 async function showImg(blob,none){
   const cv=$('mapc');
