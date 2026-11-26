@@ -346,7 +346,7 @@ body.p2 #p2{transform:translateX(0)}
 <div id="srvnav"><div class="hh"><button id="snback" aria-label="Indietro">←</button><span>Giri sul server</span></div><input id="snq" type="search" placeholder="Cerca: nome, data, bici, km…" autocomplete="off" aria-label="Cerca un giro"><p id="snmsg" class="pnote"></p><div id="snlist"></div></div>
 <div id="heat"><div class="hh"><button id="hhback" aria-label="Indietro">←</button><span>Mappa di calore</span></div><p id="heatmsg" style="margin:0;text-align:center;color:var(--ink);font-weight:700"></p><canvas id="heatc"></canvas><div class="mbtns"><button id="hhshare" class="share">Foto</button><button id="hhsave" class="sec">Salva JPG</button></div></div>
 <div id="mapov"><p id="mapmsg"></p><p id="mapttl"></p><canvas id="mapc" width="1080" height="1350" style="display:none"></canvas>
-<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Altimetria</button><button id="mhr" class="sec" style="display:none">Battiti</button><button id="mreplay" class="sec" style="display:none">Replay</button><p class="mcap">Condividi</p>
+<div class="mbtns" id="mbtns" style="display:none"><button id="mview" class="sec" style="display:none">Altimetria</button><button id="mhr" class="sec" style="display:none">Battiti</button><button id="mreplay" class="sec" style="display:none">Replay</button><button id="mfollow" class="sec" style="display:none">Segui questo giro</button><p class="mcap">Condividi</p>
 <button id="mshf" class="share">Foto</button>
 <button id="mjpg" class="sec">Salva JPG</button><button id="mgpx" class="sec">Salva GPX</button><button id="mclose" class="sec">Chiudi</button><button id="mren" class="sec">Rinomina</button><button id="mdel">Elimina giro</button></div></div>
 <div id="rpov"><p id="rpmsg"></p><canvas id="rpc" width="720" height="900" style="display:none"></canvas><video id="rpv" controls playsinline style="display:none"></video>
@@ -896,7 +896,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
-const APP_VER='2026-11-26 (1)';      // aumenta il numero a ogni versione: si legge in Opzioni
+const APP_VER='2026-11-26 (2)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
@@ -1009,7 +1009,7 @@ async function showImg(blob,none){
   try{const bm=await createImageBitmap(blob);cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);cv.style.display='block';$('mapmsg').textContent=''}
   catch(e){cv.style.display='none';$('mapmsg').textContent='Non riesco a mostrare l\'immagine: puoi scaricare il GPX.'}
 }
-function viewInit(){curView='map';const p=!!(cur&&cur.prof),h=!!(cur&&cur.hrc),rp=!!(cur&&cur.gpx);
+function viewInit(){curView='map';const p=!!(cur&&cur.prof),h=!!(cur&&cur.hrc),rp=!!(cur&&cur.gpx);$('mfollow').style.display=(rp&&cur.fromHistory&&cur.gpx.length>60)?'':'none';
   $('mview').style.display=p?'':'none';$('mview').textContent='Altimetria';$('mhr').style.display=h?'':'none';$('mhr').textContent='Battiti';$('mreplay').style.display=rp?'':'none';$('mapov').classList.toggle('pv',p||h||rp)}
 const curImg=()=>cur?(curView==='prof'&&cur.prof?cur.prof:(curView==='hr'&&cur.hrc?cur.hrc:cur.jpg)):null;
 const curSuffix=()=>curView==='prof'&&cur&&cur.prof?'-altimetria':(curView==='hr'&&cur&&cur.hrc?'-battiti':'');
@@ -1035,6 +1035,15 @@ $('hheat').onclick=heatOpen;$('hhback').onclick=()=>hide('heat');$('hexp').oncli
 $('mdel').onclick=async()=>{
   if(!cur||!confirm(dirH?'Eliminare questo giro dalla cronologia e dalla cartella?':'Eliminare questo giro dalla cronologia?'))return;
   if(await dbDel(cur.id)){if(dirH)await folderDel(cur);$('mapov').classList.remove('on','hm');cur=null;histOpen()}else toast('Non sono riuscito a eliminarlo');
+};
+
+$('mfollow').onclick=async()=>{      // il tracciato di un giro già fatto diventa il percorso da seguire nella navigazione
+  const r=cur;if(!r||!r.gpx)return;
+  const nm=(r.name||histDs(new Date(r.start))).replace(/[<>&]/g,'');
+  const txt=r.gpx.replace(/<name>[\s\S]*?<\/name>/g,'<name>'+nm+'</name>');      // nella navigazione il giro ha il nome che gli hai dato
+  $('mapov').classList.remove('on','hm');cur=null;hide('hist');hide('opts');
+  goPage(2);
+  await loadGpxFile(new File([txt],'percorso.gpx',{type:'application/gpx+xml'}));
 };
 
 async function doFine(skip){
