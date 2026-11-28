@@ -486,10 +486,10 @@ function onPos(pos){
   }
   lastKTs=pos.timestamp;
   if(!lastPt)lastPt=p;
-  if(sus>=1.5){        // la direzione si aggiorna solo se ti stai davvero muovendo (due fix di fila)
+  if(sus>=1){        // la direzione si aggiorna solo se ti stai davvero muovendo (due fix di fila, almeno 1 m/s: vale anche a piedi)
     if(rep!=null&&c.heading!=null&&!isNaN(c.heading))heading=c.heading;
-    else if(ks!=null&&ks>1.5&&k.heading!=null)heading=k.heading;
-    else if(rep!=null&&dist(lastPt,p)>15){heading=bearing(lastPt,p);lastPt=p}
+    else if(ks!=null&&ks>1&&k.heading!=null)heading=k.heading;
+    else if(rep!=null&&dist(lastPt,p)>(c.accuracy<=8?10:15)){heading=bearing(lastPt,p);lastPt=p}
   }
   try{navUpdate(p,c.accuracy)}catch(e){}
   try{etaFeed(p,spd,c.accuracy)}catch(e){}
@@ -898,7 +898,7 @@ function downloadJpg(){
 }
 
 // ---- cronologia giri: foto, GPX e dati restano nel browser (IndexedDB) ----
-const APP_VER='2026-11-27 (1)';      // aumenta il numero a ogni versione: si legge in Opzioni
+const APP_VER='2026-11-27 (2)';      // aumenta il numero a ogni versione: si legge in Opzioni
 const DBN='kubocycle',ST='rides';
 function dbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open(DBN,3);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(ST))d.createObjectStore(ST,{keyPath:'id'});if(!d.objectStoreNames.contains('routes'))d.createObjectStore('routes',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbRun(mode,fn,store){const d=await dbOpen();try{return await new Promise((res,rej)=>{const t=d.transaction(store||ST,mode),rq=fn(t.objectStore(store||ST));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}finally{d.close()}}
